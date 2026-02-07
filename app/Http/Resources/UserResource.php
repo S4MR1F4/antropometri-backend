@@ -1,0 +1,32 @@
+<?php
+
+namespace App\Http\Resources;
+
+use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\JsonResource;
+
+/**
+ * User resource for API responses.
+ * Per 07_api_specification.md §2
+ */
+class UserResource extends JsonResource
+{
+    public function toArray(Request $request): array
+    {
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'email' => $this->email,
+            'role' => $this->role,
+            'email_verified_at' => $this->email_verified_at?->toIso8601String(),
+            'created_at' => $this->created_at?->toIso8601String(),
+            'stats' => $this->when($request->routeIs('auth.me'), fn() => [
+                'total_subjects' => $this->subjects()->count(),
+                'total_measurements' => $this->measurements()->count(),
+                'today_measurements' => $this->measurements()
+                    ->whereDate('created_at', today())
+                    ->count(),
+            ]),
+        ];
+    }
+}

@@ -1,0 +1,151 @@
+<?php
+
+namespace App\Services;
+
+use App\Exceptions\DuplicateSubjectException;
+use App\Models\Subject;
+use Carbon\Carbon;
+use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+
+/**
+ * Subject service layer.
+ * Per 11_backend_architecture_laravel.md §5
+ */
+class SubjectService
+{
+    /**
+     * Get paginated subjects with filters.
+     */
+    public function getSubjects(array $filters = [], int $perPage = 15): LengthAwarePaginator
+    {
+        $query = Subject::query()
+            ->with('latestMeasurement')
+            ->withCount('measurements');
+
+        // Search filter
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nik', 'like', "%{$search}%");
+            });
+        }
+
+        // Category filter (calculated based on age)
+        if (!empty($filters['category'])) {
+            $today = now()->toDateString();
+            $query->where(function ($q) use ($filters, $today) {
+                $category = $filters['category'];
+                if ($category === 'balita') {
+                    // Age <= 60 months (5 years ago)
+                    $q->where('date_of_birth', '>=', Carbon::parse($today)->subMonths(60));
+                } elseif ($category === 'remaja') {
+                    // Age 61-216 months
+                    $q->where('date_of_birth', '<', Carbon::parse($today)->subMonths(60))
+                        ->where('date_of_birth', '>=', Carbon::parse($today)->subMonths(216));
+                } elseif ($category === 'dewasa') {
+                    // Age > 216 months
+                    $q->where('date_of_birth', '<', Carbon::parse($today)->subMonths(216));
+                }
+            });
+        }
+
+        // Gender filter
+        if (!empty($filters['gender'])) {
+            $query->where('gender', $filters['gender']);
+        }
+
+        // Sorting
+        $sortBy = $filters['sort_by'] ?? 'created_at';
+        $sortDir = $filters['sort_dir'] ?? 'desc';
+        $query->orderBy($sortBy, $sortDir);
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Create a new subject with duplicate check.
+     */
+    public function createSubject(array $data): Subject
+    {
+        // Check for duplicate
+        $existing = $this->findDuplicate($data['normalized_name'], $data['date_of_birth']);
+
+        if ($existing) {
+            throw new DuplicateSubjectException($existing);
+        }
+
+        return Subject::create($data);
+    }
+
+    /**
+     * Update a subject.
+     */
+    public function updateSubject(Subject $subject, array $data): Subject
+    {
+        // Check for duplicate if name or date_of_birth changed
+        if (isset($data['normalized_name']) || isset($data['date_of_birth'])) {
+            $normalizedName = $data['normalized_name'] ?? $subject->normalized_name;
+            $dateOfBirth = $data['date_of_birth'] ?? $subject->date_of_birth;
+
+            $existing = $this->findDuplicate($normalizedName, $dateOfBirth, $subject->id);
+
+            if ($existing) {
+                throw new DuplicateSubjectException($existing);
+            }
+        }
+
+        $subject->update($data);
+        return $subject->fresh();
+    }
+
+    /**
+     * Find duplicate subject by normalized name and date of birth.
+     */
+    public function findDuplicate(string $normalizedName, mixed $dateOfBirth, ?int $excludeId = null): ?Subject
+    {
+        $query = Subject::where('normalized_name', $normalizedName)
+            ->where('date_of_birth', $dateOfBirth);
+
+        if ($excludeId !== null) {
+            $query->where('id', '!=', $excludeId);
+        }
+
+        return $query->first();
+    }
+
+    /**
+     * Calculate age in months from date of birth.
+     * Per 08_calculation_logic.md §2.1
+     */
+    public function calculateAgeInMonths(mixed $dateOfBirth, ?string $measurementDate = null): int
+    {
+        $birthDate = Carbon::parse($dateOfBirth);
+        $measurementDate = $measurementDate ? Carbon::parse($measurementDate) : now();
+
+        $ageInMonths = ($measurementDate->year - $birthDate->year) * 12
+            + ($measurementDate->month - $birthDate->month);
+
+        // Adjust if measurement day is before birth day
+        if ($measurementDate->day < $birthDate->day) {
+            $ageInMonths--;
+        }
+
+        return max(0, $ageInMonths);
+    }
+
+    /**
+     * Determine category based on age in months.
+     * Per 08_calculation_logic.md §2.2
+     */
+    public function determineCategory(int $ageInMonths): string
+    {
+        if ($ageInMonths <= 60) {
+            return 'balita';
+        } elseif ($ageInMonths <= 216) {
+            return 'remaja';
+        }
+
+        return 'dewasa';
+    }
+}

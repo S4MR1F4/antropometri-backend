@@ -1,0 +1,136 @@
+<?php
+
+namespace App\Services;
+
+use App\Actions\Measurement\CalculateBalitaAction;
+use App\Actions\Measurement\CalculateDewasaAction;
+use App\Actions\Measurement\CalculateRemajaAction;
+use App\Models\Subject;
+
+/**
+ * Calculation service - orchestrates calculation logic.
+ * Per 11_backend_architecture_laravel.md §5
+ * Per 08_calculation_logic.md
+ */
+class CalculationService
+{
+    public function __construct(
+        protected CalculateBalitaAction $balitaAction,
+        protected CalculateRemajaAction $remajaAction,
+        protected CalculateDewasaAction $dewasaAction,
+    ) {
+    }
+
+    /**
+     * Calculate measurement results based on category.
+     */
+    public function calculate(
+        Subject $subject,
+        array $measurementData,
+        int $ageInMonths,
+        string $category
+    ): array {
+        return match ($category) {
+            'balita' => $this->balitaAction->execute(
+                gender: $subject->gender,
+                ageInMonths: $ageInMonths,
+                weight: $measurementData['weight'],
+                height: $measurementData['height'],
+                measurementType: $measurementData['measurement_type'] ?? null,
+            ),
+            'remaja' => $this->remajaAction->execute(
+                gender: $subject->gender,
+                ageInMonths: $ageInMonths,
+                weight: $measurementData['weight'],
+                height: $measurementData['height'],
+            ),
+            'dewasa' => $this->dewasaAction->execute(
+                gender: $subject->gender,
+                weight: $measurementData['weight'],
+                height: $measurementData['height'],
+                waistCircumference: $measurementData['waist_circumference'] ?? null,
+            ),
+            default => [],
+        };
+    }
+
+    /**
+     * Generate recommendation based on results.
+     * Per 08_calculation_logic.md §7
+     */
+    public function generateRecommendation(string $category, array $results): string
+    {
+        return match ($category) {
+            'balita' => $this->generateBalitaRecommendation($results),
+            'remaja' => $this->generateRemajaRecommendation($results),
+            'dewasa' => $this->generateDewasaRecommendation($results),
+            default => '',
+        };
+    }
+
+    private function generateBalitaRecommendation(array $results): string
+    {
+        $recommendations = [];
+
+        $bbtbStatus = $results['status_bbtb'] ?? null;
+        $tbuStatus = $results['status_tbu'] ?? null;
+        $bbuStatus = $results['status_bbu'] ?? null;
+
+        if (in_array($bbtbStatus, ['Gizi Buruk', 'Gizi Kurang'])) {
+            $recommendations[] = 'Segera konsultasi ke tenaga kesehatan.';
+            $recommendations[] = 'Tingkatkan asupan gizi dengan makanan tinggi protein dan energi.';
+        }
+
+        if (in_array($tbuStatus, ['Sangat Pendek', 'Pendek'])) {
+            $recommendations[] = 'Perhatikan asupan protein hewani dan kalsium.';
+            $recommendations[] = 'Stimulasi pertumbuhan dengan aktivitas fisik sesuai usia.';
+        }
+
+        if (in_array($bbtbStatus, ['Obesitas', 'Gizi Lebih'])) {
+            $recommendations[] = 'Atur porsi makan sesuai kebutuhan.';
+            $recommendations[] = 'Tingkatkan aktivitas fisik.';
+        }
+
+        if (empty($recommendations)) {
+            $recommendations[] = 'Pertumbuhan anak dalam batas normal.';
+            $recommendations[] = 'Lanjutkan pola makan seimbang dan pantau secara berkala.';
+        }
+
+        return implode(' ', $recommendations);
+    }
+
+    private function generateRemajaRecommendation(array $results): string
+    {
+        $status = $results['status_imtu'] ?? null;
+
+        return match ($status) {
+            'Gizi Buruk', 'Gizi Kurang' => 'Tingkatkan asupan kalori dengan makanan bergizi. Konsultasikan dengan ahli gizi jika diperlukan.',
+            'Gizi Lebih', 'Obesitas' => 'Kurangi asupan kalori berlebih dan tingkatkan aktivitas fisik minimal 60 menit per hari.',
+            default => 'Status gizi dalam batas normal. Pertahankan pola makan seimbang dan aktivitas fisik teratur.',
+        };
+    }
+
+    private function generateDewasaRecommendation(array $results): string
+    {
+        $recommendations = [];
+        $status = $results['status_imt'] ?? null;
+
+        if (in_array($status, ['Kurus Tingkat Berat', 'Kurus Tingkat Ringan'])) {
+            $recommendations[] = 'Tingkatkan asupan kalori dengan makanan bergizi.';
+            $recommendations[] = 'Konsultasikan dengan ahli gizi jika diperlukan.';
+        } elseif (in_array($status, ['Gemuk Tingkat Ringan', 'Gemuk Tingkat Berat'])) {
+            $recommendations[] = 'Kurangi asupan kalori berlebih.';
+            $recommendations[] = 'Tingkatkan aktivitas fisik minimal 150 menit per minggu.';
+        } else {
+            $recommendations[] = 'Status gizi normal, pertahankan pola hidup sehat.';
+        }
+
+        // Check central obesity
+        if (isset($results['has_central_obesity']) && $results['has_central_obesity']) {
+            $recommendations[] = 'Perhatikan lingkar perut sebagai indikator risiko metabolik.';
+            $recommendations[] = 'Konsultasi untuk pemeriksaan gula darah dan profil lipid.';
+        }
+
+        return implode(' ', $recommendations);
+    }
+}
