@@ -68,8 +68,15 @@ class SubjectService
      */
     public function createSubject(array $data): Subject
     {
+        // Generate normalized_name if not provided
+        $normalizedName = $data['normalized_name'] ?? Subject::normalizeName($data['name']);
+        $data['normalized_name'] = $normalizedName;
+
+        // Add user_id if not provided
+        $data['user_id'] = $data['user_id'] ?? auth()->id();
+
         // Check for duplicate
-        $existing = $this->findDuplicate($data['normalized_name'], $data['date_of_birth']);
+        $existing = $this->findDuplicate($normalizedName, $data['date_of_birth']);
 
         if ($existing) {
             throw new DuplicateSubjectException($existing);
@@ -77,6 +84,7 @@ class SubjectService
 
         return Subject::create($data);
     }
+
 
     /**
      * Update a subject.
