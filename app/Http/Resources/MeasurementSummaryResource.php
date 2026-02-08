@@ -15,12 +15,37 @@ class MeasurementSummaryResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'date' => $this->measurement_date->toDateString(),
+            'subject_id' => $this->subject_id,
+            'measurement_date' => $this->measurement_date->toDateString(),
+            'category' => $this->category,
             'weight' => $this->weight,
             'height' => $this->height,
+            'age_in_months' => $this->age_in_months,
             'status_summary' => $this->getStatusSummary(),
             'age_at_measurement' => $this->formatAgeAtMeasurement(),
+            'results' => $this->getSummaryResults(),
+            'recommendation' => $this->recommendation,
+            'notes' => $this->notes,
         ];
+    }
+
+    private function getSummaryResults(): array
+    {
+        // Provide a minimal results structure for the model to parse
+        return match ($this->category) {
+            'balita' => [
+                'bbu' => ['status' => $this->status_bbu],
+                'tbu' => ['status' => $this->status_tbu],
+                'bbtb' => ['status' => $this->status_bbtb],
+            ],
+            'remaja' => [
+                'imtu' => ['status' => $this->status_imtu],
+            ],
+            'dewasa' => [
+                'bmi' => ['status' => $this->status_imt],
+            ],
+            default => [],
+        };
     }
 
     private function getStatusSummary(): string

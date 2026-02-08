@@ -143,6 +143,27 @@ class SubjectService
     }
 
     /**
+     * Calculate age in years from date of birth.
+     */
+    public function calculateAgeInYears(mixed $dateOfBirth, ?string $measurementDate = null): int
+    {
+        $birthDate = Carbon::parse($dateOfBirth);
+        $measurementDate = $measurementDate ? Carbon::parse($measurementDate) : now();
+
+        $ageInYears = $measurementDate->year - $birthDate->year;
+
+        // Adjust if measurement month/day is before birth month/day
+        if (
+            $measurementDate->month < $birthDate->month ||
+            ($measurementDate->month === $birthDate->month && $measurementDate->day < $birthDate->day)
+        ) {
+            $ageInYears--;
+        }
+
+        return max(0, $ageInYears);
+    }
+
+    /**
      * Determine category based on age in months.
      * Per 08_calculation_logic.md §2.2
      */

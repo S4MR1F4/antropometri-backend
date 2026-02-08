@@ -30,6 +30,10 @@ class MeasurementService
             $subject->date_of_birth,
             $data['measurement_date']
         );
+        $ageInYears = $this->subjectService->calculateAgeInYears(
+            $subject->date_of_birth,
+            $data['measurement_date']
+        );
 
         // Determine category
         $category = $this->subjectService->determineCategory($ageInMonths);
@@ -54,6 +58,7 @@ class MeasurementService
             'user_id' => auth()->id(),
             'category' => $category,
             'age_in_months' => $ageInMonths,
+            'age_in_years' => $ageInYears,
             'recommendation' => $recommendation,
         ], $calculationResults);
 
@@ -73,6 +78,10 @@ class MeasurementService
 
         // Calculate age at measurement
         $ageInMonths = $this->subjectService->calculateAgeInMonths(
+            $subject->date_of_birth,
+            $syncData['measurement_date']
+        );
+        $ageInYears = $this->subjectService->calculateAgeInYears(
             $subject->date_of_birth,
             $syncData['measurement_date']
         );
@@ -105,6 +114,7 @@ class MeasurementService
             'user_id' => auth()->id(),
             'category' => $category,
             'age_in_months' => $ageInMonths,
+            'age_in_years' => $ageInYears,
             'recommendation' => $recommendation,
         ], $calculationResults);
 
