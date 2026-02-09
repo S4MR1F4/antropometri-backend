@@ -21,6 +21,8 @@ use Illuminate\Support\Facades\Route;
 */
 
 // Public routes (no authentication required)
+Route::get('/health', [\App\Http\Controllers\HealthController::class, 'check']);
+
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
