@@ -188,10 +188,14 @@ class MeasurementService
      */
     public function getAllMeasurements(array $filters = [], int $perPage = 15)
     {
-        $query = Measurement::where('user_id', auth()->id())
-            ->with('subject')
-            ->latest('measurement_date')
-            ->latest('id');
+        $query = Measurement::with('subject');
+
+        // Only filter by user_id if NOT an admin
+        if (!auth()->user()->isAdmin()) {
+            $query->where('user_id', auth()->id());
+        }
+
+        $query->latest('measurement_date')->latest('id');
 
         if (!empty($filters['from_date'])) {
             $query->where('measurement_date', '>=', $filters['from_date']);
