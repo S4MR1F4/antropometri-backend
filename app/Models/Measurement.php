@@ -32,6 +32,8 @@ class Measurement extends Model
         'height',
         'head_circumference',
         'waist_circumference',
+        'arm_circumference',
+        'is_pregnant',
         'measurement_type',
         'age_in_months',
         'age_in_years',
@@ -47,6 +49,7 @@ class Measurement extends Model
         'status_bmi',
         'has_central_obesity',
         'notes',
+        'reference_data',
     ];
 
     /**
@@ -60,12 +63,15 @@ class Measurement extends Model
         'height' => 'decimal:2',
         'head_circumference' => 'decimal:2',
         'waist_circumference' => 'decimal:2',
+        'arm_circumference' => 'decimal:2',
         'bmi' => 'decimal:2',
         'zscore_bbu' => 'decimal:2',
         'zscore_tbu' => 'decimal:2',
         'zscore_bbtb' => 'decimal:2',
         'zscore_imtu' => 'decimal:2',
+        'is_pregnant' => 'boolean',
         'has_central_obesity' => 'boolean',
+        'reference_data' => 'array',
     ];
 
     /**

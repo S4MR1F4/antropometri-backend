@@ -28,6 +28,8 @@ class StoreMeasurementRequest extends FormRequest
             'measurement_date' => ['required', 'date', 'before_or_equal:today'],
             'weight' => ['required', 'numeric'],
             'height' => ['required', 'numeric'],
+            'arm_circumference' => ['nullable', 'numeric', 'min:10', 'max:60'],
+            'is_pregnant' => ['nullable', 'boolean'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
 
@@ -95,9 +97,9 @@ class StoreMeasurementRequest extends FormRequest
             $measurementDate
         );
 
-        if ($ageInMonths <= 60) {
+        if ($ageInMonths < 60) {
             return 'balita';
-        } elseif ($ageInMonths <= 216) {
+        } elseif ($ageInMonths < 216) {
             return 'remaja';
         }
 

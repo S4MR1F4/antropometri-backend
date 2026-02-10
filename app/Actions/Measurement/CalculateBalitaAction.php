@@ -33,10 +33,13 @@ class CalculateBalitaAction
         return [
             'zscore_bbu' => $bbu['zscore'],
             'status_bbu' => $bbu['status'],
+            'reason_bbu' => $bbu['reason'],
             'zscore_tbu' => $tbu['zscore'],
             'status_tbu' => $tbu['status'],
+            'reason_tbu' => $tbu['reason'],
             'zscore_bbtb' => $bbtb['zscore'],
             'status_bbtb' => $bbtb['status'],
+            'reason_bbtb' => $bbtb['reason'],
         ];
     }
 
@@ -89,7 +92,14 @@ class CalculateBalitaAction
             default => 'Berisiko Gizi Lebih',
         };
 
-        return ['zscore' => round($zscore, 2), 'status' => $status];
+        $reason = match (true) {
+            $zscore < -3 => 'Z-Score < -3 SD',
+            $zscore < -2 => 'Z-Score -3 s/d < -2 SD',
+            $zscore <= 1 => 'Z-Score -2 s/d +1 SD',
+            default => 'Z-Score > +1 SD',
+        };
+
+        return ['zscore' => round($zscore, 2), 'status' => $status, 'reason' => $reason];
     }
 
     /**
@@ -117,7 +127,14 @@ class CalculateBalitaAction
             default => 'Tinggi',
         };
 
-        return ['zscore' => round($zscore, 2), 'status' => $status];
+        $reason = match (true) {
+            $zscore < -3 => 'Z-Score < -3 SD',
+            $zscore < -2 => 'Z-Score -3 s/d < -2 SD',
+            $zscore <= 3 => 'Z-Score -2 s/d +3 SD',
+            default => 'Z-Score > +3 SD',
+        };
+
+        return ['zscore' => round($zscore, 2), 'status' => $status, 'reason' => $reason];
     }
 
     /**
@@ -153,7 +170,16 @@ class CalculateBalitaAction
             default => 'Obesitas',
         };
 
-        return ['zscore' => round($zscore, 2), 'status' => $status];
+        $reason = match (true) {
+            $zscore < -3 => 'Z-Score < -3 SD',
+            $zscore < -2 => 'Z-Score -3 s/d < -2 SD',
+            $zscore <= 1 => 'Z-Score -2 s/d +1 SD',
+            $zscore <= 2 => 'Z-Score +1 s/d +2 SD',
+            $zscore <= 3 => 'Z-Score +2 s/d +3 SD',
+            default => 'Z-Score > +3 SD',
+        };
+
+        return ['zscore' => round($zscore, 2), 'status' => $status, 'reason' => $reason];
     }
 
     /**

@@ -26,7 +26,7 @@ return new class extends Migration {
             $table->decimal('pos3sd', 6, 3);        // +3 SD
 
             // Unique index for lookups
-            $table->unique(['gender', 'age_months'], 'idx_gender_age');
+            $table->unique(['gender', 'age_months'], 'idx_remaja_imtu_gender_age');
         });
     }
 

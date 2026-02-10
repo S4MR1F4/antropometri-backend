@@ -30,7 +30,7 @@ class CalculationService
         int $ageInMonths,
         string $category
     ): array {
-        return match ($category) {
+        $results = match ($category) {
             'balita' => $this->balitaAction->execute(
                 gender: $subject->gender,
                 ageInMonths: $ageInMonths,
@@ -49,7 +49,38 @@ class CalculationService
                 weight: $measurementData['weight'],
                 height: $measurementData['height'],
                 waistCircumference: $measurementData['waist_circumference'] ?? null,
+                armCircumference: $measurementData['arm_circumference'] ?? null,
+                isPregnant: $measurementData['is_pregnant'] ?? false,
             ),
+            default => [],
+        };
+
+        $results['references'] = $this->generateReferenceInformation($category, $subject->gender, $measurementData, $results);
+
+        return $results;
+    }
+
+    /**
+     * Generate reference information (normal ranges) for the UI.
+     */
+    private function generateReferenceInformation(string $category, string $gender, array $data, array $results): array
+    {
+        return match ($category) {
+            'balita' => [
+                'BB/U' => 'Normal: -2 SD s/d +1 SD' . (isset($results['reason_bbu']) ? " ({$results['reason_bbu']})" : ""),
+                'TB/U' => 'Normal: -2 SD s/d +3 SD' . (isset($results['reason_tbu']) ? " ({$results['reason_tbu']})" : ""),
+                'BB/TB' => 'Normal: -2 SD s/d +1 SD' . (isset($results['reason_bbtb']) ? " ({$results['reason_bbtb']})" : ""),
+            ],
+            'remaja' => [
+                'IMT/U' => 'Normal: -2 SD s/d +1 SD' . (isset($results['reason_imtu']) ? " ({$results['reason_imtu']})" : ""),
+            ],
+            'dewasa' => array_filter([
+                'IMT' => 'Normal: 18.5 - 25.0' . (isset($results['reason_imt']) ? " ({$results['reason_imt']})" : ""),
+                'Lingkar Perut' => isset($data['waist_circumference'])
+                    ? ($gender === 'L' ? 'Normal: ≤ 90 cm' : 'Normal: ≤ 80 cm')
+                    : null,
+                'LILA' => isset($data['arm_circumference']) ? 'Normal: ≥ 23.5 cm' : null,
+            ]),
             default => [],
         };
     }
@@ -58,14 +89,25 @@ class CalculationService
      * Generate recommendation based on results.
      * Per 08_calculation_logic.md §7
      */
-    public function generateRecommendation(string $category, array $results): string
+    public function generateRecommendation(string $category, array $results, array $data = []): string
     {
-        return match ($category) {
+        $recommendation = match ($category) {
             'balita' => $this->generateBalitaRecommendation($results),
             'remaja' => $this->generateRemajaRecommendation($results),
             'dewasa' => $this->generateDewasaRecommendation($results),
             default => '',
         };
+
+        // Add Pregnancy/LILA recommendation if applicable
+        if (($data['is_pregnant'] ?? false) && isset($data['arm_circumference'])) {
+            if ($data['arm_circumference'] < 23.5) {
+                $recommendation .= ' Berisiko KEK (LILA < 23.5cm). Tingkatkan asupan gizi dan konsultasi dokter.';
+            } else {
+                $recommendation .= ' Lingkar Lengan Atas (LILA) Normal.';
+            }
+        }
+
+        return $recommendation;
     }
 
     private function generateBalitaRecommendation(array $results): string

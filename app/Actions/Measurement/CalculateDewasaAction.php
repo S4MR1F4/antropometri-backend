@@ -16,6 +16,8 @@ class CalculateDewasaAction
         float $weight,
         float $height,
         ?float $waistCircumference = null,
+        ?float $armCircumference = null,
+        bool $isPregnant = false,
     ): array {
         // Calculate BMI
         $bmi = $this->calculateBMI($weight, $height);
@@ -24,6 +26,7 @@ class CalculateDewasaAction
         $result = [
             'imt' => round($bmi, 2),
             'status_imt' => $bmiResult['status'],
+            'reason_imt' => $bmiResult['reason'],
         ];
 
         // Check central obesity if waist circumference provided
@@ -59,7 +62,15 @@ class CalculateDewasaAction
             default => 'Gemuk Tingkat Berat',
         };
 
-        return ['status' => $status];
+        $reason = match (true) {
+            $bmi < 17.0 => 'IMT < 17.0',
+            $bmi < 18.5 => 'IMT 17.0 - 18.4',
+            $bmi <= 25.0 => 'IMT 18.5 - 25.0',
+            $bmi <= 27.0 => 'IMT 25.1 - 27.0',
+            default => 'IMT > 27.0',
+        };
+
+        return ['status' => $status, 'reason' => $reason];
     }
 
     /**

@@ -49,6 +49,12 @@ Route::middleware(['auth:sanctum'])->group(function () {
     // Offline Sync (authenticated users)
     Route::post('/sync/measurements', [SyncController::class, 'syncMeasurements']);
 
+    // Exports (Authenticated)
+    Route::prefix('export')->group(function () {
+        Route::get('/excel', [ExportController::class, 'exportExcel']);
+        Route::get('/pdf', [ExportController::class, 'exportPdf']);
+    });
+
     // Admin only routes
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         // User management
@@ -59,11 +65,5 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // Statistics
         Route::get('/statistics', [AdminController::class, 'statistics']);
-
-        // Exports
-        Route::prefix('export')->group(function () {
-            Route::get('/excel', [ExportController::class, 'exportExcel']);
-            Route::get('/pdf', [ExportController::class, 'exportPdf']);
-        });
     });
 });

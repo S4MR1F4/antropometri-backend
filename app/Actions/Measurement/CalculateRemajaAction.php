@@ -29,6 +29,7 @@ class CalculateRemajaAction
             'imt' => round($bmi, 2),
             'zscore_imtu' => $imtu['zscore'],
             'status_imtu' => $imtu['status'],
+            'reason_imtu' => $imtu['reason'],
         ];
     }
 
@@ -69,7 +70,15 @@ class CalculateRemajaAction
             default => 'Obesitas',
         };
 
-        return ['zscore' => round($zscore, 2), 'status' => $status];
+        $reason = match (true) {
+            $zscore < -3 => 'Z-Score < -3 SD',
+            $zscore < -2 => 'Z-Score -3 s/d < -2 SD',
+            $zscore <= 1 => 'Z-Score -2 s/d +1 SD',
+            $zscore <= 2 => 'Z-Score +1 s/d +2 SD',
+            default => 'Z-Score > +2 SD',
+        };
+
+        return ['zscore' => round($zscore, 2), 'status' => $status, 'reason' => $reason];
     }
 
     /**

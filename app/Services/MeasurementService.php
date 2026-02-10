@@ -50,6 +50,7 @@ class MeasurementService
         $recommendation = $this->calculationService->generateRecommendation(
             category: $category,
             results: $calculationResults,
+            data: $data,
         );
 
         // Prepare measurement data
@@ -60,6 +61,7 @@ class MeasurementService
             'age_in_months' => $ageInMonths,
             'age_in_years' => $ageInYears,
             'recommendation' => $recommendation,
+            'reference_data' => $calculationResults['references'] ?? null,
         ], $calculationResults);
 
         return Measurement::create($measurementData);
@@ -106,6 +108,7 @@ class MeasurementService
         $recommendation = $syncData['recommendation'] ?? $this->calculationService->generateRecommendation(
             category: $category,
             results: $calculationResults,
+            data: $syncData,
         );
 
         // Prepare measurement data
@@ -116,6 +119,7 @@ class MeasurementService
             'age_in_months' => $ageInMonths,
             'age_in_years' => $ageInYears,
             'recommendation' => $recommendation,
+            'reference_data' => $calculationResults['references'] ?? null,
         ], $calculationResults);
 
         // Remove sync-specific fields
