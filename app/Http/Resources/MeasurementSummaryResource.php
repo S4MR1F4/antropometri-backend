@@ -16,6 +16,15 @@ class MeasurementSummaryResource extends JsonResource
         return [
             'id' => $this->id,
             'subject_id' => $this->subject_id,
+            'subject' => [
+                'id' => $this->subject->id,
+                'name' => $this->subject->name,
+                'gender' => $this->subject->gender,
+            ],
+            'user' => [
+                'id' => $this->user->id,
+                'name' => $this->user->name,
+            ],
             'measurement_date' => $this->measurement_date->toDateString(),
             'category' => $this->category,
             'weight' => $this->weight,

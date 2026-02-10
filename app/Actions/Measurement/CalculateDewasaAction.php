@@ -33,6 +33,7 @@ class CalculateDewasaAction
         if ($waistCircumference !== null) {
             $obesityResult = $this->checkCentralObesity($waistCircumference, $gender);
             $result['has_central_obesity'] = $obesityResult['has_obesity'];
+            $result['status_central_obesity'] = $obesityResult['status'];
         }
 
         return $result;
@@ -80,9 +81,11 @@ class CalculateDewasaAction
     private function checkCentralObesity(float $waistCircumference, string $gender): array
     {
         $threshold = $gender === 'L' ? 90 : 80;
+        $hasObesity = $waistCircumference > $threshold;
 
         return [
-            'has_obesity' => $waistCircumference > $threshold,
+            'has_obesity' => $hasObesity,
+            'status' => $hasObesity ? 'Obesitas Sentral' : 'Normal',
             'threshold' => $threshold,
             'actual' => $waistCircumference,
             'difference' => $waistCircumference - $threshold,

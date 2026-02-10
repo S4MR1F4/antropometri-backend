@@ -169,7 +169,7 @@ class CalculationService
 
         // Check central obesity
         if (isset($results['has_central_obesity']) && $results['has_central_obesity']) {
-            $recommendations[] = 'Perhatikan lingkar perut sebagai indikator risiko metabolik.';
+            $recommendations[] = 'Perhatikan lingkar perut melebihi batas.';
             $recommendations[] = 'Konsultasi untuk pemeriksaan gula darah dan profil lipid.';
         }
 
