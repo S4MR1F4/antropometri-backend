@@ -80,7 +80,7 @@ class CalculateBalitaAction
             ->first();
 
         if (!$reference) {
-            return ['zscore' => null, 'status' => 'Data Tidak Tersedia'];
+            return ['zscore' => null, 'status' => 'Data Tidak Tersedia', 'reason' => null];
         }
 
         $zscore = $this->calculateZScore($weight, $reference);
@@ -115,7 +115,7 @@ class CalculateBalitaAction
             ->first();
 
         if (!$reference) {
-            return ['zscore' => null, 'status' => 'Data Tidak Tersedia'];
+            return ['zscore' => null, 'status' => 'Data Tidak Tersedia', 'reason' => null];
         }
 
         $zscore = $this->calculateZScore($height, $reference);
@@ -156,7 +156,7 @@ class CalculateBalitaAction
         }
 
         if (!$reference) {
-            return ['zscore' => null, 'status' => 'Data Tidak Tersedia'];
+            return ['zscore' => null, 'status' => 'Data Tidak Tersedia', 'reason' => null];
         }
 
         $zscore = $this->calculateZScore($weight, $reference);

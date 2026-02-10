@@ -27,7 +27,10 @@ class MeasurementResource extends JsonResource
             'measurement_type' => $this->when($this->category === 'balita', $this->measurement_type),
             'age_in_months' => $this->age_in_months,
             'age_in_years' => $this->when($this->category === 'dewasa', fn() => intdiv($this->age_in_months ?? 0, 12)),
-            'results' => $this->getResults(),
+
+            // Singular 'result' key with FLAT structure for Mobile App compatibility
+            'result' => $this->getFlatResult(),
+
             'references' => $this->reference_data,
             'recommendation' => $this->recommendation,
             'notes' => $this->notes,
@@ -36,76 +39,50 @@ class MeasurementResource extends JsonResource
     }
 
     /**
-     * Get calculation results based on category.
+     * Get flat result array compatible with Mobile App's Result model.
      */
-    private function getResults(): array
+    private function getFlatResult(): array
     {
-        return match ($this->category) {
-            'balita' => $this->getBalitaResults(),
-            'remaja' => $this->getRemajaResults(),
-            'dewasa' => $this->getDewasaResults(),
-            default => [],
-        };
-    }
+        // Base fields present in the DB
+        $flat = [
+            'bmi' => $this->bmi,
+            'bmi_status' => $this->status_bmi, // Ensure DB column matches or alias it
+            'zscore_bbu' => $this->zscore_bbu,
+            'status_bbu' => $this->status_bbu,
+            'zscore_tbu' => $this->zscore_tbu,
+            'status_tbu' => $this->status_tbu,
+            'zscore_bbtb' => $this->zscore_bbtb,
+            'status_bbtb' => $this->status_bbtb,
+            'zscore_imtu' => $this->zscore_imtu,
+            'status_imtu' => $this->status_imtu,
 
-    private function getBalitaResults(): array
-    {
-        return [
-            'bbu' => [
-                'zscore' => $this->zscore_bbu,
-                'status' => $this->status_bbu,
-                'status_code' => $this->toStatusCode($this->status_bbu),
-                'color' => $this->getStatusColor($this->status_bbu),
-            ],
-            'tbu' => [
-                'zscore' => $this->zscore_tbu,
-                'status' => $this->status_tbu,
-                'status_code' => $this->toStatusCode($this->status_tbu),
-                'color' => $this->getStatusColor($this->status_tbu),
-            ],
-            'bbtb' => [
-                'zscore' => $this->zscore_bbtb,
-                'status' => $this->status_bbtb,
-                'status_code' => $this->toStatusCode($this->status_bbtb),
-                'color' => $this->getStatusColor($this->status_bbtb),
-            ],
-        ];
-    }
+            // ALIASES for Mobile App (Result.dart compatibility)
+            'status_bb_u' => $this->status_bbu,
+            'bb_u_zscore' => $this->zscore_bbu,
 
-    private function getRemajaResults(): array
-    {
-        return [
-            'imtu' => [
-                'bmi' => $this->imt,
-                'zscore' => $this->zscore_imtu,
-                'status' => $this->status_imtu,
-                'status_code' => $this->toStatusCode($this->status_imtu),
-                'color' => $this->getStatusColor($this->status_imtu),
-            ],
-        ];
-    }
+            'status_tb_u' => $this->status_tbu,
+            'tb_u_zscore' => $this->zscore_tbu,
 
-    private function getDewasaResults(): array
-    {
-        $results = [
-            'bmi' => [
-                'value' => $this->imt,
-                'status' => $this->status_imt,
-                'status_code' => $this->toStatusCode($this->status_imt),
-                'color' => $this->getStatusColor($this->status_imt),
-            ],
+            'status_bb_tb' => $this->status_bbtb,
+            'bb_tb_zscore' => $this->zscore_bbtb,
+
+            'status_imt_u' => $this->status_imtu,
+            'imt_u_zscore' => $this->zscore_imtu,
         ];
 
-        if ($this->waist_circumference !== null) {
-            $threshold = $this->resource->subject?->gender === 'L' ? 90 : 80;
-            $results['central_obesity'] = [
-                'has_obesity' => $this->waist_circumference > $threshold,
-                'threshold' => $threshold,
-                'actual' => $this->waist_circumference,
-            ];
+        // Derived Logic for Central Obesity
+        if ($this->category === 'dewasa' && $this->waist_circumference !== null) {
+            $threshold = $this->subject?->gender === 'L' ? 90 : 80;
+            $flat['central_obesity_status'] = $this->waist_circumference > $threshold
+                ? 'Obesitas Sentral'
+                : 'Normal';
         }
 
-        return $results;
+        // Aliases if necessary (e.g. mobile looks for 'weight_for_age_zscore')
+        // Mobile Result.dart looks for 'zscore_bbu' or 'weight_for_age_zscore'.
+        // The DB columns are 'zscore_bbu' etc., so we are handling it by returning them directly.
+
+        return $flat;
     }
 
     private function toStatusCode(?string $status): string
@@ -113,7 +90,6 @@ class MeasurementResource extends JsonResource
         if ($status === null) {
             return 'unknown';
         }
-
         return strtolower(str_replace(' ', '_', $status));
     }
 

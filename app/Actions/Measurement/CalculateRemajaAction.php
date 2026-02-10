@@ -57,7 +57,7 @@ class CalculateRemajaAction
             ->first();
 
         if (!$reference) {
-            return ['zscore' => null, 'status' => 'Data Tidak Tersedia'];
+            return ['zscore' => null, 'status' => 'Data Tidak Tersedia', 'reason' => null];
         }
 
         $zscore = $this->calculateZScore($bmi, $reference);

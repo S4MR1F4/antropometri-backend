@@ -65,5 +65,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
         // Statistics
         Route::get('/statistics', [AdminController::class, 'statistics']);
+
+
     });
 });
