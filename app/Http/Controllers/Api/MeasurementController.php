@@ -70,7 +70,7 @@ class MeasurementController extends Controller
     public function history(Request $request): JsonResponse
     {
         $measurements = $this->measurementService->getAllMeasurements(
-            filters: $request->only(['from_date', 'to_date', 'category']),
+            filters: $request->only(['from_date', 'to_date', 'category', 'search']),
             perPage: $request->integer('per_page', 15)
         );
 

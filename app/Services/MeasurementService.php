@@ -192,7 +192,7 @@ class MeasurementService
      */
     public function getAllMeasurements(array $filters = [], int $perPage = 15)
     {
-        $query = Measurement::with('subject');
+        $query = Measurement::with(['subject', 'user']);
 
         // Only filter by user_id if NOT an admin
         if (!auth()->user()->isAdmin()) {
@@ -211,6 +211,20 @@ class MeasurementService
 
         if (!empty($filters['category'])) {
             $query->where('category', $filters['category']);
+        }
+
+        if (!empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                // Search by patient name
+                $q->whereHas('subject', function ($sq) use ($search) {
+                    $sq->where('name', 'like', "%{$search}%");
+                })
+                    // Or search by staff name
+                    ->orWhereHas('user', function ($uq) use ($search) {
+                        $uq->where('name', 'like', "%{$search}%");
+                    });
+            });
         }
 
         return $query->paginate($perPage);

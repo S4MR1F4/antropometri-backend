@@ -43,7 +43,17 @@ class AdminController extends Controller
      */
     public function users(Request $request): JsonResponse
     {
-        $users = User::paginate($request->integer('per_page', 15));
+        $query = User::query();
+
+        if ($request->filled('search')) {
+            $search = $request->input('search');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->paginate($request->integer('per_page', 15));
 
         return $this->successResponse(
             data: [
