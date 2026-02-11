@@ -35,6 +35,22 @@ class StatisticsService
         $totalMeasurements = (clone $query)->count();
         $measurementsToday = (clone $query)->whereDate('created_at', today())->count();
 
+        // Trend Calculation (This Month vs Last Month)
+        $startOfMonth = now()->startOfMonth();
+        $endOfMonth = now()->endOfMonth();
+        $startOfLastMonth = now()->subMonth()->startOfMonth();
+        $endOfLastMonth = now()->subMonth()->endOfMonth();
+
+        $thisMonthCount = Measurement::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
+        $lastMonthCount = Measurement::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->count();
+
+        $growth = 0;
+        if ($lastMonthCount > 0) {
+            $growth = (($thisMonthCount - $lastMonthCount) / $lastMonthCount) * 100;
+        } else if ($thisMonthCount > 0) {
+            $growth = 100; // 100% growth if started from 0
+        }
+
         // Breakdowns
         $byCategory = (clone $query)
             ->select('category', DB::raw('count(*) as total'))
@@ -52,6 +68,9 @@ class StatisticsService
             'total_subjects' => Subject::count(),
             'total_measurements' => $totalMeasurements,
             'measurements_today' => $measurementsToday,
+            'measurements_this_month' => $thisMonthCount,
+            'measurements_last_month' => $lastMonthCount,
+            'growth_percentage' => round($growth, 1),
             'by_category' => $byCategory,
             'by_status' => $byStatus,
         ];
@@ -59,60 +78,83 @@ class StatisticsService
 
     /**
      * Helper to get health status distribution across different categories.
+     * Aligned with Mobile labels: Normal, Stunting, Wasting, Obesity.
      */
     protected function getStatusDistribution($query): array
     {
-        // Combined distribution for Gizi status
-        // We look at several status columns and map them to standard labels
         $stats = [
-            'gizi_buruk' => 0,
-            'gizi_kurang' => 0,
-            'gizi_baik' => 0,
-            'gizi_lebih' => 0,
-            'obesitas' => 0,
-            'lainnya' => 0,
+            'normal' => 0,
+            'stunting' => 0,
+            'wasting' => 0,
+            'obesity' => 0,
         ];
 
-        // This is a complex aggregation, so we do it in high level for dashboard
-        $results = (clone $query)->get();
+        // Process latest status for each subject in the filtered results
+        $results = (clone $query)
+            ->with('subject') // Assuming relationship exists
+            ->orderBy('measurement_date', 'desc')
+            ->get();
 
+        // Group by subject to get latest status
+        $uniqueSubjects = [];
         foreach ($results as $m) {
-            $status = null;
-            if ($m->category === 'balita') {
-                $status = $m->status_bbtb; // Using BB/TB as primary indicator for balita
-            } elseif ($m->category === 'remaja') {
-                $status = $m->status_imtu;
-            } elseif ($m->category === 'dewasa') {
-                $status = $m->status_bmi;
+            if (!isset($uniqueSubjects[$m->subject_id])) {
+                $uniqueSubjects[$m->subject_id] = $m;
+            }
+        }
+
+        foreach ($uniqueSubjects as $m) {
+            $isStunting = false;
+            $isWasting = false;
+            $isObesity = false;
+
+            // Stunting logic (TB/U)
+            if ($m->status_tbu) {
+                $s = strtolower($m->status_tbu);
+                if (str_contains($s, 'pendek'))
+                    $isStunting = true;
             }
 
-            if (!$status)
-                continue;
+            // Wasting logic (BB/TB)
+            if ($m->status_bbtb) {
+                $s = strtolower($m->status_bbtb);
+                if (str_contains($s, 'kurang') || str_contains($s, 'buruk') || str_contains($s, 'wasting') || str_contains($s, 'kurus')) {
+                    $isWasting = true;
+                }
+                if (str_contains($s, 'lebih') || str_contains($s, 'gemuk') || str_contains($s, 'obesitas')) {
+                    $isObesity = true;
+                }
+            }
 
-            $normalized = $this->normalizeStatus($status);
-            if (isset($stats[$normalized])) {
-                $stats[$normalized]++;
-            } else {
-                $stats['lainnya']++;
+            // Remaja/Dewasa BMI logic
+            if ($m->status_imtu) {
+                $s = strtolower($m->status_imtu);
+                if (str_contains($s, 'kurus') || str_contains($s, 'kurang'))
+                    $isWasting = true;
+                if (str_contains($s, 'lebih') || str_contains($s, 'gemuk') || str_contains($s, 'obese'))
+                    $isObesity = true;
+            }
+
+            if ($m->status_bmi) {
+                $s = strtolower($m->status_bmi);
+                if (str_contains($s, 'kurus') || str_contains($s, 'kurang'))
+                    $isWasting = true;
+                if (str_contains($s, 'lebih') || str_contains($s, 'gemuk') || str_contains($s, 'obesitas'))
+                    $isObesity = true;
+            }
+
+            if ($isStunting)
+                $stats['stunting']++;
+            if ($isWasting)
+                $stats['wasting']++;
+            if ($isObesity)
+                $stats['obesity']++;
+
+            if (!$isStunting && !$isWasting && !$isObesity) {
+                $stats['normal']++;
             }
         }
 
         return $stats;
-    }
-
-    protected function normalizeStatus(string $status): string
-    {
-        $status = strtolower($status);
-        if (str_contains($status, 'buruk') || str_contains($status, 'sangat pendek') || str_contains($status, 'berat'))
-            return 'gizi_buruk';
-        if (str_contains($status, 'kurang') || str_contains($status, 'pendek') || str_contains($status, 'ringan'))
-            return 'gizi_kurang';
-        if (str_contains($status, 'baik') || str_contains($status, 'normal'))
-            return 'gizi_baik';
-        if (str_contains($status, 'lebih') || str_contains($status, 'gemuk'))
-            return 'gizi_lebih';
-        if (str_contains($status, 'obese') || str_contains($status, 'obesitas'))
-            return 'obesitas';
-        return 'lainnya';
     }
 }
