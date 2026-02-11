@@ -22,10 +22,8 @@ class SubjectService
             ->with('latestMeasurement')
             ->withCount('measurements');
 
-        // RBAC: Only admin can see all data. Petugas only see their own.
-        if (!auth()->user()->isAdmin()) {
-            $query->where('user_id', auth()->id());
-        }
+        // RBAC: Removed user_id restriction to allow global search for duplicate prevention.
+        // History (Measurements) remains restricted in MeasurementService.
 
         // Search filter
         if (!empty($filters['search'])) {
