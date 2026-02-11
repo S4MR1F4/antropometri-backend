@@ -9,65 +9,106 @@ class ReferenceTableSeeder extends Seeder
 {
     /**
      * Run the database seeds for reference tables.
-     * Contains sample data for testing based on WHO/Kemenkes standards.
+     * Populates BB/U, TB/U, BB/TB, and IMT/U based on WHO/Kemenkes standards.
      */
     public function run(): void
     {
-        // 1. BB/U (Berat Badan per Umur) - Balita Laki-laki 23 bulan
-        DB::table('reference_balita_bbu')->updateOrInsert(
-            ['gender' => 'L', 'age_months' => 23],
-            [
-                'neg3sd' => 8.9,
-                'neg2sd' => 9.8,
-                'neg1sd' => 10.8,
-                'median' => 12.0,
-                'pos1sd' => 13.3,
-                'pos2sd' => 14.8,
-                'pos3sd' => 16.5,
-            ]
-        );
+        $this->seedBbu();
+        $this->seedTbu();
+        $this->seedBbtb();
+        $this->seedImtu();
 
-        // 2. TB/U (Tinggi Badan per Umur) - Balita Laki-laki 23 bulan
-        DB::table('reference_balita_tbu')->updateOrInsert(
-            ['gender' => 'L', 'age_months' => 23],
-            [
-                'neg3sd' => 78.7,
-                'neg2sd' => 81.3,
-                'neg1sd' => 84.1,
-                'median' => 86.9,
-                'pos1sd' => 89.8,
-                'pos2sd' => 92.6,
-                'pos3sd' => 95.5,
-            ]
-        );
+        $this->command->info('Reference tables seeded successfully with WHO/Kemenkes standards.');
+    }
 
-        // 3. BB/TB (Berat Badan per Tinggi Badan) - Balita Laki-laki 60cm
-        // (Sample test data use height 60cm and weight 10kg)
-        DB::table('reference_balita_bbtb')->updateOrInsert(
-            ['gender' => 'L', 'height' => 60.0],
-            [
-                'neg3sd' => 4.7,
-                'neg2sd' => 5.1,
-                'neg1sd' => 5.5,
-                'median' => 6.0,
-                'pos1sd' => 6.6,
-                'pos2sd' => 7.2,
-                'pos3sd' => 7.9,
-            ]
-        );
+    private function seedBbu(): void
+    {
+        $this->command->info('Seeding BB/U (Weight-for-Age)...');
 
-        // Special test for your current input: Height 60.0 cm
-        // We added it above. Let's add a few more common heights
-        DB::table('reference_balita_bbtb')->updateOrInsert(['gender' => 'L', 'height' => 80.0], [
-            'neg3sd' => 8.6,
-            'neg2sd' => 9.4,
-            'neg1sd' => 10.3,
-            'median' => 11.2,
-            'pos1sd' => 12.3,
-            'pos2sd' => 13.4,
-            'pos3sd' => 14.7
-        ]);
+        $boys = ReferenceDataHelper::getBbuBoys();
+        $girls = ReferenceDataHelper::getBbuGirls();
 
-        $this->command->info('Reference sample data seeded successfully for testing.');
+        $data = [];
+        foreach ($boys as $age => $sd) {
+            $data[] = $this->formatRow('L', $age, $sd, 'age_months');
+        }
+        foreach ($girls as $age => $sd) {
+            $data[] = $this->formatRow('P', $age, $sd, 'age_months');
+        }
+
+        DB::table('reference_balita_bbu')->truncate();
+        DB::table('reference_balita_bbu')->insert($data);
+    }
+
+    private function seedTbu(): void
+    {
+        $this->command->info('Seeding TB/U (Height-for-Age)...');
+
+        $boys = ReferenceDataHelper::getTbuBoys();
+        $girls = ReferenceDataHelper::getTbuGirls();
+
+        $data = [];
+        foreach ($boys as $age => $sd) {
+            $data[] = $this->formatRow('L', $age, $sd, 'age_months');
+        }
+        foreach ($girls as $age => $sd) {
+            $data[] = $this->formatRow('P', $age, $sd, 'age_months');
+        }
+
+        DB::table('reference_balita_tbu')->truncate();
+        DB::table('reference_balita_tbu')->insert($data);
+    }
+
+    private function seedBbtb(): void
+    {
+        $this->command->info('Seeding BB/TB (Weight-for-Height)...');
+
+        $boys = ReferenceDataHelper::getBbtbBoys();
+        $girls = ReferenceDataHelper::getBbtbGirls();
+
+        $data = [];
+        foreach ($boys as $height => $sd) {
+            $data[] = $this->formatRow('L', $height, $sd, 'height');
+        }
+        foreach ($girls as $height => $sd) {
+            $data[] = $this->formatRow('P', $height, $sd, 'height');
+        }
+
+        DB::table('reference_balita_bbtb')->truncate();
+        DB::table('reference_balita_bbtb')->insert($data);
+    }
+
+    private function seedImtu(): void
+    {
+        $this->command->info('Seeding IMT/U (BMI-for-Age) for Adolescents...');
+
+        $boys = ReferenceDataHelper::getImtuBoys();
+        $girls = ReferenceDataHelper::getImtuGirls();
+
+        $data = [];
+        foreach ($boys as $age => $sd) {
+            $data[] = $this->formatRow('L', $age, $sd, 'age_months');
+        }
+        foreach ($girls as $age => $sd) {
+            $data[] = $this->formatRow('P', $age, $sd, 'age_months');
+        }
+
+        DB::table('reference_remaja_imtu')->truncate();
+        DB::table('reference_remaja_imtu')->insert($data);
+    }
+
+    private function formatRow(string $gender, $key, array $sd, string $keyName): array
+    {
+        return [
+            'gender' => $gender,
+            $keyName => $key,
+            'neg3sd' => $sd[0],
+            'neg2sd' => $sd[1],
+            'neg1sd' => $sd[2],
+            'median' => $sd[3],
+            'pos1sd' => $sd[4],
+            'pos2sd' => $sd[5],
+            'pos3sd' => $sd[6],
+        ];
     }
 }

@@ -11,6 +11,7 @@ use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Str;
 
 /**
  * Auth controller for authentication endpoints.
@@ -33,9 +34,16 @@ class AuthController extends Controller
             'role' => 'petugas',
         ]);
 
+        try {
+            $user->notify(new \App\Notifications\WelcomeNotification());
+        } catch (\Exception $e) {
+            // Log error but don't fail registration
+            \Log::error('Failed to send welcome email: ' . $e->getMessage());
+        }
+
         return $this->successResponse(
             data: ['user' => new UserResource($user)],
-            message: 'Registrasi berhasil. Silakan verifikasi email Anda.',
+            message: 'Registrasi berhasil. Silakan cek email Anda.',
             code: 201
         );
     }
@@ -94,6 +102,88 @@ class AuthController extends Controller
     {
         return $this->successResponse(
             data: new UserResource($request->user())
+        );
+    }
+
+    /**
+     * Change user password.
+     * POST /auth/change-password
+     */
+    public function changePassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'current_password' => ['required', 'string'],
+            'new_password' => ['required', 'string', 'min:8', 'confirmed'],
+        ]);
+
+        $user = $request->user();
+
+        if (!Hash::check($request->current_password, $user->password)) {
+            return $this->errorResponse(
+                message: 'Kata sandi saat ini tidak sesuai',
+                code: 422
+            );
+        }
+
+        $user->update([
+            'password' => Hash::make($request->new_password)
+        ]);
+
+        return $this->successResponse(message: 'Kata sandi berhasil diubah');
+    }
+
+    /**
+     * Forgot password request.
+     * POST /auth/forgot-password
+     */
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        $request->validate(['email' => 'required|email']);
+
+        $status = \Password::broker()->sendResetLink(
+            $request->only('email')
+        );
+
+        if ($status === \Password::RESET_LINK_SENT) {
+            return $this->successResponse(message: 'Link reset kata sandi telah dikirim ke email Anda.');
+        }
+
+        return $this->errorResponse(
+            message: 'Gagal mengirim link reset kata sandi.',
+            code: 400
+        );
+    }
+
+    /**
+     * Reset password.
+     * POST /auth/reset-password
+     */
+    public function resetPassword(Request $request): JsonResponse
+    {
+        $request->validate([
+            'email' => 'required|email',
+            'token' => 'required|string',
+            'password' => 'required|string|min:8|confirmed',
+        ]);
+
+        $status = \Password::broker()->reset(
+            $request->only('email', 'password', 'password_confirmation', 'token'),
+            function ($user, $password) {
+                $user->forceFill([
+                    'password' => Hash::make($password)
+                ])->setRememberToken(Str::random(60));
+
+                $user->save();
+            }
+        );
+
+        if ($status === \Password::PASSWORD_RESET) {
+            return $this->successResponse(message: 'Kata sandi berhasil diatur ulang. Silakan login kembali.');
+        }
+
+        return $this->errorResponse(
+            message: 'Token tidak valid atau kadaluarsa.',
+            code: 400
         );
     }
 }

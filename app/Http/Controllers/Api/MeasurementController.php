@@ -100,6 +100,16 @@ class MeasurementController extends Controller
             data: $request->validated()
         );
 
+        // Send notification to the user
+        try {
+            $request->user()->notify(new \App\Notifications\SystemNotification(
+                'Pemeriksaan Berhasil',
+                "Data pemeriksaan untuk {$subject->name} telah berhasil disimpan."
+            ));
+        } catch (\Exception $e) {
+            \Log::error('Notification error: ' . $e->getMessage());
+        }
+
         return $this->successResponse(
             data: ['measurement' => new MeasurementResource($measurement->load('subject'))],
             message: 'Pengukuran berhasil disimpan',
