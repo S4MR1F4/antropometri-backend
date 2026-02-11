@@ -78,6 +78,19 @@ class MeasurementResource extends JsonResource
                 : 'Normal';
         }
 
+        // Pregnancy Logic Override (ensure it matches Action logic)
+        if ($this->is_pregnant) {
+            $flat['central_obesity_status'] = 'Normal (Hamil)';
+
+            if ($this->arm_circumference !== null) {
+                // Re-calculate or fetch from DB if stored. 
+                // Assuming DB stores status_lila or we calculate on fly if not persisted.
+                // For now, simple calc on fly for display if DB column missing
+                $flat['status_lila'] = $this->arm_circumference < 23.5 ? 'Risiko KEK' : 'Normal';
+                $flat['lila'] = $this->arm_circumference;
+            }
+        }
+
         // Aliases if necessary (e.g. mobile looks for 'weight_for_age_zscore')
         // Mobile Result.dart looks for 'zscore_bbu' or 'weight_for_age_zscore'.
         // The DB columns are 'zscore_bbu' etc., so we are handling it by returning them directly.

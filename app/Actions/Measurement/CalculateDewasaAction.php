@@ -30,10 +30,20 @@ class CalculateDewasaAction
         ];
 
         // Check central obesity if waist circumference provided
-        if ($waistCircumference !== null) {
+        // valid only if NOT pregnant
+        if ($waistCircumference !== null && !$isPregnant) {
             $obesityResult = $this->checkCentralObesity($waistCircumference, $gender);
             $result['has_central_obesity'] = $obesityResult['has_obesity'];
             $result['status_central_obesity'] = $obesityResult['status'];
+        } elseif ($isPregnant) {
+            $result['status_central_obesity'] = 'Normal (Hamil)'; // Override for pregnant
+        }
+
+        // Check LILA for Pregnant Women
+        if ($isPregnant && $armCircumference !== null) {
+            $lilaResult = $this->checkLila($armCircumference);
+            $result['status_lila'] = $lilaResult['status'];
+            $result['lila_actual'] = $armCircumference;
         }
 
         return $result;
@@ -89,6 +99,22 @@ class CalculateDewasaAction
             'threshold' => $threshold,
             'actual' => $waistCircumference,
             'difference' => $waistCircumference - $threshold,
+        ];
+    }
+
+    /**
+     * Check LILA for KEK (Kekurangan Energi Kronis) in pregnant women.
+     * Threshold < 23.5 cm
+     */
+    private function checkLila(float $armCircumference): array
+    {
+        $threshold = 23.5;
+        $isKEK = $armCircumference < $threshold;
+
+        return [
+            'is_kek' => $isKEK,
+            'status' => $isKEK ? 'Risiko KEK' : 'Normal',
+            'threshold' => $threshold,
         ];
     }
 }
