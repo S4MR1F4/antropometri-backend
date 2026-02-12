@@ -17,10 +17,10 @@ class PetugasSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'petugas@antropometri.go.id'],
+            ['email' => 'bangman@duck.com'],
             [
                 'name' => 'Petugas Lapangan',
-                'password' => Hash::make('Petugas@123'),
+                'password' => Hash::make('tOOr12345*'),
                 'role' => 'petugas',
                 'email_verified_at' => now(),
             ]

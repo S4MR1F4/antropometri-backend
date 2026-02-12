@@ -116,23 +116,19 @@ class CalculationService
         $bbuStatus = $results['status_bbu'] ?? null;
 
         if (in_array($bbtbStatus, ['Gizi Buruk', 'Gizi Kurang'])) {
-            $recommendations[] = 'Segera konsultasi ke tenaga kesehatan.';
-            $recommendations[] = 'Tingkatkan asupan gizi dengan makanan tinggi protein dan energi.';
+            $recommendations[] = "Status Gizi ($bbtbStatus): Segera konsultasi ke RS/Puskesmas. Berikan MP-ASI kaya protein hewani (telur, hati, ikan) dan lemak sehat.";
         }
 
         if (in_array($tbuStatus, ['Sangat Pendek', 'Pendek'])) {
-            $recommendations[] = 'Perhatikan asupan protein hewani dan kalsium.';
-            $recommendations[] = 'Stimulasi pertumbuhan dengan aktivitas fisik sesuai usia.';
+            $recommendations[] = "Indikasi Stunting ($tbuStatus): Pastikan asupan protein hewani setiap makan. Perhatikan sanitasi lingkungan dan akses air bersih.";
         }
 
         if (in_array($bbtbStatus, ['Obesitas', 'Gizi Lebih'])) {
-            $recommendations[] = 'Atur porsi makan sesuai kebutuhan.';
-            $recommendations[] = 'Tingkatkan aktivitas fisik.';
+            $recommendations[] = "Risiko Obesitas ($bbtbStatus): Batasi konsumsi gula dan camilan olahan. Tingkatkan aktivitas bermain aktif di luar ruangan.";
         }
 
         if (empty($recommendations)) {
-            $recommendations[] = 'Pertumbuhan anak dalam batas normal.';
-            $recommendations[] = 'Lanjutkan pola makan seimbang dan pantau secara berkala.';
+            $recommendations[] = 'Pertumbuhan anak dalam batas normal. Lanjutkan pemberian makanan bergizi seimbang dan imunisasi rutin.';
         }
 
         return implode(' ', $recommendations);
@@ -143,9 +139,9 @@ class CalculationService
         $status = $results['status_imtu'] ?? null;
 
         return match ($status) {
-            'Gizi Buruk', 'Gizi Kurang' => 'Tingkatkan asupan kalori dengan makanan bergizi. Konsultasikan dengan ahli gizi jika diperlukan.',
-            'Gizi Lebih', 'Obesitas' => 'Kurangi asupan kalori berlebih dan tingkatkan aktivitas fisik minimal 60 menit per hari.',
-            default => 'Status gizi dalam batas normal. Pertahankan pola makan seimbang dan aktivitas fisik teratur.',
+            'Gizi Buruk', 'Gizi Kurang' => 'Status Gizi Kurang: Tingkatkan asupan kalori dan protein. Hindari diet ketat tanpa pengawasan medis.',
+            'Gizi Lebih', 'Obesitas' => 'Risiko Obesitas: Kurangi konsumsi minuman manis dan makanan cepat saji. Lakukan aktivitas fisik minimal 60 menit setiap hari.',
+            default => 'Status gizi normal. Pertahankan pola makan bergizi dan gaya hidup aktif untuk masa pertumbuhan yang optimal.',
         };
     }
 

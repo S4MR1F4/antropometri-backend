@@ -250,15 +250,14 @@
                 if($val > $maxVal) $maxVal = $val;
             }
             $colors = [
-                'Gizi Buruk' => '#c0392b',      // Dark Red
-                'Gizi Kurang' => '#e67e22',     // Orange
-                'Gizi Baik' => '#27ae60',       // Green
-                'Gizi Lebih' => '#f1c40f',      // Yellow
-                'Obesitas' => '#c0392b',        // Dark Red
-                'Sangat Pendek' => '#e74c3c',   // Red
-                'Pendek' => '#f39c12',          // Orange
-                'Normal' => '#27ae60',          // Green
-                'Tinggi' => '#8e44ad',          // Purple
+                'Sangat Kurus / Gizi Buruk' => '#c0392b',  // Dark Red
+                'Kurus / Gizi Kurang' => '#e67e22',       // Orange
+                'Normal / Gizi Baik' => '#27ae60',        // Green
+                'Gemuk / Gizi Lebih' => '#f1c40f',        // Yellow
+                'Obesitas' => '#c0392b',                  // Dark Red
+                'Sangat Pendek' => '#e74c3c',             // Red
+                'Pendek' => '#f39c12',                    // Orange
+                'Tinggi' => '#8e44ad',                    // Purple
             ];
         @endphp
 

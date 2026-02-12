@@ -34,28 +34,29 @@ class StoreMeasurementRequest extends FormRequest
         ];
 
         // Category-specific validation per 08_calculation_logic.md §6.1
+        // Adjusted to match mobile app's anti-error logic but with slightly wider margins
         switch ($category) {
             case 'balita':
-                $rules['weight'][] = 'min:0.5';
-                $rules['weight'][] = 'max:50';
+                $rules['weight'][] = 'min:1';
+                $rules['weight'][] = 'max:45';
                 $rules['height'][] = 'min:30';
-                $rules['height'][] = 'max:150';
+                $rules['height'][] = 'max:135';
                 $rules['head_circumference'] = ['nullable', 'numeric', 'min:10', 'max:60'];
                 $rules['measurement_type'] = ['nullable', Rule::in(['berbaring', 'berdiri'])];
                 break;
 
             case 'remaja':
-                $rules['weight'][] = 'min:5';
-                $rules['weight'][] = 'max:200';
-                $rules['height'][] = 'min:50';
-                $rules['height'][] = 'max:250';
+                $rules['weight'][] = 'min:8';
+                $rules['weight'][] = 'max:220';
+                $rules['height'][] = 'min:75';
+                $rules['height'][] = 'max:230';
                 break;
 
             case 'dewasa':
-                $rules['weight'][] = 'min:20';
-                $rules['weight'][] = 'max:500';
-                $rules['height'][] = 'min:100';
-                $rules['height'][] = 'max:300';
+                $rules['weight'][] = 'min:15';
+                $rules['weight'][] = 'max:400';
+                $rules['height'][] = 'min:90';
+                $rules['height'][] = 'max:260';
                 $rules['waist_circumference'] = ['nullable', 'numeric', 'min:30', 'max:200'];
                 break;
         }

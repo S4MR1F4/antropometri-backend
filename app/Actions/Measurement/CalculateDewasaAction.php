@@ -39,10 +39,15 @@ class CalculateDewasaAction
         }
 
         // Check LILA for Pregnant Women
-        if ($isPregnant && $armCircumference !== null) {
-            $lilaResult = $this->checkLila($armCircumference);
-            $result['status_lila'] = $lilaResult['status'];
-            $result['lila_actual'] = $armCircumference;
+        if ($isPregnant) {
+            $result['status_bmi'] = 'Ibu Hamil (' . $bmiResult['status'] . ')';
+
+            if ($armCircumference !== null) {
+                $lilaResult = $this->checkLila($armCircumference);
+                $result['status_lila'] = $lilaResult['status'];
+                $result['status_kek'] = $lilaResult['status']; // Sync'd key
+                $result['lila_actual'] = $armCircumference;
+            }
         }
 
         return $result;
@@ -65,11 +70,11 @@ class CalculateDewasaAction
     private function classifyBMI(float $bmi): array
     {
         $status = match (true) {
-            $bmi < 17.0 => 'Kurus Tingkat Berat',
-            $bmi < 18.5 => 'Kurus Tingkat Ringan',
+            $bmi < 17.0 => 'Sangat Kurus',
+            $bmi < 18.5 => 'Kurus',
             $bmi <= 25.0 => 'Normal',
-            $bmi <= 27.0 => 'Gemuk Tingkat Ringan',
-            default => 'Gemuk Tingkat Berat',
+            $bmi <= 27.0 => 'Gemuk',
+            default => 'Obesitas',
         };
 
         $reason = match (true) {

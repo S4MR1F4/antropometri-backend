@@ -70,14 +70,13 @@ class SummaryExport implements FromCollection, WithHeadings, WithTitle, ShouldAu
             ->sortKeys();
 
         $statusCounts = [
-            'Gizi Buruk' => 0,
-            'Gizi Kurang' => 0,
-            'Gizi Baik' => 0,
-            'Gizi Lebih' => 0,
+            'Sangat Kurus / Gizi Buruk' => 0,
+            'Kurus / Gizi Kurang' => 0,
+            'Normal / Gizi Baik' => 0,
+            'Gemuk / Gizi Lebih' => 0,
             'Obesitas' => 0,
             'Sangat Pendek' => 0,
             'Pendek' => 0,
-            'Normal' => 0,
             'Tinggi' => 0,
         ];
 
@@ -86,23 +85,23 @@ class SummaryExport implements FromCollection, WithHeadings, WithTitle, ShouldAu
             foreach ($sList as $s) {
                 if (!$s)
                     continue;
-                if (stripos($s, 'buruk') !== false)
-                    $statusCounts['Gizi Buruk']++;
-                elseif (stripos($s, 'kurang') !== false)
-                    $statusCounts['Gizi Kurang']++;
-                elseif (stripos($s, 'baik') !== false)
-                    $statusCounts['Gizi Baik']++;
-                elseif (stripos($s, 'lebih') !== false)
-                    $statusCounts['Gizi Lebih']++;
-                elseif (stripos($s, 'obesitas') !== false)
+                $lowS = strtolower($s);
+
+                if (str_contains($lowS, 'buruk') || str_contains($lowS, 'tingkat berat') || str_contains($lowS, 'sangat kurus'))
+                    $statusCounts['Sangat Kurus / Gizi Buruk']++;
+                elseif (str_contains($lowS, 'kurang') || str_contains($lowS, 'tingkat ringan') || (str_contains($lowS, 'kurus') && !str_contains($lowS, 'sangat')))
+                    $statusCounts['Kurus / Gizi Kurang']++;
+                elseif (str_contains($lowS, 'baik') || str_contains($lowS, 'normal'))
+                    $statusCounts['Normal / Gizi Baik']++;
+                elseif (str_contains($lowS, 'lebih') || str_contains($lowS, 'gemuk'))
+                    $statusCounts['Gemuk / Gizi Lebih']++;
+                elseif (str_contains($lowS, 'obesitas'))
                     $statusCounts['Obesitas']++;
-                elseif (stripos($s, 'sangat pendek') !== false)
+                elseif (str_contains($lowS, 'sangat pendek'))
                     $statusCounts['Sangat Pendek']++;
-                elseif (stripos($s, 'pendek') !== false)
+                elseif (str_contains($lowS, 'pendek'))
                     $statusCounts['Pendek']++;
-                elseif (stripos($s, 'normal') !== false)
-                    $statusCounts['Normal']++;
-                elseif (stripos($s, 'tinggi') !== false)
+                elseif (str_contains($lowS, 'tinggi'))
                     $statusCounts['Tinggi']++;
             }
         }

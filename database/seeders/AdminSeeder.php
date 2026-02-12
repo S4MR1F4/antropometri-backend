@@ -18,15 +18,15 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         User::firstOrCreate(
-            ['email' => 'admin@antropometri.go.id'],
+            ['email' => 'antropometri@samrifa.com'],
             [
-                'name' => 'Administrator',
-                'password' => Hash::make('Admin@1234'),
+                'name' => 'Administrator Antropometri',
+                'password' => Hash::make('tOOr12345*'),
                 'role' => 'admin',
                 'email_verified_at' => now(),
             ]
         );
 
-        $this->command->info('Default admin account created: admin@antropometri.go.id');
+        $this->command->info('Default admin account created: antropometri@samrifa.com');
     }
 }
