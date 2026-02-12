@@ -48,6 +48,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::apiResource('subjects', SubjectController::class);
 
     // Measurements
+    Route::get('/measurements/grouped', [MeasurementController::class, 'groupedHistory']);
     Route::get('/measurements', [MeasurementController::class, 'history']);
     Route::apiResource('subjects.measurements', MeasurementController::class)
         ->except(['update'])

@@ -32,6 +32,10 @@ class StatisticsService
             $query->where('category', $filters['category']);
         }
 
+        if (!empty($filters['user_id'])) {
+            $query->where('user_id', $filters['user_id']);
+        }
+
         $totalMeasurements = (clone $query)->count();
         $measurementsToday = (clone $query)->whereDate('created_at', today())->count();
 
@@ -41,8 +45,8 @@ class StatisticsService
         $startOfLastMonth = now()->subMonth()->startOfMonth();
         $endOfLastMonth = now()->subMonth()->endOfMonth();
 
-        $thisMonthCount = Measurement::whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
-        $lastMonthCount = Measurement::whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->count();
+        $thisMonthCount = (clone $query)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
+        $lastMonthCount = (clone $query)->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->count();
 
         $growth = 0;
         if ($lastMonthCount > 0) {
@@ -155,6 +159,19 @@ class StatisticsService
             }
         }
 
-        return $stats;
+        return [
+            // Mobile aligned keys
+            'normal_count' => $stats['normal'],
+            'stunting_count' => $stats['stunting'],
+            'wasting_count' => $stats['wasting'],
+            'obesity_count' => $stats['obesity'],
+
+            // Backward compatibility for reports
+            'gizi_baik' => $stats['normal'],
+            'gizi_kurang' => $stats['stunting'], // Aligned logic: Stunting = Pendek/Kurang
+            'gizi_buruk' => $stats['wasting'],  // Aligned logic: Wasting = Buruk/Kurus
+            'gizi_lebih' => $stats['obesity'],
+            'obesitas' => $stats['obesity'],
+        ];
     }
 }

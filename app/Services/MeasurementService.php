@@ -21,6 +21,44 @@ class MeasurementService
     }
 
     /**
+     * Calculate health trend based on previous measurements.
+     */
+    public function calculateTrend(Subject $subject, float $currentBmi, string $category): ?array
+    {
+        $lastMeasurement = $subject->measurements()
+            ->where('id', '!=', request()->route('measurement')) // Exclude current if updating
+            ->latest('measurement_date')
+            ->latest('id')
+            ->first();
+
+        if (!$lastMeasurement) {
+            return null;
+        }
+
+        $prevBmi = (float) $lastMeasurement->bmi;
+        if ($prevBmi <= 0)
+            return null;
+
+        $diff = $currentBmi - $prevBmi;
+        $percent = ($diff / $prevBmi) * 100;
+
+        $status = 'stabil';
+        if ($diff > 0.1)
+            $status = 'meningkat';
+        if ($diff < -0.1)
+            $status = 'menurun';
+
+        return [
+            'previous_bmi' => round($prevBmi, 2),
+            'difference' => round($diff, 2),
+            'percentage' => round($percent, 1),
+            'status' => $status,
+            'label' => ucfirst($status),
+            'date' => $lastMeasurement->measurement_date->toDateString(),
+        ];
+    }
+
+    /**
      * Create a measurement with calculations.
      */
     public function createMeasurement(Subject $subject, array $data): Measurement
@@ -53,6 +91,12 @@ class MeasurementService
             data: $data,
         );
 
+        // Calculate trend for adults/adolescents using BMI
+        $trend = null;
+        if (in_array($category, ['dewasa', 'remaja']) && isset($calculationResults['bmi'])) {
+            $trend = $this->calculateTrend($subject, $calculationResults['bmi'], $category);
+        }
+
         // Prepare measurement data
         $measurementData = array_merge($data, [
             'subject_id' => $subject->id,
@@ -62,6 +106,7 @@ class MeasurementService
             'age_in_years' => $ageInYears,
             'recommendation' => $recommendation,
             'reference_data' => $calculationResults['references'] ?? null,
+            'trend_info' => $trend,
         ], $calculationResults);
 
         return Measurement::create($measurementData);
@@ -111,6 +156,12 @@ class MeasurementService
             data: $syncData,
         );
 
+        // Calculate trend
+        $trend = null;
+        if (in_array($category, ['dewasa', 'remaja']) && isset($calculationResults['bmi'])) {
+            $trend = $this->calculateTrend($subject, $calculationResults['bmi'], $category);
+        }
+
         // Prepare measurement data
         $measurementData = array_merge($syncData, [
             'subject_id' => $subject->id,
@@ -120,6 +171,7 @@ class MeasurementService
             'age_in_years' => $ageInYears,
             'recommendation' => $recommendation,
             'reference_data' => $calculationResults['references'] ?? null,
+            'trend_info' => $trend,
         ], $calculationResults);
 
         // Remove sync-specific fields
@@ -226,6 +278,59 @@ class MeasurementService
                     });
             });
         }
+
+        return $query->paginate($perPage);
+    }
+
+    /**
+     * Get unique subjects with their latest measurement and measurement count.
+     * Used for grouped history view in mobile app.
+     */
+    public function getGroupedHistory(array $filters = [], int $perPage = 15)
+    {
+        $query = Subject::query();
+
+        // Search by subject name
+        if (!empty($filters['search'])) {
+            $query->where('name', 'like', "%{$filters['search']}%");
+        }
+
+        // Filter by subjects that have measurements by this user (if not admin)
+        if (!auth()->user()->isAdmin()) {
+            $query->whereHas('measurements', function ($q) {
+                $q->where('user_id', auth()->id());
+            });
+        }
+
+        // We want subjects that have at least one measurement
+        $query->has('measurements');
+
+        // Load latest measurement and count
+        $query->with([
+            'latestMeasurement',
+            'measurements' => function ($q) {
+                if (!auth()->user()->isAdmin()) {
+                    $q->where('user_id', auth()->id());
+                }
+            }
+        ])->withCount([
+                    'measurements' => function ($q) {
+                        if (!auth()->user()->isAdmin()) {
+                            $q->where('user_id', auth()->id());
+                        }
+                    }
+                ]);
+
+        // Order by latest measurement date using subquery for sorting
+        $query->addSelect([
+            'latest_measured_at' => Measurement::select('measurement_date')
+                ->whereColumn('subject_id', 'subjects.id')
+                ->latest('measurement_date')
+                ->latest('id')
+                ->limit(1)
+        ])
+            ->orderByDesc('latest_measured_at')
+            ->orderByDesc('id');
 
         return $query->paginate($perPage);
     }

@@ -60,22 +60,19 @@ class CalculationService
         return $results;
     }
 
-    /**
-     * Generate reference information (normal ranges) for the UI.
-     */
     private function generateReferenceInformation(string $category, string $gender, array $data, array $results): array
     {
         return match ($category) {
             'balita' => [
-                'BB/U' => 'Normal: -2 SD s/d +1 SD' . (isset($results['reason_bbu']) ? " ({$results['reason_bbu']})" : ""),
-                'TB/U' => 'Normal: -2 SD s/d +3 SD' . (isset($results['reason_tbu']) ? " ({$results['reason_tbu']})" : ""),
-                'BB/TB' => 'Normal: -2 SD s/d +1 SD' . (isset($results['reason_bbtb']) ? " ({$results['reason_bbtb']})" : ""),
+                'BB/U' => 'Standar: -2 SD s/d +1 SD',
+                'TB/U' => 'Standar: -2 SD s/d +3 SD',
+                'BB/TB' => 'Standar: -2 SD s/d +1 SD',
             ],
             'remaja' => [
-                'IMT/U' => 'Normal: -2 SD s/d +1 SD' . (isset($results['reason_imtu']) ? " ({$results['reason_imtu']})" : ""),
+                'IMT/U' => 'Standar: -2 SD s/d +1 SD',
             ],
             'dewasa' => array_filter([
-                'IMT' => 'Normal: 18.5 - 25.0' . (isset($results['reason_imt']) ? " ({$results['reason_imt']})" : ""),
+                'IMT' => 'Ideal: 18.5 - 25.0',
                 'Lingkar Perut' => isset($data['waist_circumference'])
                     ? ($gender === 'L' ? 'Normal: ≤ 90 cm' : 'Normal: ≤ 80 cm')
                     : null,
@@ -155,7 +152,7 @@ class CalculationService
     private function generateDewasaRecommendation(array $results): string
     {
         $recommendations = [];
-        $status = $results['status_imt'] ?? null;
+        $status = $results['status_bmi'] ?? null;
 
         if (in_array($status, ['Kurus Tingkat Berat', 'Kurus Tingkat Ringan'])) {
             $recommendations[] = 'Tingkatkan asupan kalori dengan makanan bergizi.';
@@ -169,8 +166,8 @@ class CalculationService
 
         // Check central obesity
         if (isset($results['has_central_obesity']) && $results['has_central_obesity']) {
-            $recommendations[] = 'Perhatikan lingkar perut melebihi batas.';
-            $recommendations[] = 'Konsultasi untuk pemeriksaan gula darah dan profil lipid.';
+            $recommendations[] = 'Perhatikan lingkar perut melebihi batas normal (L: ≤90cm, P: ≤80cm).';
+            $recommendations[] = 'Konsultasi dokter untuk pemeriksaan risiko penyakit metabolik.';
         }
 
         return implode(' ', $recommendations);

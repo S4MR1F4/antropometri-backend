@@ -40,7 +40,7 @@ class StoreMeasurementRequest extends FormRequest
                 $rules['weight'][] = 'max:50';
                 $rules['height'][] = 'min:30';
                 $rules['height'][] = 'max:150';
-                $rules['head_circumference'] = ['nullable', 'numeric', 'min:20', 'max:60'];
+                $rules['head_circumference'] = ['nullable', 'numeric', 'min:10', 'max:60'];
                 $rules['measurement_type'] = ['nullable', Rule::in(['berbaring', 'berdiri'])];
                 break;
 

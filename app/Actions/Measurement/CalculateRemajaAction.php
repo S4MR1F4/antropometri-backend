@@ -26,10 +26,9 @@ class CalculateRemajaAction
         $imtu = $this->calculateIMTU($gender, $ageInMonths, $bmi);
 
         return [
-            'imt' => round($bmi, 2),
+            'bmi' => round($bmi, 2),
             'zscore_imtu' => $imtu['zscore'],
             'status_imtu' => $imtu['status'],
-            'reason_imtu' => $imtu['reason'],
         ];
     }
 

@@ -22,9 +22,14 @@ class ExportController extends Controller
      */
     public function exportExcel(Request $request)
     {
-        return $this->exportService->exportToExcel(
-            $request->only(['from_date', 'to_date', 'category'])
-        );
+        $filters = $request->only(['from_date', 'to_date', 'category']);
+
+        $user = $request->user();
+        if ($user && !$user->isAdmin()) {
+            $filters['user_id'] = $user->id;
+        }
+
+        return $this->exportService->exportToExcel($filters);
     }
 
     /**
@@ -33,8 +38,13 @@ class ExportController extends Controller
      */
     public function exportPdf(Request $request)
     {
-        return $this->exportService->exportToPdf(
-            $request->only(['from_date', 'to_date', 'category'])
-        );
+        $filters = $request->only(['from_date', 'to_date', 'category']);
+
+        $user = $request->user();
+        if ($user && !$user->isAdmin()) {
+            $filters['user_id'] = $user->id;
+        }
+
+        return $this->exportService->exportToPdf($filters);
     }
 }

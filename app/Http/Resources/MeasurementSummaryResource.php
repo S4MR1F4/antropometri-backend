@@ -20,9 +20,10 @@ class MeasurementSummaryResource extends JsonResource
                 'id' => $this->subject->id,
                 'name' => $this->subject->name,
                 'gender' => $this->subject->gender,
+                'nik' => $this->subject->getMaskedNik(),
                 'date_of_birth' => $this->subject->date_of_birth->toDateString(),
             ],
-            'petugas_name' => $this->user->name,
+            'petugas_name' => $this->user?->name,
             'measurement_date' => $this->measurement_date->toDateString(), // YYYY-MM-DD
             'measured_at' => $this->created_at?->toIso8601String(), // Full datetime
             'category' => $this->category,

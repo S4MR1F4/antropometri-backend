@@ -24,9 +24,8 @@ class CalculateDewasaAction
         $bmiResult = $this->classifyBMI($bmi);
 
         $result = [
-            'imt' => round($bmi, 2),
-            'status_imt' => $bmiResult['status'],
-            'reason_imt' => $bmiResult['reason'],
+            'bmi' => round($bmi, 2),
+            'status_bmi' => $bmiResult['status'],
         ];
 
         // Check central obesity if waist circumference provided

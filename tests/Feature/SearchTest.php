@@ -96,7 +96,7 @@ class SearchTest extends TestCase
 
         $response->assertStatus(200)
             ->assertJsonCount(1, 'data.measurements')
-            ->assertJsonPath('data.measurements.0.user.name', 'Petugas Salman');
+            ->assertJsonPath('data.measurements.0.petugas_name', 'Petugas Salman');
     }
 
     public function test_search_results_are_case_insensitive()

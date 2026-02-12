@@ -6,13 +6,20 @@ use App\Models\Measurement;
 use Maatwebsite\Excel\Concerns\FromQuery;
 use Maatwebsite\Excel\Concerns\WithHeadings;
 use Maatwebsite\Excel\Concerns\WithMapping;
+use Maatwebsite\Excel\Concerns\WithTitle;
+use Maatwebsite\Excel\Concerns\ShouldAutoSize;
 
 /**
  * Excel export logic for examination data.
  * Per 07_api_specification.md §5.3 and 06_data_dictionary.md §4
  */
-class MeasurementsExport implements FromQuery, WithHeadings, WithMapping
+class MeasurementsExport implements FromQuery, WithHeadings, WithMapping, WithTitle, ShouldAutoSize
 {
+    public function title(): string
+    {
+        return 'Data Detail (Raw)';
+    }
+
     protected array $filters;
 
     public function __construct(array $filters = [])
@@ -22,7 +29,7 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping
 
     public function query()
     {
-        $query = Measurement::query()->with('subject');
+        $query = Measurement::query()->with(['subject', 'user']);
 
         if (!empty($this->filters['from_date'])) {
             $query->where('measurement_date', '>=', $this->filters['from_date']);
@@ -36,6 +43,10 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping
             $query->where('category', $this->filters['category']);
         }
 
+        if (!empty($this->filters['user_id'])) {
+            $query->where('user_id', $this->filters['user_id']);
+        }
+
         return $query->latest('measurement_date');
     }
 
@@ -43,6 +54,8 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping
     {
         return [
             'ID Pengukuran',
+            'Waktu Input',
+            'Petugas Input',
             'ID Subjek',
             'Nama Subjek',
             'NIK',
@@ -66,7 +79,8 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping
             'Status IMT/U',
             'Status BMI',
             'Obesitas Sentral',
-            'Catatan',
+            'Rekomendasi',
+            'Tindak Lanjut / Catatan',
         ];
     }
 
@@ -74,6 +88,8 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping
     {
         return [
             $measurement->id,
+            $measurement->created_at ? $measurement->created_at->format('Y-m-d H:i:s') : '-',
+            $measurement->user->name ?? 'Sistem',
             $measurement->subject_id,
             $measurement->subject->name ?? '-',
             $measurement->subject->nik ?? '-',
@@ -97,6 +113,7 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping
             $measurement->status_imtu,
             $measurement->status_bmi,
             $measurement->has_central_obesity ? 'Ya' : 'Tidak',
+            $measurement->recommendation,
             $measurement->notes,
         ];
     }

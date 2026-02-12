@@ -50,6 +50,8 @@ class Measurement extends Model
         'has_central_obesity',
         'notes',
         'reference_data',
+        'recommendation',
+        'trend_info',
     ];
 
     /**
@@ -72,6 +74,7 @@ class Measurement extends Model
         'is_pregnant' => 'boolean',
         'has_central_obesity' => 'boolean',
         'reference_data' => 'array',
+        'trend_info' => 'array',
     ];
 
     /**

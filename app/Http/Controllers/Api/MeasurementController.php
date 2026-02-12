@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Measurement\StoreMeasurementRequest;
+use App\Http\Resources\HistoryGroupedResource;
 use App\Http\Resources\MeasurementResource;
 use App\Http\Resources\MeasurementSummaryResource;
 use App\Http\Resources\SubjectResource;
@@ -82,6 +83,30 @@ class MeasurementController extends Controller
                     'last_page' => $measurements->lastPage(),
                     'per_page' => $measurements->perPage(),
                     'total' => $measurements->total(),
+                ],
+            ]
+        );
+    }
+
+    /**
+     * List grouped measurements by subject for unique patient list.
+     * GET /measurements/grouped
+     */
+    public function groupedHistory(Request $request): JsonResponse
+    {
+        $subjects = $this->measurementService->getGroupedHistory(
+            filters: $request->only(['search']),
+            perPage: $request->integer('per_page', 15)
+        );
+
+        return $this->successResponse(
+            data: [
+                'subjects' => HistoryGroupedResource::collection($subjects->items()),
+                'pagination' => [
+                    'current_page' => $subjects->currentPage(),
+                    'last_page' => $subjects->lastPage(),
+                    'per_page' => $subjects->perPage(),
+                    'total' => $subjects->total(),
                 ],
             ]
         );
