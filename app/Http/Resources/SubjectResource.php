@@ -22,7 +22,7 @@ class SubjectResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'normalized_name' => $this->normalized_name,
-            'date_of_birth' => $this->date_of_birth->toDateString(),
+            'date_of_birth' => $this->date_of_birth?->toDateString() ?? '0000-00-00',
             'gender' => $this->gender,
             'nik' => $this->getMaskedNik(),
             'age_in_months' => $ageInMonths,

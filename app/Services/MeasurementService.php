@@ -302,8 +302,9 @@ class MeasurementService
             });
         }
 
-        // We want subjects that have at least one measurement
-        $query->has('measurements');
+        // We allow subjects without measurements to show up in the patient list/history
+        // for better visibility of newly added patients.
+        // $query->has('measurements');
 
         // Load latest measurement and count
         $query->with([

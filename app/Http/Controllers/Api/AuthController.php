@@ -41,9 +41,16 @@ class AuthController extends Controller
             \Log::error('Failed to send welcome email: ' . $e->getMessage());
         }
 
+        // Auto-login: Create token immediately after registration
+        $token = $user->createToken('default');
+
         return $this->successResponse(
-            data: ['user' => new UserResource($user)],
-            message: 'Registrasi berhasil. Silakan cek email Anda.',
+            data: [
+                'user' => new UserResource($user),
+                'token' => $token->plainTextToken,
+                'token_type' => 'Bearer',
+            ],
+            message: 'Registrasi berhasil. Selamat datang!',
             code: 201
         );
     }
