@@ -75,6 +75,6 @@ class SubjectPolicy
      */
     public function forceDelete(User $user, Subject $subject): bool
     {
-        return $user->isAdmin();
+        return $user->isAdmin() || $subject->user_id === $user->id;
     }
 }

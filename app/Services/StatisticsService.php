@@ -36,6 +36,9 @@ class StatisticsService
             $query->where('user_id', $filters['user_id']);
         }
 
+        // Exclude measurements from deleted subjects
+        $query->whereHas('subject');
+
         $totalMeasurements = (clone $query)->count();
         $measurementsToday = (clone $query)->whereDate('created_at', today())->count();
 
