@@ -121,6 +121,17 @@ class MeasurementService
      */
     public function createFromSyncData(array $syncData): Measurement
     {
+        // Defensive deduplication: skip if identical measurement already exists
+        $existing = Measurement::where('subject_id', $syncData['subject_id'])
+            ->where('measurement_date', $syncData['measurement_date'])
+            ->where('weight', $syncData['weight'] ?? null)
+            ->where('height', $syncData['height'] ?? null)
+            ->first();
+
+        if ($existing) {
+            return $existing; // Already synced, return existing record
+        }
+
         $subject = Subject::findOrFail($syncData['subject_id']);
 
         // Calculate age at measurement

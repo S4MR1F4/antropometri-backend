@@ -106,9 +106,9 @@ class MeasurementResource extends JsonResource
     {
         return match ($status) {
             'Gizi Baik', 'Normal' => '#388E3C',
-            'Gizi Kurang', 'Pendek', 'Kurus Tingkat Ringan', 'Gizi Lebih' => '#F57C00',
-            'Gizi Buruk', 'Sangat Pendek', 'Kurus Tingkat Berat', 'Gemuk Tingkat Berat', 'Obesitas' => '#D32F2F',
-            'Berisiko Gizi Lebih', 'Tinggi', 'Gemuk Tingkat Ringan' => '#FBC02D',
+            'Gizi Kurang', 'Pendek', 'Kurus', 'Gizi Lebih' => '#F57C00',
+            'Gizi Buruk', 'Sangat Pendek', 'Sangat Kurus', 'Obesitas' => '#D32F2F',
+            'Berisiko Gizi Lebih', 'Tinggi', 'Gemuk' => '#FBC02D',
             default => '#757575',
         };
     }

@@ -140,7 +140,7 @@ class CalculationService
 
         return match ($status) {
             'Gizi Buruk', 'Gizi Kurang' => 'Status Gizi Kurang: Tingkatkan asupan kalori dan protein. Hindari diet ketat tanpa pengawasan medis.',
-            'Gizi Lebih', 'Obesitas' => 'Risiko Obesitas: Kurangi konsumsi minuman manis dan makanan cepat saji. Lakukan aktivitas fisik minimal 60 menit setiap hari.',
+            'Berisiko Gizi Lebih', 'Gizi Lebih', 'Obesitas' => 'Risiko Obesitas: Kurangi konsumsi minuman manis dan makanan cepat saji. Lakukan aktivitas fisik minimal 60 menit setiap hari.',
             default => 'Status gizi normal. Pertahankan pola makan bergizi dan gaya hidup aktif untuk masa pertumbuhan yang optimal.',
         };
     }
@@ -150,10 +150,10 @@ class CalculationService
         $recommendations = [];
         $status = $results['status_bmi'] ?? null;
 
-        if (in_array($status, ['Kurus Tingkat Berat', 'Kurus Tingkat Ringan'])) {
+        if (in_array($status, ['Sangat Kurus', 'Kurus'])) {
             $recommendations[] = 'Tingkatkan asupan kalori dengan makanan bergizi.';
             $recommendations[] = 'Konsultasikan dengan ahli gizi jika diperlukan.';
-        } elseif (in_array($status, ['Gemuk Tingkat Ringan', 'Gemuk Tingkat Berat'])) {
+        } elseif (in_array($status, ['Gemuk', 'Obesitas'])) {
             $recommendations[] = 'Kurangi asupan kalori berlebih.';
             $recommendations[] = 'Tingkatkan aktivitas fisik minimal 150 menit per minggu.';
         } else {

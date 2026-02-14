@@ -127,9 +127,16 @@ class MeasurementController extends Controller
 
         // Send notification to the user
         try {
+            $weight = $measurement->weight ?? '-';
+            $height = $measurement->height ?? '-';
             $request->user()->notify(new \App\Notifications\SystemNotification(
                 'Pemeriksaan Berhasil',
-                "Data pemeriksaan untuk {$subject->name} telah berhasil disimpan."
+                "{$subject->name} — BB: {$weight}kg, TB: {$height}cm berhasil disimpan.",
+                [
+                    'measurement_id' => $measurement->id,
+                    'subject_id' => $subject->id,
+                    'subject_name' => $subject->name,
+                ]
             ));
         } catch (\Exception $e) {
             \Log::error('Notification error: ' . $e->getMessage());

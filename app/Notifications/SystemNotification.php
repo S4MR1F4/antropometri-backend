@@ -13,14 +13,16 @@ class SystemNotification extends Notification
 
     protected $title;
     protected $message;
+    protected $meta;
 
     /**
      * Create a new notification instance.
      */
-    public function __construct($title, $message)
+    public function __construct($title, $message, $meta = [])
     {
         $this->title = $title;
         $this->message = $message;
+        $this->meta = $meta;
     }
 
     /**
@@ -56,6 +58,9 @@ class SystemNotification extends Notification
         return [
             'title' => $this->title,
             'message' => $this->message,
+            'measurement_id' => $this->meta['measurement_id'] ?? null,
+            'subject_id' => $this->meta['subject_id'] ?? null,
+            'subject_name' => $this->meta['subject_name'] ?? null,
         ];
     }
 }
