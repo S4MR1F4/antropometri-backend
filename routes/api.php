@@ -24,8 +24,8 @@ use Illuminate\Support\Facades\Route;
 Route::get('/health', [\App\Http\Controllers\HealthController::class, 'check']);
 
 Route::prefix('auth')->group(function () {
-    Route::post('/register', [AuthController::class, 'register']);
-    Route::post('/login', [AuthController::class, 'login']);
+    Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:6,1');
+    Route::post('/login', [AuthController::class, 'login'])->middleware('throttle:6,1');
     Route::post('/forgot-password', [AuthController::class, 'forgotPassword']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 });

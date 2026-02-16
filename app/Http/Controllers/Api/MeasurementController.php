@@ -125,21 +125,25 @@ class MeasurementController extends Controller
             data: $request->validated()
         );
 
-        // Send notification to the user
+        // Send notification to all admins
         try {
             $weight = $measurement->weight ?? '-';
             $height = $measurement->height ?? '-';
-            $request->user()->notify(new \App\Notifications\SystemNotification(
-                'Pemeriksaan Berhasil',
-                "{$subject->name} — BB: {$weight}kg, TB: {$height}cm berhasil disimpan.",
-                [
-                    'measurement_id' => $measurement->id,
-                    'subject_id' => $subject->id,
-                    'subject_name' => $subject->name,
-                ]
-            ));
+            $admins = \App\Models\User::where('role', 'admin')->get();
+
+            if ($admins->isNotEmpty()) {
+                \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\SystemNotification(
+                    'Pemeriksaan Baru',
+                    "{$subject->name} — BB: {$weight}kg, TB: {$height}cm (Petugas: {$request->user()->name})",
+                    [
+                        'measurement_id' => $measurement->id,
+                        'subject_id' => $subject->id,
+                        'subject_name' => $subject->name,
+                    ]
+                ));
+            }
         } catch (\Exception $e) {
-            \Log::error('Notification error: ' . $e->getMessage());
+            \Log::error('Admin Notification error: ' . $e->getMessage());
         }
 
         return $this->successResponse(
