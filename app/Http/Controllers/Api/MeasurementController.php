@@ -53,7 +53,7 @@ class MeasurementController extends Controller
                                 ->calculateAgeInMonths($subject->date_of_birth)
                         ),
                 ],
-                'measurements' => MeasurementSummaryResource::collection($measurements->items()),
+                'measurements' => MeasurementSummaryResource::collection($measurements->items())->resolve(),
                 'pagination' => [
                     'current_page' => $measurements->currentPage(),
                     'last_page' => $measurements->lastPage(),
@@ -77,7 +77,7 @@ class MeasurementController extends Controller
 
         return $this->successResponse(
             data: [
-                'measurements' => MeasurementSummaryResource::collection($measurements->items()),
+                'measurements' => MeasurementSummaryResource::collection($measurements->items())->resolve(),
                 'pagination' => [
                     'current_page' => $measurements->currentPage(),
                     'last_page' => $measurements->lastPage(),
@@ -101,7 +101,7 @@ class MeasurementController extends Controller
 
         return $this->successResponse(
             data: [
-                'subjects' => HistoryGroupedResource::collection($subjects->items()),
+                'subjects' => HistoryGroupedResource::collection($subjects->items())->resolve(),
                 'pagination' => [
                     'current_page' => $subjects->currentPage(),
                     'last_page' => $subjects->lastPage(),

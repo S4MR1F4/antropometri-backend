@@ -22,40 +22,71 @@ class MeasurementService
 
     /**
      * Calculate health trend based on previous measurements.
+     * Analyzes last 5 measurements for growth velocity and patterns.
      */
-    public function calculateTrend(Subject $subject, float $currentBmi, string $category): ?array
+    public function calculateTrend(Subject $subject, float $currentValue, string $category, string $metric = 'bmi'): ?array
     {
-        $lastMeasurement = $subject->measurements()
-            ->where('id', '!=', request()->route('measurement')) // Exclude current if updating
+        $history = $subject->measurements()
+            ->where('id', '!=', request()->route('measurement'))
             ->latest('measurement_date')
             ->latest('id')
-            ->first();
+            ->limit(5)
+            ->get();
 
-        if (!$lastMeasurement) {
+        if ($history->isEmpty()) {
             return null;
         }
 
-        $prevBmi = (float) $lastMeasurement->bmi;
-        if ($prevBmi <= 0)
+        $lastMeasurement = $history->first();
+        $prevValue = (float) ($metric === 'bmi' ? $lastMeasurement->bmi : $lastMeasurement->{$metric});
+
+        if ($prevValue <= 0)
             return null;
 
-        $diff = $currentBmi - $prevBmi;
-        $percent = ($diff / $prevBmi) * 100;
-
+        $diff = $currentValue - $prevValue;
         $status = 'stabil';
-        if ($diff > 0.1)
+        if ($diff > 0.05)
             $status = 'meningkat';
-        if ($diff < -0.1)
+        if ($diff < -0.05)
             $status = 'menurun';
 
+        // Velocity calculation (if more than 1 previous data point)
+        $velocity = null;
+        if ($history->count() >= 2) {
+            $oldest = $history->last();
+            $newest = $history->first();
+            $months = $oldest->measurement_date->diffInMonths($newest->measurement_date) ?: 1;
+            $oldestVal = (float) ($metric === 'bmi' ? $oldest->bmi : $oldest->{$metric});
+            $newestVal = (float) ($metric === 'bmi' ? $newest->bmi : $newest->{$metric});
+            $velocity = round(($newestVal - $oldestVal) / $months, 2);
+        }
+
+        $summary = $this->generateTrendSummary($status, $velocity, $metric);
+
         return [
-            'previous_bmi' => round($prevBmi, 2),
+            'previous_value' => round($prevValue, 2),
             'difference' => round($diff, 2),
-            'percentage' => round($percent, 1),
             'status' => $status,
             'label' => ucfirst($status),
+            'velocity' => $velocity,
+            'summary' => $summary,
             'date' => $lastMeasurement->measurement_date->toDateString(),
+            'data_points_analyzed' => $history->count()
         ];
+    }
+
+    protected function generateTrendSummary(string $status, ?float $velocity, string $metric): string
+    {
+        $metricName = $metric === 'bmi' ? 'IMT' : ($metric === 'weight' ? 'Berat Badan' : 'Tinggi Badan');
+        $base = "Tren $metricName Anda saat ini sedang $status.";
+
+        if ($velocity !== null) {
+            $action = $velocity > 0 ? "peningkatan" : "penurunan";
+            $absVelocity = abs($velocity);
+            $base .= " Terdapat rata-rata $action sebesar $absVelocity per bulan dalam periode terakhir.";
+        }
+
+        return $base;
     }
 
     /**
@@ -91,11 +122,10 @@ class MeasurementService
             data: $data,
         );
 
-        // Calculate trend for adults/adolescents using BMI
-        $trend = null;
-        if (in_array($category, ['dewasa', 'remaja']) && isset($calculationResults['bmi'])) {
-            $trend = $this->calculateTrend($subject, $calculationResults['bmi'], $category);
-        }
+        // Calculate trend (Default to BMI for trend analysis)
+        $trendMetric = in_array($category, ['dewasa', 'remaja']) ? 'bmi' : 'weight';
+        $currentVal = $calculationResults[$trendMetric] ?? ($data['weight'] ?? 0);
+        $trend = $this->calculateTrend($subject, (float) $currentVal, $category, $trendMetric);
 
         // Prepare measurement data
         $measurementData = array_merge($data, [
@@ -114,22 +144,20 @@ class MeasurementService
 
     /**
      * Create a measurement from offline sync data.
-     * This method is used by SyncService for batch processing.
-     *
-     * @param array $syncData Data from offline sync with pre-calculated results
-     * @return Measurement
+     * Use precise timestamp + value matching for deduplication.
      */
     public function createFromSyncData(array $syncData): Measurement
     {
-        // Defensive deduplication: skip if identical measurement already exists
+        // Precise Deduplication: Check for identical timestamp + values
         $existing = Measurement::where('subject_id', $syncData['subject_id'])
             ->where('measurement_date', $syncData['measurement_date'])
             ->where('weight', $syncData['weight'] ?? null)
             ->where('height', $syncData['height'] ?? null)
+            ->where('head_circumference', $syncData['head_circumference'] ?? null)
             ->first();
 
         if ($existing) {
-            return $existing; // Already synced, return existing record
+            return $existing;
         }
 
         $subject = Subject::findOrFail($syncData['subject_id']);
@@ -168,10 +196,9 @@ class MeasurementService
         );
 
         // Calculate trend
-        $trend = null;
-        if (in_array($category, ['dewasa', 'remaja']) && isset($calculationResults['bmi'])) {
-            $trend = $this->calculateTrend($subject, $calculationResults['bmi'], $category);
-        }
+        $trendMetric = in_array($category, ['dewasa', 'remaja']) ? 'bmi' : 'weight';
+        $currentVal = $calculationResults[$trendMetric] ?? ($syncData['weight'] ?? 0);
+        $trend = $this->calculateTrend($subject, (float) $currentVal, $category, $trendMetric);
 
         // Prepare measurement data
         $measurementData = array_merge($syncData, [
@@ -255,7 +282,7 @@ class MeasurementService
      */
     public function getAllMeasurements(array $filters = [], int $perPage = 15)
     {
-        $query = Measurement::with(['subject', 'user']);
+        $query = Measurement::with(['subject', 'user'])->whereHas('subject');
 
         // Only filter by user_id if NOT an admin
         if (!auth()->user()->isAdmin()) {
@@ -306,12 +333,12 @@ class MeasurementService
             $query->where('name', 'like', "%{$filters['search']}%");
         }
 
-        // Filter by subjects that have measurements by this user (if not admin)
-        if (!auth()->user()->isAdmin()) {
-            $query->whereHas('measurements', function ($q) {
+        // Filter by subjects that have measurements by this user
+        $query->whereHas('measurements', function ($q) {
+            if (!auth()->user()->isAdmin()) {
                 $q->where('user_id', auth()->id());
-            });
-        }
+            }
+        });
 
         // We allow subjects without measurements to show up in the patient list/history
         // for better visibility of newly added patients.

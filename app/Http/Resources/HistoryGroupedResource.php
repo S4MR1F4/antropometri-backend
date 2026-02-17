@@ -4,6 +4,7 @@ namespace App\Http\Resources;
 
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Resources\MeasurementSummaryResource;
 
 /**
  * Grouped history resource for unique subjects in Riwayat view.

@@ -23,7 +23,7 @@ class MeasurementSummaryResource extends JsonResource
                 'nik' => $this->subject?->getMaskedNik() ?? '-',
                 'date_of_birth' => $this->subject?->date_of_birth?->toDateString() ?? '0000-00-00',
             ],
-            'petugas_name' => $this->user?->name,
+            'petugas_name' => $this->user?->name ?? 'Petugas Terhapus',
             'measurement_date' => $this->measurement_date?->toDateString() ?? '0000-00-00', // YYYY-MM-DD
             'measured_at' => $this->created_at?->toIso8601String(), // Full datetime
             'category' => $this->category,

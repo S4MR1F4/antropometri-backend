@@ -60,7 +60,7 @@ class DashboardStatsTest extends TestCase
     public function test_petugas_can_get_own_filtered_stats()
     {
         $otherPetugas = User::factory()->create(['role' => 'petugas']);
-        $subject = Subject::factory()->create();
+        $subject = Subject::factory()->create(['user_id' => $this->petugas->id]);
 
         // Me
         Measurement::factory()->create([

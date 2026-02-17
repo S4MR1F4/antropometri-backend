@@ -127,9 +127,11 @@ class SyncService
         $hash = $this->normalizeHash($record['hash']);
         $createdAtLocal = $record['created_at_local'] ?? now();
 
-        // Find existing measurement by hash (subject + date combination)
+        // Find existing measurement by EXACT timestamp and values
         $existing = Measurement::where('subject_id', $record['subject_id'])
-            ->whereDate('measurement_date', $record['measurement_date'])
+            ->where('measurement_date', $record['measurement_date'])
+            ->where('weight', $record['weight'] ?? null)
+            ->where('height', $record['height'] ?? null)
             ->first();
 
         if (!$existing) {
@@ -138,7 +140,7 @@ class SyncService
             return ['status' => 'synced', 'measurement' => $measurement];
         }
 
-        // Duplicate found - apply conflict resolution
+        // Duplicate found - apply conflict resolution (if results differ)
         return $this->resolveConflict($existing, $record, $createdAtLocal);
     }
 
