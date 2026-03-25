@@ -169,4 +169,33 @@ class AdminController extends Controller
             message: 'User berhasil dihapus'
         );
     }
+
+    /**
+     * Reset a user's password to a random one and send via email.
+     * POST /admin/users/{user}/reset-password
+     */
+    public function resetPassword(User $user): JsonResponse
+    {
+        $newPassword = \Illuminate\Support\Str::random(10);
+
+        $user->update([
+            'password' => \Illuminate\Support\Facades\Hash::make($newPassword)
+        ]);
+
+        try {
+            $user->notify(new \App\Notifications\PasswordResetNotification($newPassword));
+
+            ActivityLog::log('admin_reset_user_password', 'User', $user->id);
+
+            return $this->successResponse(
+                message: "Kata sandi untuk {$user->name} berhasil direset dan dikirim ke emailnya."
+            );
+        } catch (\Exception $e) {
+            \Log::error('Failed to send reset email: ' . $e->getMessage());
+            return $this->errorResponse(
+                message: 'Gagal mengirim email reset kata sandi. Periksa konfigurasi SMTP.',
+                code: 500
+            );
+        }
+    }
 }

@@ -33,6 +33,7 @@ class Subject extends Model
         'address',
         'parent_name',
         'phone',
+        'pregnancy_start_date',
     ];
 
     /**
@@ -42,6 +43,7 @@ class Subject extends Model
      */
     protected $casts = [
         'date_of_birth' => 'date',
+        'pregnancy_start_date' => 'date',
     ];
 
     /**

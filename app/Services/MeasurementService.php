@@ -21,10 +21,28 @@ class MeasurementService
     }
 
     /**
-     * Calculate health trend based on previous measurements.
-     * Analyzes last 5 measurements for growth velocity and patterns.
+     * Helper to get severity score
      */
-    public function calculateTrend(Subject $subject, float $currentValue, string $category, string $metric = 'bmi'): ?array
+    protected function getSeverityScore(?string $status): int
+    {
+        if (empty($status))
+            return -1;
+        $status = strtolower($status);
+
+        if (str_contains($status, 'risiko kek') || str_contains($status, 'sangat kurus') || str_contains($status, 'gizi buruk') || str_contains($status, 'obesitas'))
+            return 3;
+        if (str_contains($status, 'kurus') || str_contains($status, 'gemuk') || str_contains($status, 'berisiko') || str_contains($status, 'gizi kurang') || str_contains($status, 'gizi lebih'))
+            return 2;
+        if (str_contains($status, 'normal') || str_contains($status, 'gizi baik'))
+            return 1;
+
+        return -1;
+    }
+
+    /**
+     * Calculate health trend based on previous measurements.
+     */
+    public function calculateTrend(Subject $subject, ?array $currentResult, float $currentValue, string $category, string $metric = 'bmi'): ?array
     {
         $history = $subject->measurements()
             ->where('id', '!=', request()->route('measurement'))
@@ -45,10 +63,52 @@ class MeasurementService
 
         $diff = $currentValue - $prevValue;
         $status = 'stabil';
-        if ($diff > 0.05)
-            $status = 'meningkat';
-        if ($diff < -0.05)
-            $status = 'menurun';
+        $label = 'Stabil';
+
+        // Extract statuses
+        $currStatus = null;
+        $prevStatus = null;
+
+        if (isset($currentResult['is_pregnant']) && $currentResult['is_pregnant']) {
+            $currStatus = $currentResult['status_lila'] ?? $currentResult['status_kek'] ?? null;
+            $prevStatus = $lastMeasurement->status_lila ?? $lastMeasurement->status_kek;
+        } elseif ($category === 'dewasa') {
+            $currStatus = $currentResult['status_bmi'] ?? null;
+            $prevStatus = $lastMeasurement->status_bmi;
+        } else {
+            // Remaja or Balita -> IMT or BB/TB
+            $currStatus = $currentResult['status_imtu'] ?? $currentResult['status_bbtb'] ?? $currentResult['status_bmi'] ?? null;
+            $prevStatus = $lastMeasurement->status_imtu ?? $lastMeasurement->status_bbtb ?? $lastMeasurement->status_bmi;
+        }
+
+        $currSeverity = $this->getSeverityScore($currStatus);
+        $prevSeverity = $this->getSeverityScore($prevStatus);
+
+        if ($currSeverity !== -1 && $prevSeverity !== -1) {
+            if ($currSeverity < $prevSeverity) {
+                $status = 'membaik';
+                $label = 'Lebih Sehat';
+            } elseif ($currSeverity > $prevSeverity) {
+                $status = 'memburuk';
+                $label = 'Menurun';
+            } else {
+                if ($diff > 0.05) {
+                    $status = 'meningkat';
+                    $label = 'Naik';
+                } elseif ($diff < -0.05) {
+                    $status = 'menurun';
+                    $label = 'Turun';
+                }
+            }
+        } else {
+            if ($diff > 0.05) {
+                $status = 'meningkat';
+                $label = 'Naik';
+            } elseif ($diff < -0.05) {
+                $status = 'menurun';
+                $label = 'Turun';
+            }
+        }
 
         // Velocity calculation (if more than 1 previous data point)
         $velocity = null;
@@ -61,13 +121,13 @@ class MeasurementService
             $velocity = round(($newestVal - $oldestVal) / $months, 2);
         }
 
-        $summary = $this->generateTrendSummary($status, $velocity, $metric);
+        $summary = $this->generateTrendSummary($status, $velocity, $metric, $diff, $prevValue, $currentValue);
 
         return [
             'previous_value' => round($prevValue, 2),
             'difference' => round($diff, 2),
             'status' => $status,
-            'label' => ucfirst($status),
+            'label' => $label,
             'velocity' => $velocity,
             'summary' => $summary,
             'date' => $lastMeasurement->measurement_date->toDateString(),
@@ -75,15 +135,29 @@ class MeasurementService
         ];
     }
 
-    protected function generateTrendSummary(string $status, ?float $velocity, string $metric): string
+    protected function generateTrendSummary(string $status, ?float $velocity, string $metric, float $diff, float $prev, float $curr): string
     {
         $metricName = $metric === 'bmi' ? 'IMT' : ($metric === 'weight' ? 'Berat Badan' : 'Tinggi Badan');
-        $base = "Tren $metricName Anda saat ini sedang $status.";
+        $base = "";
+        $diffStr = number_format(abs($diff), 1);
+        $prevStr = number_format($prev, 1);
+        $currStr = number_format($curr, 1);
 
-        if ($velocity !== null) {
+        if ($status === 'membaik') {
+            $base = "Kesehatan Menuju Lebih Baik. Perubahan $metricName $diffStr ($prevStr -> $currStr).";
+        } elseif ($status === 'memburuk') {
+            $base = "Kategori Kesehatan Menurun. Terdapat perubahan $metricName $diffStr ($prevStr -> $currStr).";
+        } elseif ($status === 'stabil') {
+            $base = "Kondisi terpantau stabil dengan $metricName $currStr.";
+        } else {
+            $direction = $status === 'meningkat' ? 'Naik' : 'Turun';
+            $base = "$metricName $direction $diffStr dari pengukuran sebelumnya ($prevStr -> $currStr).";
+        }
+
+        if ($velocity !== null && $status !== 'stabil' && !in_array($status, ['membaik', 'memburuk'])) {
             $action = $velocity > 0 ? "peningkatan" : "penurunan";
             $absVelocity = abs($velocity);
-            $base .= " Terdapat rata-rata $action sebesar $absVelocity per bulan dalam periode terakhir.";
+            $base .= " Rata-rata $action sebesar $absVelocity per bulan.";
         }
 
         return $base;
@@ -105,7 +179,8 @@ class MeasurementService
         );
 
         // Determine category
-        $category = $this->subjectService->determineCategory($ageInMonths);
+        $isPregnant = isset($data['is_pregnant']) ? (bool) $data['is_pregnant'] : false;
+        $category = $this->subjectService->determineCategory($ageInMonths, $isPregnant);
 
         // Calculate results based on category
         $calculationResults = $this->calculationService->calculate(
@@ -125,7 +200,7 @@ class MeasurementService
         // Calculate trend (Default to BMI for trend analysis)
         $trendMetric = in_array($category, ['dewasa', 'remaja']) ? 'bmi' : 'weight';
         $currentVal = $calculationResults[$trendMetric] ?? ($data['weight'] ?? 0);
-        $trend = $this->calculateTrend($subject, (float) $currentVal, $category, $trendMetric);
+        $trend = $this->calculateTrend($subject, $calculationResults, (float) $currentVal, $category, $trendMetric);
 
         // Prepare measurement data
         $measurementData = array_merge($data, [
@@ -138,6 +213,56 @@ class MeasurementService
             'reference_data' => $calculationResults['references'] ?? null,
             'trend_info' => $trend,
         ], $calculationResults);
+
+        // Handle Pregnancy Logic
+        if ($isPregnant) {
+            $measurementDate = \Carbon\Carbon::parse($data['measurement_date']);
+            
+            // 1. Persist pregnancy_start_date on subject if provided or not already set
+            if (isset($data['pregnancy_start_date']) && $data['pregnancy_start_date']) {
+                $subject->update(['pregnancy_start_date' => $data['pregnancy_start_date']]);
+            } elseif (!$subject->pregnancy_start_date) {
+                $subject->update(['pregnancy_start_date' => $measurementDate]);
+            }
+
+            // 2. Calculate Gestational Age (Weeks)
+            $startDate = $subject->pregnancy_start_date ? \Carbon\Carbon::parse($subject->pregnancy_start_date) : $measurementDate;
+            $gestationalWeeks = (int) $startDate->diffInWeeks($measurementDate);
+            $measurementData['gestational_age_weeks'] = $gestationalWeeks;
+
+            // 3. Determine Trimester
+            $trimester = 1;
+            if ($gestationalWeeks >= 27) {
+                $trimester = 3;
+            } elseif ($gestationalWeeks >= 14) {
+                $trimester = 2;
+            }
+            $measurementData['trimester'] = $trimester;
+
+            // 4. Calculate Weight Gain
+            // Find the last measurement before pregnancy started
+            $prePregnancyMeasurement = $subject->measurements()
+                ->where('measurement_date', '<', $startDate)
+                ->latest('measurement_date')
+                ->first();
+
+            if ($prePregnancyMeasurement instanceof \App\Models\Measurement && isset($prePregnancyMeasurement->weight)) {
+                $measurementData['pregnancy_weight_gain'] = floatval($data['weight']) - floatval($prePregnancyMeasurement->weight);
+            } else {
+                // If no pre-pregnancy data, try to find the earliest pregnancy measurement
+                $firstPregnancyMeasurement = $subject->measurements()
+                    ->where('is_pregnant', true)
+                    ->oldest('measurement_date')
+                    ->first();
+                
+                if ($firstPregnancyMeasurement instanceof \App\Models\Measurement && isset($firstPregnancyMeasurement->weight)) {
+                    $measurementData['pregnancy_weight_gain'] = floatval($data['weight']) - floatval($firstPregnancyMeasurement->weight);
+                } else {
+                    // Default to 0 if this is the first ever measurement
+                    $measurementData['pregnancy_weight_gain'] = 0;
+                }
+            }
+        }
 
         return Measurement::create($measurementData);
     }
@@ -173,7 +298,8 @@ class MeasurementService
         );
 
         // Determine category
-        $category = $syncData['category'] ?? $this->subjectService->determineCategory($ageInMonths);
+        $isPregnant = isset($syncData['is_pregnant']) ? (bool) $syncData['is_pregnant'] : false;
+        $category = $syncData['category'] ?? $this->subjectService->determineCategory($ageInMonths, $isPregnant);
 
         // If sync data already has calculated results, use them
         // Otherwise, calculate fresh
@@ -198,7 +324,7 @@ class MeasurementService
         // Calculate trend
         $trendMetric = in_array($category, ['dewasa', 'remaja']) ? 'bmi' : 'weight';
         $currentVal = $calculationResults[$trendMetric] ?? ($syncData['weight'] ?? 0);
-        $trend = $this->calculateTrend($subject, (float) $currentVal, $category, $trendMetric);
+        $trend = $this->calculateTrend($subject, $calculationResults, (float) $currentVal, $category, $trendMetric);
 
         // Prepare measurement data
         $measurementData = array_merge($syncData, [
@@ -282,7 +408,19 @@ class MeasurementService
      */
     public function getAllMeasurements(array $filters = [], int $perPage = 15)
     {
-        $query = Measurement::with(['subject', 'user'])->whereHas('subject');
+        $query = Measurement::with(['subject' => function($q) {
+            $q->withTrashed();
+        }, 'user']);
+
+        if (!empty($filters['only_trashed'])) {
+            $query->onlyTrashed();
+        }
+
+        // We use whereHas with withTrashed to ensure we see measurements 
+        // even if their parent patient is deleted.
+        $query->whereHas('subject', function($q) {
+            $q->withTrashed();
+        });
 
         // Only filter by user_id if NOT an admin
         if (!auth()->user()->isAdmin()) {
@@ -327,6 +465,10 @@ class MeasurementService
     public function getGroupedHistory(array $filters = [], int $perPage = 15)
     {
         $query = Subject::query();
+
+        if (!empty($filters['only_trashed'])) {
+            $query->onlyTrashed();
+        }
 
         // Search by subject name
         if (!empty($filters['search'])) {

@@ -34,7 +34,7 @@ class SubjectController extends Controller
     public function index(Request $request): JsonResponse
     {
         $subjects = $this->subjectService->getSubjects(
-            filters: $request->only(['search', 'category', 'gender', 'sort_by', 'sort_dir']),
+            filters: $request->only(['search', 'category', 'gender', 'sort_by', 'sort_dir', 'trashed', 'only_trashed']),
             perPage: $request->integer('per_page', 15)
         );
 
@@ -131,6 +131,37 @@ class SubjectController extends Controller
 
         return $this->successResponse(
             message: 'Subjek berhasil dihapus'
+        );
+    }
+
+    /**
+     * Restore a soft-deleted subject.
+     * POST /subjects/{subject}/restore
+     */
+    public function restore(Subject $subject): JsonResponse
+    {
+        $this->authorize('restore', $subject);
+
+        $subject->restore();
+
+        return $this->successResponse(
+            data: ['subject' => new SubjectResource($subject)],
+            message: 'Data subjek berhasil dipulihkan'
+        );
+    }
+
+    /**
+     * Reset subject's pregnancy status.
+     * POST /subjects/{subject}/reset-pregnancy
+     */
+    public function resetPregnancy(Subject $subject): JsonResponse
+    {
+        $this->authorize('update', $subject);
+
+        $subject->update(['pregnancy_start_date' => null]);
+
+        return $this->successResponse(
+            message: 'Status kehamilan berhasil direset'
         );
     }
 }

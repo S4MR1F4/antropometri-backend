@@ -168,18 +168,28 @@ class AuthController extends Controller
     {
         $request->validate(['email' => 'required|email']);
 
-        $status = \Password::broker()->sendResetLink(
-            $request->only('email')
-        );
-
-        if ($status === \Password::RESET_LINK_SENT) {
-            return $this->successResponse(message: 'Link reset kata sandi telah dikirim ke email Anda.');
+        $user = User::where('email', $request->email)->first();
+        if (!$user) {
+            return $this->errorResponse(
+                message: 'Email tidak terdaftar.',
+                code: 404
+            );
         }
 
-        return $this->errorResponse(
-            message: 'Gagal mengirim link reset kata sandi.',
-            code: 400
-        );
+        $newPassword = Str::random(10);
+        $user->update(['password' => Hash::make($newPassword)]);
+
+        try {
+            $user->notify(new \App\Notifications\PasswordResetNotification($newPassword));
+        } catch (\Exception $e) {
+            \Log::error('Failed to send reset email: ' . $e->getMessage());
+            return $this->errorResponse(
+                message: 'Gagal mengirim email reset kata sandi. Periksa konfigurasi SMTP.',
+                code: 500
+            );
+        }
+
+        return $this->successResponse(message: 'Kata sandi baru telah dikirim ke email Anda.');
     }
 
     /**

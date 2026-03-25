@@ -71,7 +71,7 @@ class MeasurementController extends Controller
     public function history(Request $request): JsonResponse
     {
         $measurements = $this->measurementService->getAllMeasurements(
-            filters: $request->only(['from_date', 'to_date', 'category', 'search']),
+            filters: $request->only(['from_date', 'to_date', 'category', 'search', 'only_trashed']),
             perPage: $request->integer('per_page', 15)
         );
 
@@ -95,7 +95,7 @@ class MeasurementController extends Controller
     public function groupedHistory(Request $request): JsonResponse
     {
         $subjects = $this->measurementService->getGroupedHistory(
-            filters: $request->only(['search']),
+            filters: $request->only(['search', 'only_trashed']),
             perPage: $request->integer('per_page', 15)
         );
 
@@ -178,6 +178,22 @@ class MeasurementController extends Controller
 
         return $this->successResponse(
             message: 'Pengukuran berhasil dihapus'
+        );
+    }
+
+    /**
+     * Restore a deleted measurement.
+     * POST /measurements/{id}/restore
+     */
+    public function restore(int $id): JsonResponse
+    {
+        $measurement = Measurement::onlyTrashed()->findOrFail($id);
+        $this->authorize('delete', $measurement); // Reuse delete policy for restoration
+
+        $measurement->restore();
+
+        return $this->successResponse(
+            message: 'Pengukuran berhasil dipulihkan'
         );
     }
 }

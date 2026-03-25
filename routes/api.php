@@ -22,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 
 // Public routes (no authentication required)
 Route::get('/health', [\App\Http\Controllers\HealthController::class, 'check']);
+Route::get('/version/check', [\App\Http\Controllers\Api\VersionController::class, 'check']);
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:6,1');
@@ -46,13 +47,17 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('/notifications/{id}/read', [\App\Http\Controllers\Api\NotificationController::class, 'markAsRead']);
 
     // Subjects CRUD
-    Route::apiResource('subjects', SubjectController::class);
+    Route::post('subjects/{subject}/reset-pregnancy', [SubjectController::class, 'resetPregnancy']);
+    Route::post('subjects/{subject}/restore', [SubjectController::class, 'restore'])->withTrashed();
+    Route::apiResource('subjects', SubjectController::class)->withTrashed(['show', 'update']);
 
     // Measurements
+    Route::post('/measurements/{id}/restore', [MeasurementController::class, 'restore']);
     Route::get('/measurements/grouped', [MeasurementController::class, 'groupedHistory']);
     Route::get('/measurements', [MeasurementController::class, 'history']);
     Route::apiResource('subjects.measurements', MeasurementController::class)
         ->except(['update'])
+        ->withTrashed(['index'])
         ->shallow();
 
     // Offline Sync (authenticated users)
@@ -64,6 +69,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::get('/pdf', [ExportController::class, 'exportPdf']);
     });
 
+    // Imports (Authenticated — admin & petugas)
+    Route::post('/import/measurements', [\App\Http\Controllers\Api\ImportController::class, 'importMeasurements']);
+
     // Admin only routes
     Route::middleware(['admin'])->prefix('admin')->group(function () {
         // User management
@@ -71,6 +79,7 @@ Route::middleware(['auth:sanctum'])->group(function () {
         Route::post('/users', [AdminController::class, 'storeUser']);
         Route::put('/users/{user}', [AdminController::class, 'updateUser']);
         Route::delete('/users/{user}', [AdminController::class, 'destroyUser']);
+        Route::post('/users/{user}/reset-password', [AdminController::class, 'resetPassword']);
 
         // Statistics
         Route::get('/statistics', [AdminController::class, 'statistics']);

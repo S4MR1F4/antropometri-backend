@@ -33,7 +33,7 @@ class UserResource extends JsonResource
                 $distribution = $statisticsService->getDashboardStats($filters);
 
                 return [
-                    'total_subjects' => $this->subjects()->count(),
+                    'total_subjects' => $this->measurements()->distinct('subject_id')->count(),
                     'total_measurements' => $distribution['total_measurements'] ?? 0,
                     'total_all_time' => $this->measurements()->count(),
                     'today_measurements' => $this->measurements()

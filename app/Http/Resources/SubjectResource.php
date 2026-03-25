@@ -24,19 +24,22 @@ class SubjectResource extends JsonResource
             'normalized_name' => $this->normalized_name,
             'date_of_birth' => $this->date_of_birth?->toDateString() ?? '0000-00-00',
             'gender' => $this->gender,
-            'nik' => $this->getMaskedNik(),
+            'nik' => $this->nik,
             'age_in_months' => $ageInMonths,
             'age_display' => $this->formatAge($ageInMonths),
             'category' => $category,
             'address' => $this->address,
             'parent_name' => $this->parent_name,
             'phone' => $this->phone,
+            'pregnancy_start_date' => $this->pregnancy_start_date?->toDateString(),
+            'is_pregnant_active' => (bool)$this->pregnancy_start_date,
             'measurements_count' => $this->whenCounted('measurements'),
             'latest_measurement' => $this->when(
                 $this->relationLoaded('latestMeasurement') && $this->latestMeasurement,
                 fn() => new MeasurementSummaryResource($this->latestMeasurement)
             ),
             'created_at' => $this->created_at?->toIso8601String(),
+            'deleted_at' => $this->deleted_at?->toIso8601String(),
         ];
     }
 

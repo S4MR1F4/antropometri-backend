@@ -19,6 +19,7 @@ class SubjectService
     public function getSubjects(array $filters = [], int $perPage = 15): LengthAwarePaginator
     {
         $query = Subject::query()
+            ->withTrashed()
             ->with('latestMeasurement')
             ->withCount('measurements');
 
@@ -56,6 +57,18 @@ class SubjectService
         // Gender filter
         if (!empty($filters['gender'])) {
             $query->where('gender', $filters['gender']);
+        }
+
+        // Trashed filter
+        if (isset($filters['trashed']) && $filters['trashed']) {
+            $query->onlyTrashed();
+        } else {
+            // Default to not showing trashed unless explicitly asked, or keep withTrashed?
+            // Actually, existing code used withTrashed() unconditionally. 
+            // If they want ONLY trashed:
+            if (isset($filters['only_trashed']) && $filters['only_trashed']) {
+                $query->onlyTrashed();
+            }
         }
 
         // Sorting
@@ -170,8 +183,12 @@ class SubjectService
      * Determine category based on age in months.
      * Per 08_calculation_logic.md §2.2
      */
-    public function determineCategory(int $ageInMonths): string
+    public function determineCategory(int $ageInMonths, bool $isPregnant = false): string
     {
+        if ($isPregnant) {
+            return 'dewasa'; // Ibu Hamil calculations are handled inside CalculateDewasaAction
+        }
+
         if ($ageInMonths <= 60) {
             return 'balita';
         } elseif ($ageInMonths <= 216) {

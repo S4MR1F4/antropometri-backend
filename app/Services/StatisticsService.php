@@ -102,15 +102,9 @@ class StatisticsService
             ->orderBy('measurement_date', 'desc')
             ->get();
 
-        // Group by subject to get latest status
-        $uniqueSubjects = [];
+        // We no longer group by subject_id. Instead, we include all measurements
+        // so that the total distribution matches the total count of measurements.
         foreach ($results as $m) {
-            if (!isset($uniqueSubjects[$m->subject_id])) {
-                $uniqueSubjects[$m->subject_id] = $m;
-            }
-        }
-
-        foreach ($uniqueSubjects as $m) {
             $isStunting = false;
             $isWasting = false;
             $isObesity = false;

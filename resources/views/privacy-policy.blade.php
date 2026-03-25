@@ -43,6 +43,11 @@
             margin-bottom: 10px;
         }
 
+        a {
+            color: #059669;
+            text-decoration: underline;
+        }
+
         .footer {
             margin-top: 50px;
             font-size: 0.9em;
@@ -55,10 +60,11 @@
 <body>
     <div class="container">
         <h1>Kebijakan Privasi</h1>
-        <p><strong>Terakhir Diperbarui: 15 Februari 2026</strong></p>
+        <p><strong>Terakhir Diperbarui: 23 Februari 2026</strong></p>
 
         <p>Aplikasi <strong>Antropometri Indonesia</strong> berkomitmen untuk melindungi privasi data kesehatan dan
-            informasi pribadi Anda. Dokumen ini menjelaskan bagaimana kami mengelola data dalam Aplikasi.</p>
+            informasi pribadi Anda. Dokumen ini menjelaskan bagaimana kami mengumpulkan, menggunakan, menyimpan, dan
+            melindungi data dalam Aplikasi.</p>
 
         <h2>1. Jenis Data yang Dikumpulkan</h2>
         <ul>
@@ -66,6 +72,7 @@
             <li><strong>Data Pengukuran</strong>: Berat badan, Tinggi badan, Lingkar kepala, Lingkar perut, dan Lengan
                 atas (LiLA).</li>
             <li><strong>Data Petugas</strong>: Nama atau akun petugas yang melakukan pendataan.</li>
+            <li><strong>Data Teknis</strong>: Versi aplikasi, jenis perangkat, dan log error untuk perbaikan.</li>
         </ul>
 
         <h2>2. Tujuan Pengolahan Data</h2>
@@ -73,24 +80,26 @@
         <ul>
             <li>Melakukan perhitungan nilai Z-Score berdasarkan standar Kemenkes RI.</li>
             <li>Memantau tren pertumbuhan dan status gizi individu.</li>
-            <li>Menyediakan laporan untuk keperluan administrasi kesehatan masyarakat.</li>
+            <li>Menyediakan laporan (PDF/CSV) untuk keperluan administrasi kesehatan masyarakat.</li>
+            <li>Meningkatkan kualitas layanan dan performa aplikasi.</li>
         </ul>
 
-        <h2>3. Penyimpanan Data & Keamanan</h2>
+        <h2>3. Penyimpanan Data &amp; Keamanan</h2>
         <ul>
             <li><strong>Penyimpanan</strong>: Data disimpan secara offline di perangkat dan disinkronkan ke server aman
                 kami menggunakan protokol HTTPS dan enkripsi.</li>
             <li><strong>Keamanan</strong>: Kami menerapkan pembatasan akses (role-based access) dan enkripsi data
-                (AES-256).</li>
+                (AES-256) di mana data pasien hanya dapat dilihat oleh tenaga kesehatan berwenang.</li>
         </ul>
 
         <h2>4. Berbagi Data</h2>
-        <p>Kami <strong>tidak akan pernah</strong> menjual informasi pribadi Anda kepada pihak ketiga. Data hanya
+        <p>Kami <strong>tidak akan pernah</strong> menjual atau membagikan informasi pribadi atau data kesehatan Anda
+            kepada pihak ketiga untuk tujuan komersial. Data hanya
             digunakan untuk kepentingan pelaporan kesehatan resmi.</p>
 
-        <h2>5. Izin Perangkat</h2>
+        <h2>5. Izin Perangkat (App Permissions)</h2>
         <ul>
-            <li><strong>Penyimpanan</strong>: Untuk menyimpan laporan PDF/CSV.</li>
+            <li><strong>Penyimpanan (Storage)</strong>: Untuk menyimpan laporan PDF/CSV.</li>
             <li><strong>Internet</strong>: Untuk sinkronisasi data ke pusat.</li>
         </ul>
 
@@ -102,11 +111,21 @@
                     href="mailto:antropometri@samrifa.com">antropometri@samrifa.com</a> dengan subjek "Permintaan
                 Penghapusan Data".
             </li>
-            <li><strong>Admin Antropometri</strong>: Menghubungi administrator untuk proses lebih lanjut.</li>
+            <li><strong>Admin Antropometri</strong>: Menghubungi administrator sistem di instansi terkait untuk proses
+                lebih lanjut.</li>
         </ul>
         <p>Kami akan memproses penghapusan data dalam waktu maksimal 7 hari kerja setelah verifikasi identitas.</p>
 
-        <h2>7. Kontak Kami</h2>
+        <h2>7. Hak Pengguna</h2>
+        <p>Pengguna atau subjek data berhak untuk:</p>
+        <ul>
+            <li>Mengakses data pribadi yang tersimpan.</li>
+            <li>Meminta koreksi atas data yang tidak akurat.</li>
+            <li>Meminta penghapusan data mereka dari sistem.</li>
+            <li>Mendapatkan salinan data mereka dalam format yang dapat dibaca.</li>
+        </ul>
+
+        <h2>8. Kontak Kami</h2>
         <p>Jika Anda memiliki pertanyaan mengenai kebijakan privasi ini, Anda dapat menghubungi kami di: <a
                 href="mailto:antropometri@samrifa.com">antropometri@samrifa.com</a></p>
     </div>

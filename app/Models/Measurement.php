@@ -52,6 +52,9 @@ class Measurement extends Model
         'reference_data',
         'recommendation',
         'trend_info',
+        'gestational_age_weeks',
+        'trimester',
+        'pregnancy_weight_gain',
     ];
 
     /**
@@ -75,6 +78,9 @@ class Measurement extends Model
         'has_central_obesity' => 'boolean',
         'reference_data' => 'array',
         'trend_info' => 'array',
+        'gestational_age_weeks' => 'integer',
+        'trimester' => 'integer',
+        'pregnancy_weight_gain' => 'decimal:2',
     ];
 
     /**

@@ -30,6 +30,7 @@ class StoreMeasurementRequest extends FormRequest
             'height' => ['required', 'numeric'],
             'arm_circumference' => ['nullable', 'numeric', 'min:10', 'max:60'],
             'is_pregnant' => ['nullable', 'boolean'],
+            'pregnancy_start_date' => ['nullable', 'date', 'before_or_equal:today'],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
 

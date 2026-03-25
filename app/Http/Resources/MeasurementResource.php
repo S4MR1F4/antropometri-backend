@@ -29,6 +29,9 @@ class MeasurementResource extends JsonResource
             'measurement_type' => $this->when($this->category === 'balita', $this->measurement_type),
             'age_in_months' => $this->age_in_months,
             'age_in_years' => $this->when($this->category === 'dewasa', fn() => intdiv($this->age_in_months ?? 0, 12)),
+            'gestational_age_weeks' => $this->gestational_age_weeks,
+            'trimester' => $this->trimester,
+            'pregnancy_weight_gain' => $this->pregnancy_weight_gain,
 
             // Singular 'result' key with FLAT structure for Mobile App compatibility
             'result' => $this->getFlatResult(),
@@ -90,6 +93,13 @@ class MeasurementResource extends JsonResource
         $flat['recommendation'] = $this->recommendation;
         $flat['trend'] = $this->trend_info;
         $flat['references'] = $this->reference_data;
+
+        // Pregnancy Metrics
+        if ($this->is_pregnant) {
+            $flat['gestational_age_weeks'] = $this->gestational_age_weeks;
+            $flat['trimester'] = $this->trimester;
+            $flat['pregnancy_weight_gain'] = $this->pregnancy_weight_gain;
+        }
 
         return $flat;
     }

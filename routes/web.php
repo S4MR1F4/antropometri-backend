@@ -6,9 +6,13 @@ Route::get('/privacy-policy', function () {
     return view('privacy-policy');
 });
 
+Route::get('/', function () {
+    return view('landing');
+});
+
 Route::any('{any}', function () {
     return response()->json([
         'success' => false,
         'message' => 'Web access is restricted. Please use the API endpoints at /api.',
     ], 403);
-})->where('any', '.*');
+})->where('any', '^(?!api).*$');

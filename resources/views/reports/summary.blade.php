@@ -322,6 +322,9 @@
                              <div style="font-size: 11px;">
                                 <strong>BB:</strong> {{ $m->weight }} kg | <strong>TB:</strong> {{ $m->height }} cm
                                 @if($m->bmi) | <strong>IMT:</strong> {{ $m->bmi }} @endif
+                                @if($m->head_circumference) | <strong>LK:</strong> {{ $m->head_circumference }} cm @endif
+                                @if($m->arm_circumference) | <strong>LILA:</strong> {{ $m->arm_circumference }} cm @endif
+                                @if($m->waist_circumference) | <strong>LP:</strong> {{ $m->waist_circumference }} cm @endif
                              </div>
                             
                             <div style="margin-top: 5px; font-size: 10px; border-top: 1px dashed #ccc; padding-top: 4px;">
@@ -329,7 +332,9 @@
                                 @if($m->status_tbu) TB/U: {{ $m->status_tbu }}<br> @endif
                                 @if($m->status_bbtb) BB/TB: {{ $m->status_bbtb }}<br> @endif
                                 @if($m->status_imtu) IMT/U: {{ $m->status_imtu }}<br> @endif
-                                @if($m->status_bmi) BMI: {{ $m->status_bmi }} @endif
+                                @if($m->status_bmi) BMI: {{ $m->status_bmi }}<br> @endif
+                                @if($m->status_kek ?? $m->status_lila) LILA/KEK: {{ $m->status_kek ?? $m->status_lila }}<br> @endif
+                                @if($m->has_central_obesity) <strong>Obesitas Sentral: Ya</strong> @endif
                             </div>
                         </td>
                     </tr>
