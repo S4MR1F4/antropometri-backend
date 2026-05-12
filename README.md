@@ -539,6 +539,8 @@ Response:
 }
 ```
 
+Jika validasi batch gagal atau terjadi konflik, backend mencatat `sync_validation_failed`, `sync_record_conflict`, atau `sync_endpoint_failed` ke activity log. Detail yang dicatat mencakup `local_id`, `subject_id`, tanggal pemeriksaan, jumlah record, dan alasan gagal supaya data lapangan dapat ditelusuri tanpa menghapus data lokal secara otomatis.
+
 ### POST `/api/activity-logs/client`
 
 Menerima log lokal dari mobile ketika aplikasi kembali online. Dipakai untuk mencatat error offline, aksi tambah/edit/hapus, proses sync, dan konteks perangkat.

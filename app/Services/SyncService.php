@@ -62,6 +62,17 @@ class SyncService
                         $skipped++;
                         break;
                     case 'conflict':
+                        ActivityLog::log(
+                            'sync_record_conflict',
+                            'SyncLog',
+                            $syncLog->id,
+                            [
+                                'local_id' => $record['local_id'] ?? null,
+                                'subject_id' => $record['subject_id'] ?? null,
+                                'measurement_date' => $record['measurement_date'] ?? null,
+                                'reason' => $result['reason'],
+                            ]
+                        );
                         $conflicts[] = [
                             'local_id' => $record['local_id'] ?? null,
                             'reason' => $result['reason'],
@@ -120,7 +131,7 @@ class SyncService
         if (!isset($record['subject_id'], $record['hash'], $record['measurement_date'])) {
             return [
                 'status' => 'conflict',
-                'reason' => 'Data tidak lengkap',
+                'reason' => 'Data tidak lengkap: subject_id, hash, atau measurement_date kosong',
             ];
         }
 
@@ -191,7 +202,7 @@ class SyncService
 
         return [
             'status' => 'conflict',
-            'reason' => 'Hasil berbeda dengan data server',
+            'reason' => 'Hasil berbeda dengan data server. Data lokal tidak dihapus otomatis dan perlu direview.',
         ];
     }
 

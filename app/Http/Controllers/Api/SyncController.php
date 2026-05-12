@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\ActivityLog;
 use App\Services\SyncService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -58,6 +59,11 @@ class SyncController extends Controller
         ]);
 
         if ($validator->fails()) {
+            ActivityLog::log('sync_validation_failed', 'SyncLog', null, [
+                'errors' => $validator->errors()->toArray(),
+                'total_records' => count($request->input('records', [])),
+            ]);
+
             return $this->errorResponse(
                 message: 'Data tidak valid',
                 errors: $validator->errors()->toArray(),
@@ -73,6 +79,11 @@ class SyncController extends Controller
                 message: 'Sinkronisasi selesai'
             );
         } catch (\Throwable $e) {
+            ActivityLog::log('sync_endpoint_failed', 'SyncLog', null, [
+                'error' => $e->getMessage(),
+                'total_records' => count($request->input('records', [])),
+            ]);
+
             return $this->errorResponse(
                 message: 'Sinkronisasi gagal: ' . $e->getMessage(),
                 code: 500
