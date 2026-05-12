@@ -17,7 +17,6 @@ class HistoryGroupedResource extends JsonResource
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'nik' => $this->nik,
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth?->toDateString(),
             'measurement_count' => $this->measurements_count ?? 0,

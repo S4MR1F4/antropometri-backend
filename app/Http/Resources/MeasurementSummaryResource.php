@@ -20,7 +20,6 @@ class MeasurementSummaryResource extends JsonResource
                 'id' => $this->subject?->id,
                 'name' => $this->subject?->name ?? 'Pasien Terhapus',
                 'gender' => $this->subject?->gender ?? '-',
-                'nik' => $this->subject?->nik,
                 'date_of_birth' => $this->subject?->date_of_birth?->toDateString() ?? '0000-00-00',
             ],
             'petugas_name' => $this->user?->name ?? 'Petugas Terhapus',

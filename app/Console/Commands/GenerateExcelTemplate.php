@@ -45,7 +45,6 @@ class GenerateExcelTemplate extends Command
 
         $headers = [
             'No',
-            'NIK',
             'Nama Pasien',
             'Tanggal Lahir',
             'Tanggal Periksa',
@@ -81,7 +80,7 @@ class GenerateExcelTemplate extends Command
         ];
 
         $sheet->fromArray([$headers], NULL, 'A1');
-        $sheet->getStyle('A1:Z1')->applyFromArray($headerStyle);
+        $sheet->getStyle('A1:Y1')->applyFromArray($headerStyle);
         $sheet->getRowDimension(1)->setRowHeight(55);
         $sheet->freezePane('A2');
 
@@ -128,16 +127,16 @@ class GenerateExcelTemplate extends Command
             'borders' => ['allBorders' => ['borderStyle' => Border::BORDER_THIN]],
         ];
 
-        $sheet->getStyle("A2:K$maxRows")->applyFromArray($inputStyle);
-        $sheet->getStyle("L2:Z$maxRows")->applyFromArray($autoStyle);
+        $sheet->getStyle("A2:J$maxRows")->applyFromArray($inputStyle);
+        $sheet->getStyle("K2:Y$maxRows")->applyFromArray($autoStyle);
 
         $sheet->getProtection()->setSheet(true);
-        $sheet->getStyle("A2:K$maxRows")->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
+        $sheet->getStyle("A2:J$maxRows")->getProtection()->setLocked(Protection::PROTECTION_UNPROTECTED);
 
         // --- Data Validation & Dropdowns ---
 
         // Validation for Date (Memaksa Date Format dan trigger Date Picker native di beberapa platform Excel)
-        $dvDate = $sheet->getCell('D2')->getDataValidation();
+        $dvDate = $sheet->getCell('C2')->getDataValidation();
         $dvDate->setType(DataValidation::TYPE_DATE);
         $dvDate->setErrorStyle(DataValidation::STYLE_STOP);
         $dvDate->setAllowBlank(true);
@@ -145,85 +144,86 @@ class GenerateExcelTemplate extends Command
         $dvDate->setPromptTitle('Pilih/Ketik Tanggal');
         $dvDate->setPrompt('Gunakan format: YYYY-MM-DD. (Contoh: 2024-05-20)');
 
-        $dvGender = $sheet->getCell('F2')->getDataValidation();
+        $dvGender = $sheet->getCell('E2')->getDataValidation();
         $dvGender->setType(DataValidation::TYPE_LIST);
         $dvGender->setAllowBlank(true);
         $dvGender->setShowDropDown(true);
         $dvGender->setFormula1('"L,P"');
 
-        $dvHamil = $sheet->getCell('G2')->getDataValidation();
+        $dvHamil = $sheet->getCell('F2')->getDataValidation();
         $dvHamil->setType(DataValidation::TYPE_LIST);
         $dvHamil->setAllowBlank(true);
         $dvHamil->setShowDropDown(true);
         $dvHamil->setFormula1('"Y,T"');
 
         for ($r = 2; $r <= $maxRows; $r++) {
+            $sheet->getCell("C{$r}")->setDataValidation(clone $dvDate);
             $sheet->getCell("D{$r}")->setDataValidation(clone $dvDate);
-            $sheet->getCell("E{$r}")->setDataValidation(clone $dvDate);
-            $sheet->getCell("F{$r}")->setDataValidation(clone $dvGender);
-            $sheet->getCell("G{$r}")->setDataValidation(clone $dvHamil);
+            $sheet->getCell("E{$r}")->setDataValidation(clone $dvGender);
+            $sheet->getCell("F{$r}")->setDataValidation(clone $dvHamil);
 
             // Format Numbering as proper Date
+            $sheet->getStyle("C{$r}")->getNumberFormat()->setFormatCode('yyyy-mm-dd');
             $sheet->getStyle("D{$r}")->getNumberFormat()->setFormatCode('yyyy-mm-dd');
-            $sheet->getStyle("E{$r}")->getNumberFormat()->setFormatCode('yyyy-mm-dd');
         }
 
         // --- SUMIFS Based Master Formulas ---
+        // Column mapping: C=TglLahir, D=TglPeriksa, E=JK, F=Hamil, G=BB, H=TB, I=LILA, J=LK
+        // Auto columns: K=Umur(Bln), L=Umur(Thn), M=Kategori, N=ZBBu, O=StBBu, P=ZTBu, Q=StTBu, R=ZBBTB, S=StBBTB, T=ZIMTU, U=StIMTU, V=IMTDewasa, W=StIMTDewasa, X=LILA(Bumil), Y=Rekomendasi
         for ($r = 2; $r <= $maxRows; $r++) {
-            $sheet->setCellValue("L{$r}", "=IF(AND(D{$r}<>\"\", E{$r}<>\"\"), DATEDIF(D{$r}, E{$r}, \"m\"), \"\")");
-            $sheet->setCellValue("M{$r}", "=IF(L{$r}<>\"\", INT(L{$r}/12), \"\")");
-            $sheet->setCellValue("N{$r}", "=IF(G{$r}=\"Y\", \"Ibu Hamil\", IF(L{$r}<>\"\", IF(L{$r}<=60, \"Balita\", IF(L{$r}<=216, \"Remaja\", \"Dewasa\")), \"\"))");
+            $sheet->setCellValue("K{$r}", "=IF(AND(C{$r}<>\"\", D{$r}<>\"\"), DATEDIF(C{$r}, D{$r}, \"m\"), \"\")");
+            $sheet->setCellValue("L{$r}", "=IF(K{$r}<>\"\", INT(K{$r}/12), \"\")");
+            $sheet->setCellValue("M{$r}", "=IF(F{$r}=\"Y\", \"Ibu Hamil\", IF(K{$r}<>\"\", IF(K{$r}<=60, \"Balita\", IF(K{$r}<=216, \"Remaja\", \"Dewasa\")), \"\"))");
 
-            // Variables for calculations
-            $bb = "H$r";
-            $tb = "I$r";
+            $bb = "G$r";
+            $tb = "H$r";
 
             // BBU
-            $c_bbu = "COUNTIFS(Ref_BBU!B:B, F$r, Ref_BBU!A:A, L$r)";
-            $m_bbu = "SUMIFS(Ref_BBU!C:C, Ref_BBU!B:B, F$r, Ref_BBU!A:A, L$r)";
-            $n_bbu = "SUMIFS(Ref_BBU!D:D, Ref_BBU!B:B, F$r, Ref_BBU!A:A, L$r)";
-            $p_bbu = "SUMIFS(Ref_BBU!E:E, Ref_BBU!B:B, F$r, Ref_BBU!A:A, L$r)";
-            $sheet->setCellValue("O{$r}", "=IF(AND(N{$r}=\"Balita\", $bb<>\"\"), IF($c_bbu>0, ROUND(($bb - $m_bbu) / IF($bb >= $m_bbu, $p_bbu - $m_bbu, $m_bbu - $n_bbu), 2), \"N/A\"), \"-\")");
-            $sheet->setCellValue("P{$r}", "=IF(O{$r}=\"-\", \"-\", IF(O{$r}=\"N/A\", \"N/A\", IF(O{$r}<-3, \"Gizi Buruk\", IF(O{$r}<-2, \"Gizi Kurang\", IF(O{$r}<=1, \"Gizi Baik\", \"Beresiko Lebih\")))))");
+            $c_bbu = "COUNTIFS(Ref_BBU!B:B, E$r, Ref_BBU!A:A, K$r)";
+            $m_bbu = "SUMIFS(Ref_BBU!C:C, Ref_BBU!B:B, E$r, Ref_BBU!A:A, K$r)";
+            $n_bbu = "SUMIFS(Ref_BBU!D:D, Ref_BBU!B:B, E$r, Ref_BBU!A:A, K$r)";
+            $p_bbu = "SUMIFS(Ref_BBU!E:E, Ref_BBU!B:B, E$r, Ref_BBU!A:A, K$r)";
+            $sheet->setCellValue("N{$r}", "=IF(AND(M{$r}=\"Balita\", $bb<>\"\"), IF($c_bbu>0, ROUND(($bb - $m_bbu) / IF($bb >= $m_bbu, $p_bbu - $m_bbu, $m_bbu - $n_bbu), 2), \"N/A\"), \"-\")");
+            $sheet->setCellValue("O{$r}", "=IF(N{$r}=\"-\", \"-\", IF(N{$r}=\"N/A\", \"N/A\", IF(N{$r}<-3, \"Gizi Buruk\", IF(N{$r}<-2, \"Gizi Kurang\", IF(N{$r}<=1, \"Gizi Baik\", \"Beresiko Lebih\")))))");
 
             // TBU
-            $c_tbu = "COUNTIFS(Ref_TBU!B:B, F$r, Ref_TBU!A:A, L$r)";
-            $m_tbu = "SUMIFS(Ref_TBU!C:C, Ref_TBU!B:B, F$r, Ref_TBU!A:A, L$r)";
-            $n_tbu = "SUMIFS(Ref_TBU!D:D, Ref_TBU!B:B, F$r, Ref_TBU!A:A, L$r)";
-            $p_tbu = "SUMIFS(Ref_TBU!E:E, Ref_TBU!B:B, F$r, Ref_TBU!A:A, L$r)";
-            $sheet->setCellValue("Q{$r}", "=IF(AND(N{$r}=\"Balita\", $tb<>\"\"), IF($c_tbu>0, ROUND(($tb - $m_tbu) / IF($tb >= $m_tbu, $p_tbu - $m_tbu, $m_tbu - $n_tbu), 2), \"N/A\"), \"-\")");
-            $sheet->setCellValue("R{$r}", "=IF(Q{$r}=\"-\", \"-\", IF(Q{$r}=\"N/A\", \"N/A\", IF(Q{$r}<-3, \"Sangat Pendek\", IF(Q{$r}<-2, \"Pendek\", IF(Q{$r}<=3, \"Normal\", \"Tinggi\")))))");
+            $c_tbu = "COUNTIFS(Ref_TBU!B:B, E$r, Ref_TBU!A:A, K$r)";
+            $m_tbu = "SUMIFS(Ref_TBU!C:C, Ref_TBU!B:B, E$r, Ref_TBU!A:A, K$r)";
+            $n_tbu = "SUMIFS(Ref_TBU!D:D, Ref_TBU!B:B, E$r, Ref_TBU!A:A, K$r)";
+            $p_tbu = "SUMIFS(Ref_TBU!E:E, Ref_TBU!B:B, E$r, Ref_TBU!A:A, K$r)";
+            $sheet->setCellValue("P{$r}", "=IF(AND(M{$r}=\"Balita\", $tb<>\"\"), IF($c_tbu>0, ROUND(($tb - $m_tbu) / IF($tb >= $m_tbu, $p_tbu - $m_tbu, $m_tbu - $n_tbu), 2), \"N/A\"), \"-\")");
+            $sheet->setCellValue("Q{$r}", "=IF(P{$r}=\"-\", \"-\", IF(P{$r}=\"N/A\", \"N/A\", IF(P{$r}<-3, \"Sangat Pendek\", IF(P{$r}<-2, \"Pendek\", IF(P{$r}<=3, \"Normal\", \"Tinggi\")))))");
 
             // BBTB
             $h_rnd = "ROUND($tb*2,0)/2";
-            $c_bbtb = "COUNTIFS(Ref_BBTB!B:B, F$r, Ref_BBTB!A:A, $h_rnd)";
-            $m_bbtb = "SUMIFS(Ref_BBTB!C:C, Ref_BBTB!B:B, F$r, Ref_BBTB!A:A, $h_rnd)";
-            $n_bbtb = "SUMIFS(Ref_BBTB!D:D, Ref_BBTB!B:B, F$r, Ref_BBTB!A:A, $h_rnd)";
-            $p_bbtb = "SUMIFS(Ref_BBTB!E:E, Ref_BBTB!B:B, F$r, Ref_BBTB!A:A, $h_rnd)";
-            $sheet->setCellValue("S{$r}", "=IF(AND(N{$r}=\"Balita\", $bb<>\"\", $tb<>\"\"), IF($c_bbtb>0, ROUND(($bb - $m_bbtb) / IF($bb >= $m_bbtb, $p_bbtb - $m_bbtb, $m_bbtb - $n_bbtb), 2), \"N/A\"), \"-\")");
-            $sheet->setCellValue("T{$r}", "=IF(S{$r}=\"-\", \"-\", IF(S{$r}=\"N/A\", \"N/A\", IF(S{$r}<-3, \"Gizi Buruk\", IF(S{$r}<-2, \"Gizi Kurang\", IF(S{$r}<=1, \"Gizi Baik\", IF(S{$r}<=2, \"Beresiko Lebih\", IF(S{$r}<=3, \"Gizi Lebih\", \"Obesitas\")))))))");
+            $c_bbtb = "COUNTIFS(Ref_BBTB!B:B, E$r, Ref_BBTB!A:A, $h_rnd)";
+            $m_bbtb = "SUMIFS(Ref_BBTB!C:C, Ref_BBTB!B:B, E$r, Ref_BBTB!A:A, $h_rnd)";
+            $n_bbtb = "SUMIFS(Ref_BBTB!D:D, Ref_BBTB!B:B, E$r, Ref_BBTB!A:A, $h_rnd)";
+            $p_bbtb = "SUMIFS(Ref_BBTB!E:E, Ref_BBTB!B:B, E$r, Ref_BBTB!A:A, $h_rnd)";
+            $sheet->setCellValue("R{$r}", "=IF(AND(M{$r}=\"Balita\", $bb<>\"\", $tb<>\"\"), IF($c_bbtb>0, ROUND(($bb - $m_bbtb) / IF($bb >= $m_bbtb, $p_bbtb - $m_bbtb, $m_bbtb - $n_bbtb), 2), \"N/A\"), \"-\")");
+            $sheet->setCellValue("S{$r}", "=IF(R{$r}=\"-\", \"-\", IF(R{$r}=\"N/A\", \"N/A\", IF(R{$r}<-3, \"Gizi Buruk\", IF(R{$r}<-2, \"Gizi Kurang\", IF(R{$r}<=1, \"Gizi Baik\", IF(R{$r}<=2, \"Beresiko Lebih\", IF(R{$r}<=3, \"Gizi Lebih\", \"Obesitas\")))))))");
 
             // IMTU
             $imtRaw = "($bb / (($tb/100)*($tb/100)))";
-            $c_imtu = "COUNTIFS(Ref_IMTU!B:B, F$r, Ref_IMTU!A:A, L$r)";
-            $m_imtu = "SUMIFS(Ref_IMTU!C:C, Ref_IMTU!B:B, F$r, Ref_IMTU!A:A, L$r)";
-            $n_imtu = "SUMIFS(Ref_IMTU!D:D, Ref_IMTU!B:B, F$r, Ref_IMTU!A:A, L$r)";
-            $p_imtu = "SUMIFS(Ref_IMTU!E:E, Ref_IMTU!B:B, F$r, Ref_IMTU!A:A, L$r)";
-            $sheet->setCellValue("U{$r}", "=IF(AND(N{$r}=\"Remaja\", $bb<>\"\", $tb<>\"\"), IF($c_imtu>0, ROUND(($imtRaw - $m_imtu) / IF($imtRaw >= $m_imtu, $p_imtu - $m_imtu, $m_imtu - $n_imtu), 2), \"N/A\"), \"-\")");
-            $sheet->setCellValue("V{$r}", "=IF(U{$r}=\"-\", \"-\", IF(U{$r}=\"N/A\", \"N/A\", IF(U{$r}<-3, \"Gizi Buruk\", IF(U{$r}<-2, \"Gizi Kurang\", IF(U{$r}<=1, \"Gizi Baik\", IF(U{$r}<=2, \"Gizi Lebih\", \"Obesitas\"))))))");
+            $c_imtu = "COUNTIFS(Ref_IMTU!B:B, E$r, Ref_IMTU!A:A, K$r)";
+            $m_imtu = "SUMIFS(Ref_IMTU!C:C, Ref_IMTU!B:B, E$r, Ref_IMTU!A:A, K$r)";
+            $n_imtu = "SUMIFS(Ref_IMTU!D:D, Ref_IMTU!B:B, E$r, Ref_IMTU!A:A, K$r)";
+            $p_imtu = "SUMIFS(Ref_IMTU!E:E, Ref_IMTU!B:B, E$r, Ref_IMTU!A:A, K$r)";
+            $sheet->setCellValue("T{$r}", "=IF(AND(M{$r}=\"Remaja\", $bb<>\"\", $tb<>\"\"), IF($c_imtu>0, ROUND(($imtRaw - $m_imtu) / IF($imtRaw >= $m_imtu, $p_imtu - $m_imtu, $m_imtu - $n_imtu), 2), \"N/A\"), \"-\")");
+            $sheet->setCellValue("U{$r}", "=IF(T{$r}=\"-\", \"-\", IF(T{$r}=\"N/A\", \"N/A\", IF(T{$r}<-3, \"Gizi Buruk\", IF(T{$r}<-2, \"Gizi Kurang\", IF(T{$r}<=1, \"Gizi Baik\", IF(T{$r}<=2, \"Gizi Lebih\", \"Obesitas\"))))))");
 
             // Dewasa & Ibu Hamil
-            $sheet->setCellValue("W{$r}", "=IF(AND(N{$r}=\"Dewasa\", $bb<>\"\", $tb<>\"\"), ROUND($imtRaw, 2), \"-\")");
-            $sheet->setCellValue("X{$r}", "=IF(W{$r}=\"-\", \"-\", IF(W{$r}<18.5, \"Kurus\", IF(W{$r}<=25, \"Normal\", IF(W{$r}<=27, \"Gemuk (Overweight)\", \"Obesitas\"))))");
-            $sheet->setCellValue("Y{$r}", "=IF(N{$r}=\"Ibu Hamil\", IF(J{$r}=\"\", \"N/A\", IF(J{$r}<23.5, \"KEK\", \"Normal\")), \"-\")");
+            $sheet->setCellValue("V{$r}", "=IF(AND(M{$r}=\"Dewasa\", $bb<>\"\", $tb<>\"\"), ROUND($imtRaw, 2), \"-\")");
+            $sheet->setCellValue("W{$r}", "=IF(V{$r}=\"-\", \"-\", IF(V{$r}<18.5, \"Kurus\", IF(V{$r}<=25, \"Normal\", IF(V{$r}<=27, \"Gemuk (Overweight)\", \"Obesitas\"))))");
+            $sheet->setCellValue("X{$r}", "=IF(M{$r}=\"Ibu Hamil\", IF(I{$r}=\"\", \"N/A\", IF(I{$r}<23.5, \"KEK\", \"Normal\")), \"-\")");
 
-            // Rekomendasi Pintar Bersarang
-            $rec = "=IF(N{$r}=\"Ibu Hamil\", IF(Y{$r}=\"KEK\", \"Risiko KEK! Tingkatkan gizi, rujuk ke faskes/konsultasi bidan.\", \"Normal, pertahankan gizi & rutin periksa.\"), ";
-            $rec .= "IF(N{$r}=\"Balita\", IF(OR(P{$r}=\"Gizi Buruk\", T{$r}=\"Gizi Buruk\"), \"Rujuk ke RS/Puskesmas segera untuk penanganan Gizi Buruk!\", IF(OR(R{$r}=\"Sangat Pendek\", R{$r}=\"Pendek\"), \"Indikasi Stunting! Konsultasi dokter anak, perbanyak protein.\", IF(OR(P{$r}=\"Gizi Kurang\", T{$r}=\"Gizi Kurang\"), \"Perlu intervensi gizi tambahan & pantau ketat bulanan.\", IF(OR(T{$r}=\"Obesitas\", T{$r}=\"Gizi Lebih\"), \"Awas kelebihan gizi, perhatikan pola makan padat energi.\", \"Sehat, pertahankan asupan gizi makro dan mikro.\")))), ";
-            $rec .= "IF(N{$r}=\"Remaja\", IF(V{$r}=\"Gizi Buruk\", \"Segera rujuk dan perbaiki asupan gizi.\", IF(V{$r}=\"Gizi Kurang\", \"Tingkatkan asupan gizi dan kalori harian.\", IF(OR(V{$r}=\"Obesitas\", V{$r}=\"Gizi Lebih\"), \"Batasi kalori, tingkatkan aktivitas olahraga.\", \"Normal, terapkan hidup sehat & gizi seimbang.\"))), ";
-            $rec .= "IF(N{$r}=\"Dewasa\", IF(X{$r}=\"Kurus\", \"Tingkatkan energi, protein dan massa otot.\", IF(OR(X{$r}=\"Obesitas\", X{$r}=\"Gemuk (Overweight)\"), \"Kurangi surplus kalori tinggi, jadwalkan defisit olahraga.\", \"Ideal, pertahankan gaya hidup sehat.\")), \"Lengkapi Data!\")";
+            // Rekomendasi
+            $rec = "=IF(M{$r}=\"Ibu Hamil\", IF(X{$r}=\"KEK\", \"Risiko KEK! Tingkatkan gizi, rujuk ke faskes/konsultasi bidan.\", \"Normal, pertahankan gizi & rutin periksa.\"), ";
+            $rec .= "IF(M{$r}=\"Balita\", IF(OR(O{$r}=\"Gizi Buruk\", S{$r}=\"Gizi Buruk\"), \"Rujuk ke RS/Puskesmas segera untuk penanganan Gizi Buruk!\", IF(OR(Q{$r}=\"Sangat Pendek\", Q{$r}=\"Pendek\"), \"Indikasi Stunting! Konsultasi dokter anak, perbanyak protein.\", IF(OR(O{$r}=\"Gizi Kurang\", S{$r}=\"Gizi Kurang\"), \"Perlu intervensi gizi tambahan & pantau ketat bulanan.\", IF(OR(S{$r}=\"Obesitas\", S{$r}=\"Gizi Lebih\"), \"Awas kelebihan gizi, perhatikan pola makan padat energi.\", \"Sehat, pertahankan asupan gizi makro dan mikro.\")))), ";
+            $rec .= "IF(M{$r}=\"Remaja\", IF(U{$r}=\"Gizi Buruk\", \"Segera rujuk dan perbaiki asupan gizi.\", IF(U{$r}=\"Gizi Kurang\", \"Tingkatkan asupan gizi dan kalori harian.\", IF(OR(U{$r}=\"Obesitas\", U{$r}=\"Gizi Lebih\"), \"Batasi kalori, tingkatkan aktivitas olahraga.\", \"Normal, terapkan hidup sehat & gizi seimbang.\"))), ";
+            $rec .= "IF(M{$r}=\"Dewasa\", IF(W{$r}=\"Kurus\", \"Tingkatkan energi, protein dan massa otot.\", IF(OR(W{$r}=\"Obesitas\", W{$r}=\"Gemuk (Overweight)\"), \"Kurangi surplus kalori tinggi, jadwalkan defisit olahraga.\", \"Ideal, pertahankan gaya hidup sehat.\")), \"Lengkapi Data!\")";
             $rec .= ")))";
-            $sheet->setCellValue("Z{$r}", $rec);
+            $sheet->setCellValue("Y{$r}", $rec);
         }
 
         // --- Sheet Rekapitulasi & Chart ---
@@ -237,17 +237,17 @@ class GenerateExcelTemplate extends Command
 
         $this->buildTable($summarySheet, 'Status Gizi (BB/U) - Balita', 'A4', [
             ['Gizi Buruk', 'Gizi Kurang', 'Gizi Baik', 'Beresiko Lebih'],
-            ['P:P', '"Gizi Buruk"', '"Gizi Kurang"', '"Gizi Baik"', '"Beresiko Lebih"']
+            ['O:O', '"Gizi Buruk"', '"Gizi Kurang"', '"Gizi Baik"', '"Beresiko Lebih"']
         ]);
 
         $this->buildTable($summarySheet, 'Status Stunting (TB/U) - Balita', 'E4', [
             ['Sangat Pendek (Stunting)', 'Pendek (Stunting)', 'Normal', 'Tinggi'],
-            ['R:R', '"Sangat Pendek"', '"Pendek"', '"Normal"', '"Tinggi"']
+            ['Q:Q', '"Sangat Pendek"', '"Pendek"', '"Normal"', '"Tinggi"']
         ]);
 
         $this->buildTable($summarySheet, 'Status Gizi (BB/TB) - Balita', 'I4', [
             ['Gizi Buruk', 'Gizi Kurang', 'Gizi Baik', 'Beresiko Lebih', 'Gizi Lebih', 'Obesitas'],
-            ['T:T', '"Gizi Buruk"', '"Gizi Kurang"', '"Gizi Baik"', '"Beresiko Lebih"', '"Gizi Lebih"', '"Obesitas"']
+            ['S:S', '"Gizi Buruk"', '"Gizi Kurang"', '"Gizi Baik"', '"Beresiko Lebih"', '"Gizi Lebih"', '"Obesitas"']
         ]);
 
         $this->buildCategoryTable($summarySheet, 'A16');
@@ -296,8 +296,8 @@ class GenerateExcelTemplate extends Command
         $targetCol = $data[1][0]; // "P:P"
         for ($i = 0; $i < count($labels); $i++) {
             $sheet->setCellValue("{$col}{$row}", $labels[$i]);
-            $sheet->setCellValue("{$col1}{$row}", "=COUNTIFS('Template Input'!$targetCol, {$data[1][$i + 1]}, 'Template Input'!F:F, \"L\")");
-            $sheet->setCellValue("{$col2}{$row}", "=COUNTIFS('Template Input'!$targetCol, {$data[1][$i + 1]}, 'Template Input'!F:F, \"P\")");
+            $sheet->setCellValue("{$col1}{$row}", "=COUNTIFS('Template Input'!$targetCol, {$data[1][$i + 1]}, 'Template Input'!E:E, \"L\")");
+            $sheet->setCellValue("{$col2}{$row}", "=COUNTIFS('Template Input'!$targetCol, {$data[1][$i + 1]}, 'Template Input'!E:E, \"P\")");
             $row++;
         }
     }
@@ -311,7 +311,7 @@ class GenerateExcelTemplate extends Command
         $categories = ['Balita', 'Remaja', 'Dewasa', 'Ibu Hamil'];
         foreach ($categories as $cat) {
             $sheet->setCellValue("A{$row}", $cat);
-            $sheet->setCellValue("B{$row}", "=COUNTIF('Template Input'!N:N, \"{$cat}\")");
+            $sheet->setCellValue("B{$row}", "=COUNTIF('Template Input'!M:M, \"{$cat}\")");
             $row++;
         }
     }

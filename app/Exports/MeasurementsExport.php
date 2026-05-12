@@ -56,7 +56,6 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping, WithTi
     {
         return [
             'No',
-            'NIK',
             'Nama Pasien',
             'Tanggal Lahir',
             'Tanggal Periksa',
@@ -91,7 +90,6 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping, WithTi
         
         return [
             $this->rowNumber,
-            $measurement->subject->nik ?? '-',
             $measurement->subject->name ?? '-',
             $measurement->subject->date_of_birth ? $measurement->subject->date_of_birth->format('Y-m-d') : '-',
             $measurement->measurement_date ? $measurement->measurement_date->format('Y-m-d') : '-',

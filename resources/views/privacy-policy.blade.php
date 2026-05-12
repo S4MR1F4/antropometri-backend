@@ -68,7 +68,7 @@
 
         <h2>1. Jenis Data yang Dikumpulkan</h2>
         <ul>
-            <li><strong>Data Subjek (Pasien)</strong>: Nama, NIK, Tanggal Lahir, Gender.</li>
+            <li><strong>Data Subjek (Pasien)</strong>: Nama, tanggal lahir, gender, alamat, nama orang tua, dan nomor telepon jika diisi.</li>
             <li><strong>Data Pengukuran</strong>: Berat badan, Tinggi badan, Lingkar kepala, Lingkar perut, dan Lengan
                 atas (LiLA).</li>
             <li><strong>Data Petugas</strong>: Nama atau akun petugas yang melakukan pendataan.</li>

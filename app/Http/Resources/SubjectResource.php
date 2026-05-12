@@ -24,7 +24,6 @@ class SubjectResource extends JsonResource
             'normalized_name' => $this->normalized_name,
             'date_of_birth' => $this->date_of_birth?->toDateString() ?? '0000-00-00',
             'gender' => $this->gender,
-            'nik' => $this->nik,
             'age_in_months' => $ageInMonths,
             'age_display' => $this->formatAge($ageInMonths),
             'category' => $category,

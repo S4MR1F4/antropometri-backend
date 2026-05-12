@@ -32,7 +32,6 @@ class MeasurementsImport implements ToCollection, WithHeadingRow, WithMultipleSh
             // Mapping based on template headers (slugified by WithHeadingRow)
             // Example: "Nama Pasien" -> "nama_pasien", "Tanggal Lahir" -> "tanggal_lahir"
             
-            $nik = $row['nik'] ?? null;
             $name = $row['nama_pasien'] ?? null;
 
             // Skip empty rows or template filler rows
@@ -58,13 +57,12 @@ class MeasurementsImport implements ToCollection, WithHeadingRow, WithMultipleSh
 
                 $isPregnant = isset($row['hamil_yt']) && strtoupper(trim($row['hamil_yt'])) === 'Y';
 
-                // Find or create subject
+                // Find or create subject by name + DOB + gender
                 $subject = Subject::firstOrCreate(
-                    ['nik' => $nik],
                     [
                         'name' => $name,
-                        'gender' => $gender,
                         'date_of_birth' => $dob,
+                        'gender' => $gender,
                     ]
                 );
 

@@ -25,7 +25,6 @@ class SubjectFactory extends Factory
             'normalized_name' => Subject::normalizeName($name),
             'date_of_birth' => fake()->date('Y-m-d', '-1 year'),
             'gender' => fake()->randomElement(['L', 'P']),
-            'nik' => fake()->numberBetween(1000, 9999),
         ];
     }
 }

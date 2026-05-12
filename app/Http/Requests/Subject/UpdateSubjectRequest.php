@@ -22,7 +22,6 @@ class UpdateSubjectRequest extends FormRequest
             'name' => ['sometimes', 'required', 'string', 'min:3', 'max:255'],
             'date_of_birth' => ['sometimes', 'required', 'date', 'before_or_equal:today'],
             'gender' => ['sometimes', 'required', Rule::in(['L', 'P'])],
-            'nik' => ['nullable', 'string', 'digits:16'],
             'address' => ['nullable', 'string', 'max:500'],
             'parent_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
@@ -36,7 +35,6 @@ class UpdateSubjectRequest extends FormRequest
             'date_of_birth.date' => 'Format tanggal lahir tidak valid',
             'date_of_birth.before_or_equal' => 'Tanggal lahir tidak boleh di masa depan',
             'gender.in' => 'Jenis kelamin harus L atau P',
-            'nik.digits' => 'NIK harus berjumlah tepat 16 digit angka',
         ];
     }
 

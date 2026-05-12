@@ -27,7 +27,6 @@ class Subject extends Model
         'user_id',
         'name',
         'normalized_name',
-        'nik',
         'date_of_birth',
         'gender',
         'address',
@@ -46,20 +45,6 @@ class Subject extends Model
         'pregnancy_start_date' => 'date',
     ];
 
-    /**
-     * Get masked NIK for security (e.g. 7571xxxxx01)
-     */
-    public function getMaskedNik(): ?string
-    {
-        if (!$this->nik)
-            return null;
-
-        $len = strlen($this->nik);
-        if ($len <= 6)
-            return $this->nik;
-
-        return substr($this->nik, 0, 4) . str_repeat('x', $len - 6) . substr($this->nik, -2);
-    }
 
     /**
      * Get all measurements for this subject.

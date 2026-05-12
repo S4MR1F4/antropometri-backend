@@ -22,7 +22,6 @@ class StoreSubjectRequest extends FormRequest
             'name' => ['required', 'string', 'min:3', 'max:255'],
             'date_of_birth' => ['required', 'date', 'before_or_equal:today'],
             'gender' => ['required', Rule::in(['L', 'P'])],
-            'nik' => ['nullable', 'string', 'digits:16'],
             'address' => ['nullable', 'string', 'max:500'],
             'parent_name' => ['nullable', 'string', 'max:255'],
             'phone' => ['nullable', 'string', 'max:20'],
@@ -39,7 +38,6 @@ class StoreSubjectRequest extends FormRequest
             'date_of_birth.before_or_equal' => 'Tanggal lahir tidak boleh di masa depan',
             'gender.required' => 'Jenis kelamin wajib diisi',
             'gender.in' => 'Jenis kelamin harus L atau P',
-            'nik.digits' => 'NIK harus berjumlah tepat 16 digit angka',
         ];
     }
 

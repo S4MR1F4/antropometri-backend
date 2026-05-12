@@ -29,10 +29,7 @@ class SubjectService
         // Search filter
         if (!empty($filters['search'])) {
             $search = $filters['search'];
-            $query->where(function ($q) use ($search) {
-                $q->where('name', 'like', "%{$search}%")
-                    ->orWhere('nik', 'like', "%{$search}%");
-            });
+            $query->where('name', 'like', "%{$search}%");
         }
 
         // Category filter (calculated based on age)

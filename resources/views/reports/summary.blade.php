@@ -304,7 +304,6 @@
                         <td style="vertical-align: top;">
                             <div style="font-weight: bold; font-size: 12px; margin-bottom: 4px;">{{ $m->subject->name ?? '-' }}</div>
                             <div style="font-size: 10px; color: #555;">
-                                NIK: {{ $m->subject->nik ?? '-' }}<br>
                                 JK: {{ $m->subject->gender == 'L' ? 'Laki-laki' : 'Perempuan' }}<br>
                                 Umur: {{ floor($m->age_in_months / 12) }} Thn {{ $m->age_in_months % 12 }} Bln
                             </div>
