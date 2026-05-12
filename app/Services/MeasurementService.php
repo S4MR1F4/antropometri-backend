@@ -44,8 +44,13 @@ class MeasurementService
      */
     public function calculateTrend(Subject $subject, ?array $currentResult, float $currentValue, string $category, string $metric = 'bmi'): ?array
     {
+        $currentMeasurement = request()->route('measurement');
+        $currentMeasurementId = $currentMeasurement instanceof Measurement
+            ? $currentMeasurement->id
+            : $currentMeasurement;
+
         $history = $subject->measurements()
-            ->where('id', '!=', request()->route('measurement'))
+            ->when($currentMeasurementId, fn($query) => $query->where('id', '!=', $currentMeasurementId))
             ->latest('measurement_date')
             ->latest('id')
             ->limit(5)
@@ -265,6 +270,76 @@ class MeasurementService
         }
 
         return Measurement::create($measurementData);
+    }
+
+    /**
+     * Update an existing measurement and recalculate all derived fields.
+     */
+    public function updateMeasurement(Measurement $measurement, array $data): Measurement
+    {
+        $subject = $measurement->subject;
+
+        $ageInMonths = $this->subjectService->calculateAgeInMonths(
+            $subject->date_of_birth,
+            $data['measurement_date']
+        );
+        $ageInYears = $this->subjectService->calculateAgeInYears(
+            $subject->date_of_birth,
+            $data['measurement_date']
+        );
+
+        $isPregnant = isset($data['is_pregnant']) ? (bool) $data['is_pregnant'] : false;
+        $category = $this->subjectService->determineCategory($ageInMonths, $isPregnant);
+
+        $calculationResults = $this->calculationService->calculate(
+            subject: $subject,
+            measurementData: $data,
+            ageInMonths: $ageInMonths,
+            category: $category,
+        );
+
+        $recommendation = $this->calculationService->generateRecommendation(
+            category: $category,
+            results: $calculationResults,
+            data: $data,
+        );
+
+        $trendMetric = in_array($category, ['dewasa', 'remaja']) ? 'bmi' : 'weight';
+        $currentVal = $calculationResults[$trendMetric] ?? ($data['weight'] ?? 0);
+        $trend = $this->calculateTrend($subject, $calculationResults, (float) $currentVal, $category, $trendMetric);
+
+        $measurementData = array_merge($data, [
+            'subject_id' => $subject->id,
+            'user_id' => $measurement->user_id,
+            'category' => $category,
+            'age_in_months' => $ageInMonths,
+            'age_in_years' => $ageInYears,
+            'recommendation' => $recommendation,
+            'reference_data' => $calculationResults['references'] ?? null,
+            'trend_info' => $trend,
+        ], $calculationResults);
+
+        if ($isPregnant) {
+            $measurementDate = \Carbon\Carbon::parse($data['measurement_date']);
+            if (!empty($data['pregnancy_start_date'])) {
+                $subject->update(['pregnancy_start_date' => $data['pregnancy_start_date']]);
+            } elseif (!$subject->pregnancy_start_date) {
+                $subject->update(['pregnancy_start_date' => $measurementDate]);
+            }
+
+            $startDate = $subject->pregnancy_start_date ? \Carbon\Carbon::parse($subject->pregnancy_start_date) : $measurementDate;
+            $gestationalWeeks = (int) $startDate->diffInWeeks($measurementDate);
+            $measurementData['gestational_age_weeks'] = $gestationalWeeks;
+            $measurementData['trimester'] = $gestationalWeeks >= 27 ? 3 : ($gestationalWeeks >= 14 ? 2 : 1);
+        } else {
+            $measurementData['gestational_age_weeks'] = null;
+            $measurementData['trimester'] = null;
+            $measurementData['pregnancy_weight_gain'] = null;
+        }
+
+        $measurement->update($measurementData);
+
+        return $measurement->fresh();
     }
 
     /**

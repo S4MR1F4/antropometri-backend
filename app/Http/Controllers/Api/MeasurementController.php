@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Measurement\StoreMeasurementRequest;
+use App\Http\Requests\Measurement\UpdateMeasurementRequest;
 use App\Http\Resources\HistoryGroupedResource;
 use App\Http\Resources\MeasurementResource;
 use App\Http\Resources\MeasurementSummaryResource;
+use App\Models\ActivityLog;
 use App\Http\Resources\SubjectResource;
 use App\Models\Measurement;
 use App\Models\Subject;
@@ -96,7 +98,7 @@ class MeasurementController extends Controller
     {
         $subjects = $this->measurementService->getGroupedHistory(
             filters: $request->only(['search', 'only_trashed']),
-            perPage: $request->integer('per_page', 15)
+            perPage: $request->integer('per_page', 10)
         );
 
         return $this->successResponse(
@@ -124,6 +126,7 @@ class MeasurementController extends Controller
             subject: $subject,
             data: $request->validated()
         );
+        ActivityLog::log('measurement_create', 'Measurement', $measurement->id, $measurement->toArray());
 
         // Send notification to all admins
         try {
@@ -154,6 +157,34 @@ class MeasurementController extends Controller
     }
 
     /**
+     * Update a measurement and recalculate results.
+     * PUT /measurements/{measurement}
+     */
+    public function update(UpdateMeasurementRequest $request, Measurement $measurement): JsonResponse
+    {
+        $this->authorize('update', $measurement);
+
+        $oldValues = $measurement->toArray();
+        $measurement = $this->measurementService->updateMeasurement(
+            measurement: $measurement,
+            data: $request->validated()
+        );
+
+        ActivityLog::log(
+            'measurement_update',
+            'Measurement',
+            $measurement->id,
+            $measurement->fresh()->toArray(),
+            $oldValues
+        );
+
+        return $this->successResponse(
+            data: ['measurement' => new MeasurementResource($measurement->load('subject'))],
+            message: 'Pengukuran berhasil diperbarui'
+        );
+    }
+
+    /**
      * Get measurement detail.
      * GET /measurements/{measurement}
      */
@@ -174,7 +205,9 @@ class MeasurementController extends Controller
     {
         $this->authorize('delete', $measurement);
 
+        $oldValues = $measurement->toArray();
         $measurement->delete();
+        ActivityLog::log('measurement_delete', 'Measurement', $measurement->id, null, $oldValues);
 
         return $this->successResponse(
             message: 'Pengukuran berhasil dihapus'

@@ -40,7 +40,7 @@ class StatisticsService
         $query->whereHas('subject');
 
         $totalMeasurements = (clone $query)->count();
-        $measurementsToday = (clone $query)->whereDate('created_at', today())->count();
+        $measurementsToday = (clone $query)->whereDate('measurement_date', today())->count();
 
         // Trend Calculation (This Month vs Last Month)
         $startOfMonth = now()->startOfMonth();
@@ -48,8 +48,8 @@ class StatisticsService
         $startOfLastMonth = now()->subMonth()->startOfMonth();
         $endOfLastMonth = now()->subMonth()->endOfMonth();
 
-        $thisMonthCount = (clone $query)->whereBetween('created_at', [$startOfMonth, $endOfMonth])->count();
-        $lastMonthCount = (clone $query)->whereBetween('created_at', [$startOfLastMonth, $endOfLastMonth])->count();
+        $thisMonthCount = (clone $query)->whereBetween('measurement_date', [$startOfMonth, $endOfMonth])->count();
+        $lastMonthCount = (clone $query)->whereBetween('measurement_date', [$startOfLastMonth, $endOfLastMonth])->count();
 
         $growth = 0;
         if ($lastMonthCount > 0) {

@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\Auth\LoginRequest;
 use App\Http\Requests\Auth\RegisterRequest;
 use App\Http\Resources\UserResource;
+use App\Models\ActivityLog;
 use App\Models\User;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -43,6 +44,18 @@ class AuthController extends Controller
 
         // Auto-login: Create token immediately after registration
         $token = $user->createToken('default');
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'action' => 'register',
+            'model_type' => 'User',
+            'model_id' => $user->id,
+            'new_values' => [
+                'email' => $user->email,
+                'device_name' => $request->input('device_name', 'default'),
+            ],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return $this->successResponse(
             data: [
@@ -64,6 +77,20 @@ class AuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
         if (!$user || !Hash::check($request->password, $user->password)) {
+            ActivityLog::create([
+                'user_id' => $user?->id,
+                'action' => 'login_failed',
+                'model_type' => 'User',
+                'model_id' => $user?->id,
+                'new_values' => [
+                    'email' => $request->email,
+                    'reason' => 'invalid_credentials',
+                    'device_name' => $request->input('device_name', 'default'),
+                ],
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent(),
+            ]);
+
             return $this->errorResponse(
                 message: 'Email atau password salah',
                 code: 401
@@ -76,6 +103,18 @@ class AuthController extends Controller
 
         // Create new token
         $token = $user->createToken($deviceName);
+        ActivityLog::create([
+            'user_id' => $user->id,
+            'action' => 'login_success',
+            'model_type' => 'User',
+            'model_id' => $user->id,
+            'new_values' => [
+                'email' => $user->email,
+                'device_name' => $deviceName,
+            ],
+            'ip_address' => $request->ip(),
+            'user_agent' => $request->userAgent(),
+        ]);
 
         return $this->successResponse(
             data: [
@@ -94,6 +133,9 @@ class AuthController extends Controller
      */
     public function logout(Request $request): JsonResponse
     {
+        ActivityLog::log('logout', 'User', $request->user()->id, [
+            'token_name' => $request->user()->currentAccessToken()?->name,
+        ]);
         $request->user()->currentAccessToken()->delete();
 
         return $this->successResponse(

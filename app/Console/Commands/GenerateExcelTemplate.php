@@ -116,7 +116,8 @@ class GenerateExcelTemplate extends Command
             $sheet->getColumnDimension($col)->setWidth($width);
         }
 
-        $maxRows = 200;
+        // Rows 2..15001 provide capacity for 15,000 participants.
+        $maxRows = 15001;
 
         $inputStyle = [
             'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'FEF9C3']],

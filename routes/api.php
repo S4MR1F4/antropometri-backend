@@ -3,6 +3,7 @@
 use App\Http\Controllers\Api\AdminController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\ExportController;
+use App\Http\Controllers\Api\LogController;
 use App\Http\Controllers\Api\MeasurementController;
 use App\Http\Controllers\Api\SubjectController;
 use App\Http\Controllers\Api\SyncController;
@@ -56,7 +57,6 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::get('/measurements/grouped', [MeasurementController::class, 'groupedHistory']);
     Route::get('/measurements', [MeasurementController::class, 'history']);
     Route::apiResource('subjects.measurements', MeasurementController::class)
-        ->except(['update'])
         ->withTrashed(['index'])
         ->shallow();
 
@@ -71,6 +71,9 @@ Route::middleware(['auth:sanctum'])->group(function () {
 
     // Imports (Authenticated — admin & petugas)
     Route::post('/import/measurements', [\App\Http\Controllers\Api\ImportController::class, 'importMeasurements']);
+
+    Route::get('/activity-logs', [LogController::class, 'index']);
+    Route::post('/activity-logs/client', [LogController::class, 'storeClientLog']);
 
     // Admin only routes
     Route::middleware(['admin'])->prefix('admin')->group(function () {

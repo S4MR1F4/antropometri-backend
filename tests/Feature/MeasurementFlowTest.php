@@ -75,6 +75,39 @@ class MeasurementFlowTest extends TestCase
         ]);
     }
 
+    public function test_can_update_measurement()
+    {
+        $user = User::factory()->create();
+        $subject = Subject::factory()->create([
+            'date_of_birth' => now()->subMonths(12)->format('Y-m-d'),
+            'gender' => 'L',
+            'user_id' => $user->id,
+        ]);
+
+        $measurement = Measurement::factory()->create([
+            'subject_id' => $subject->id,
+            'user_id' => $user->id,
+            'measurement_date' => now()->format('Y-m-d'),
+            'category' => 'balita',
+            'weight' => 9.0,
+            'height' => 75.0,
+        ]);
+
+        $response = $this->actingAs($user, 'sanctum')->putJson("/api/measurements/{$measurement->id}", [
+            'measurement_date' => now()->format('Y-m-d'),
+            'weight' => 10.0,
+            'height' => 75.0,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJsonPath('data.measurement.weight', '10.00');
+
+        $this->assertDatabaseHas('measurements', [
+            'id' => $measurement->id,
+            'weight' => 10.0,
+        ]);
+    }
+
     public function test_can_get_subject_measurements_with_trend()
     {
         $user = User::factory()->create();

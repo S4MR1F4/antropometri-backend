@@ -34,6 +34,8 @@ Generate template Excel:
 php artisan app:generate-excel-template
 ```
 
+Template yang digenerate mengikuti `docs/Template_Perhitungan_Antropometri.xlsx`, tanpa NIK, dan menyiapkan area input sampai 15.000 peserta agar export/import manual tetap konsisten dengan template operasional.
+
 ## Konfigurasi Penting
 
 ```env
@@ -131,7 +133,8 @@ Request:
   "name": "Petugas Puskesmas",
   "email": "petugas@example.com",
   "password": "password123",
-  "password_confirmation": "password123"
+  "password_confirmation": "password123",
+  "device_name": "android-001"
 }
 ```
 
@@ -247,6 +250,8 @@ Request:
   "new_password_confirmation": "password456"
 }
 ```
+
+Setiap register, login sukses, login gagal, dan logout dicatat ke activity log beserta IP, user agent, email, dan `device_name` jika dikirim oleh mobile.
 
 ## Subjects
 
@@ -455,6 +460,27 @@ Validasi utama:
 
 Response `201` berisi `measurement` penuh dengan `result`, `references`, `recommendation`, dan `trend_info`.
 
+### PUT `/api/measurements/{measurement}`
+
+Edit pemeriksaan yang sudah tersimpan. Endpoint ini dipakai mobile untuk fitur edit pemeriksaan semua role yang memiliki akses ke data tersebut. Field bersifat partial, tetapi jika field perhitungan dikirim maka hasil antropometri, rekomendasi, trend, dan data kehamilan dihitung ulang.
+
+Request:
+
+```json
+{
+  "measurement_date": "2026-05-13",
+  "weight": 39,
+  "height": 145.5,
+  "head_circumference": null,
+  "waist_circumference": null,
+  "arm_circumference": null,
+  "measurement_type": "berdiri",
+  "is_pregnant": false,
+  "pregnancy_start_date": null,
+  "notes": "Koreksi hasil pemeriksaan"
+}
+```
+
 ### GET `/api/measurements`
 
 History semua measurement sesuai policy user. Query: `from_date`, `to_date`, `category`, `search`, `only_trashed`, `per_page`.
@@ -513,11 +539,43 @@ Response:
 }
 ```
 
+### POST `/api/activity-logs/client`
+
+Menerima log lokal dari mobile ketika aplikasi kembali online. Dipakai untuk mencatat error offline, aksi tambah/edit/hapus, proses sync, dan konteks perangkat.
+
+Request:
+
+```json
+{
+  "level": "error",
+  "action": "api_error",
+  "message": "Koneksi gagal saat simpan pemeriksaan",
+  "context": {
+    "path": "/subjects/1/measurements",
+    "method": "POST"
+  },
+  "occurred_at": "2026-05-13T08:30:00+08:00"
+}
+```
+
+### GET `/api/activity-logs`
+
+List log aktivitas. Admin dapat melihat semua log, sedangkan petugas hanya log miliknya sendiri.
+
+Query:
+
+| Parameter | Tipe | Keterangan |
+| --- | --- | --- |
+| `level` | string | `info`, `warning`, `error` |
+| `action` | string | Filter aksi, contoh `login_success`, `client_api_error` |
+| `search` | string | Cari action, model, IP, user agent |
+| `per_page` | int | Default 20 |
+
 ## Export dan Import
 
 ### GET `/api/export/excel`
 
-Export Excel. Query: `from_date`, `to_date`, `category`, `user_id`.
+Export Excel. Query: `from_date`, `to_date`, `category`, `user_id`. Struktur output harus tetap selaras dengan template 15.000 peserta di `docs/Template_Perhitungan_Antropometri.xlsx` supaya data hasil export dapat dipindah ke template tanpa mengubah kolom.
 
 ### GET `/api/export/pdf`
 
@@ -604,3 +662,4 @@ Sebelum migration ini dijalankan di server, backup NIK dan full database harus s
 - Payload mobile dienkripsi oleh client dan middleware backend.
 - Data NIK tidak lagi diterima, disimpan, diexport, atau dikirim oleh API aktif.
 - File credential production tidak boleh masuk Git.
+- Log aktivitas menyimpan konteks teknis seperlunya untuk audit dan debugging, bukan password atau token.

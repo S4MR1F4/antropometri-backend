@@ -37,7 +37,10 @@ class UserResource extends JsonResource
                     'total_measurements' => $distribution['total_measurements'] ?? 0,
                     'total_all_time' => $this->measurements()->count(),
                     'today_measurements' => $this->measurements()
-                        ->whereDate('created_at', today())
+                        ->whereDate('measurement_date', today())
+                        ->count(),
+                    'month_measurements' => $this->measurements()
+                        ->whereBetween('measurement_date', [now()->startOfMonth(), now()->endOfMonth()])
                         ->count(),
                     'growth_percentage' => $distribution['growth_percentage'] ?? 0,
                     'distribution' => $distribution['by_status'],
