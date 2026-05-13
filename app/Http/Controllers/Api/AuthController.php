@@ -225,13 +225,29 @@ class AuthController extends Controller
             $user->notify(new \App\Notifications\PasswordResetNotification($newPassword));
         } catch (\Exception $e) {
             \Log::error('Failed to send reset email: ' . $e->getMessage());
-            return $this->errorResponse(
-                message: 'Gagal mengirim email reset kata sandi. Periksa konfigurasi SMTP.',
-                code: 500
+            ActivityLog::log('forgot_password_email_failed', 'User', $user->id, [
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+            ]);
+
+            return $this->successResponse(
+                data: [
+                    'email_sent' => false,
+                    'new_password' => $newPassword,
+                ],
+                message: 'Password baru berhasil dibuat, tetapi email gagal dikirim. Salin password yang tampil.'
             );
         }
 
-        return $this->successResponse(message: 'Kata sandi baru telah dikirim ke email Anda.');
+        ActivityLog::log('forgot_password_reset', 'User', $user->id, [
+            'email' => $user->email,
+            'email_sent' => true,
+        ]);
+
+        return $this->successResponse(
+            data: ['email_sent' => true],
+            message: 'Kata sandi baru telah dikirim ke email Anda.'
+        );
     }
 
     /**

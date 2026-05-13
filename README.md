@@ -193,13 +193,38 @@ Response:
 
 ### POST `/api/auth/forgot-password`
 
-Mengirim password baru ke email user.
+Membuat password acak baru dan mencoba mengirimkannya ke email user. Jika SMTP/email gagal, password tetap sudah direset dan API mengembalikan `new_password` agar dapat disalin langsung oleh pengguna.
 
 Request:
 
 ```json
 {
   "email": "petugas@example.com"
+}
+```
+
+Response sukses email:
+
+```json
+{
+  "success": true,
+  "message": "Kata sandi baru telah dikirim ke email Anda.",
+  "data": {
+    "email_sent": true
+  }
+}
+```
+
+Response saat email gagal:
+
+```json
+{
+  "success": true,
+  "message": "Password baru berhasil dibuat, tetapi email gagal dikirim. Salin password yang tampil.",
+  "data": {
+    "email_sent": false,
+    "new_password": "randomPassword"
+  }
 }
 ```
 
@@ -641,7 +666,7 @@ Soft delete user. Admin tidak dapat menghapus akun sendiri.
 
 ### POST `/api/admin/users/{user}/reset-password`
 
-Generate password acak dan kirim ke email user.
+Generate password acak, simpan sebagai password baru, dan kirim ke email user. Response selalu menyertakan `new_password` untuk admin agar bisa disalin dan dikirim manual jika email gagal.
 
 ## Database dan Migration NIK
 

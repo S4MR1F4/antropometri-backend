@@ -188,13 +188,25 @@ class AdminController extends Controller
             ActivityLog::log('admin_reset_user_password', 'User', $user->id);
 
             return $this->successResponse(
+                data: [
+                    'email_sent' => true,
+                    'new_password' => $newPassword,
+                ],
                 message: "Kata sandi untuk {$user->name} berhasil direset dan dikirim ke emailnya."
             );
         } catch (\Exception $e) {
             \Log::error('Failed to send reset email: ' . $e->getMessage());
-            return $this->errorResponse(
-                message: 'Gagal mengirim email reset kata sandi. Periksa konfigurasi SMTP.',
-                code: 500
+            ActivityLog::log('admin_reset_user_password_email_failed', 'User', $user->id, [
+                'email' => $user->email,
+                'error' => $e->getMessage(),
+            ]);
+
+            return $this->successResponse(
+                data: [
+                    'email_sent' => false,
+                    'new_password' => $newPassword,
+                ],
+                message: 'Password berhasil direset, tetapi email gagal dikirim. Admin dapat menyalin password baru.'
             );
         }
     }
