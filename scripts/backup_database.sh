@@ -4,7 +4,7 @@ set -euo pipefail
 APP_DIR="${APP_DIR:-$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)}"
 ENV_FILE="${ENV_FILE:-${APP_DIR}/.env}"
 BACKUP_DIR="${DB_BACKUP_DIR:-${APP_DIR}/storage/app/backups/database}"
-KEEP_DAYS="${DB_BACKUP_KEEP_DAYS:-30}"
+KEEP_COUNT="${DB_BACKUP_KEEP_COUNT:-10}"
 
 env_value() {
   local key="$1"
@@ -90,6 +90,11 @@ gzip -9 "$OUT_SQL"
 trap - EXIT
 
 ln -sfn "$(basename "$OUT_GZ")" "${BACKUP_DIR}/latest.sql.gz" 2>/dev/null || true
-find "$BACKUP_DIR" -type f -name "${SAFE_DB_NAME}_*.sql.gz" -mtime +"$KEEP_DAYS" -delete
+if [[ "$KEEP_COUNT" =~ ^[0-9]+$ ]] && [[ "$KEEP_COUNT" -gt 0 ]]; then
+  find "$BACKUP_DIR" -maxdepth 1 -type f -name "${SAFE_DB_NAME}_*.sql.gz" \
+    -printf '%T@ %p\n' | sort -rn | tail -n +"$((KEEP_COUNT + 1))" | cut -d' ' -f2- | while IFS= read -r old_backup; do
+      rm -f "$old_backup"
+    done
+fi
 
 echo "$OUT_GZ"

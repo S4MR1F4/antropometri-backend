@@ -70,7 +70,7 @@ Jadwal production yang direkomendasikan:
 0 2 * * * cd /home/u863643602/domains/samrifa.com/antropometri_app && bash scripts/backup_database.sh >> storage/logs/database-backup.log 2>&1
 ```
 
-Dengan jadwal ini database dibackup setiap jam 02:00 waktu server. File `latest.sql.gz` akan menunjuk backup terbaru jika server mendukung symlink, dan backup lama akan dibersihkan setelah 30 hari kecuali `DB_BACKUP_KEEP_DAYS` diatur berbeda.
+Dengan jadwal ini database dibackup setiap jam 02:00 waktu server. File `latest.sql.gz` akan menunjuk backup terbaru jika server mendukung symlink. Retensi default adalah 10 file backup terbaru; ketika backup ke-11 berhasil dibuat, file paling lama otomatis dihapus. Jumlah retensi dapat diubah dengan `DB_BACKUP_KEEP_COUNT`.
 
 ## Struktur Folder
 
