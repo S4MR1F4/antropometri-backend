@@ -278,6 +278,8 @@ Request:
 
 Setiap register, login sukses, login gagal, dan logout dicatat ke activity log beserta IP, user agent, email, dan `device_name` jika dikirim oleh mobile.
 
+Login mendukung multi-device: setiap `device_name` mendapat token terpisah, sehingga satu akun bisa digunakan di lebih dari satu perangkat secara bersamaan. Login dari device yang sama hanya mengganti token lama device tersebut tanpa mengganggu sesi di device lain.
+
 ## Subjects
 
 NIK sudah dihapus dari kontrak API. Identifikasi duplikat menggunakan `normalized_name` + `date_of_birth` pada scope user.
