@@ -176,7 +176,13 @@ class AdminController extends Controller
      */
     public function resetPassword(User $user): JsonResponse
     {
-        $newPassword = \Illuminate\Support\Str::random(10);
+        request()->validate([
+            'password' => ['sometimes', 'string', 'min:8'],
+        ]);
+
+        $newPassword = request()->filled('password')
+            ? request()->input('password')
+            : \Illuminate\Support\Str::random(10);
 
         $user->update([
             'password' => \Illuminate\Support\Facades\Hash::make($newPassword)

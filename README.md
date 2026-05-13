@@ -50,6 +50,28 @@ DB_PASSWORD=
 
 Credential production disimpan terpisah di `../docs/server_credentials.md` dan file tersebut wajib tetap masuk `.gitignore`.
 
+## Backup Database Production
+
+Backend menyediakan skrip `scripts/backup_database.sh` untuk backup MySQL/MariaDB production. Skrip membaca konfigurasi database dari `.env`, menyimpan hasil ke `storage/app/backups/database`, mengompres file menjadi `.sql.gz`, dan memakai nama file berbasis tanggal-jam:
+
+```text
+{DB_DATABASE}_YYYYMMDD_HHMMSS.sql.gz
+```
+
+Jalankan manual di server sebelum deploy atau pull:
+
+```bash
+bash scripts/backup_database.sh
+```
+
+Jadwal production yang direkomendasikan:
+
+```cron
+0 2 * * * cd /home/u863643602/domains/samrifa.com/antropometri_app && bash scripts/backup_database.sh >> storage/logs/database-backup.log 2>&1
+```
+
+Dengan jadwal ini database dibackup setiap jam 02:00 waktu server. File `latest.sql.gz` akan menunjuk backup terbaru jika server mendukung symlink, dan backup lama akan dibersihkan setelah 30 hari kecuali `DB_BACKUP_KEEP_DAYS` diatur berbeda.
+
 ## Struktur Folder
 
 ```text
@@ -669,6 +691,22 @@ Soft delete user. Admin tidak dapat menghapus akun sendiri.
 ### POST `/api/admin/users/{user}/reset-password`
 
 Generate password acak, simpan sebagai password baru, dan kirim ke email user. Response selalu menyertakan `new_password` untuk admin agar bisa disalin dan dikirim manual jika email gagal.
+
+Request normal boleh kosong:
+
+```json
+{}
+```
+
+Untuk sinkronisasi dari mobile saat admin melakukan reset dalam kondisi offline, endpoint juga menerima password yang sudah dibuat di perangkat:
+
+```json
+{
+  "password": "RandomPassword123"
+}
+```
+
+Jika `password` dikirim, backend memakai password tersebut sebagai password baru lalu tetap mencoba mengirim email saat request tersinkron. Log aktivitas tidak menyimpan password.
 
 ## Database dan Migration NIK
 
