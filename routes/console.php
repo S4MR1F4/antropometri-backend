@@ -8,6 +8,11 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote');
 
+Schedule::command('db:backup')
+    ->dailyAt('02:00')
+    ->withoutOverlapping()
+    ->appendOutputTo(storage_path('logs/database-backup.log'));
+
 Schedule::command('data:prune-soft-deleted')
     ->dailyAt('02:15')
     ->withoutOverlapping()

@@ -64,12 +64,20 @@ Jalankan manual di server sebelum deploy atau pull:
 
 ```bash
 bash scripts/backup_database.sh
+# atau lewat Laravel command
+php artisan db:backup
 ```
 
-Jadwal production yang direkomendasikan:
+Laravel scheduler sudah menjadwalkan backup setiap jam `02:00`:
+
+```bash
+php artisan schedule:list
+```
+
+Server/hosting cukup memiliki satu Cron Jobs untuk scheduler Laravel:
 
 ```cron
-0 2 * * * cd /home/u863643602/domains/samrifa.com/antropometri_app && bash scripts/backup_database.sh >> storage/logs/database-backup.log 2>&1
+* * * * * cd /home/u863643602/domains/samrifa.com/antropometri_app && php artisan schedule:run >> storage/logs/scheduler.log 2>&1
 ```
 
 Dengan jadwal ini database dibackup setiap jam 02:00 waktu server. File `latest.sql.gz` akan menunjuk backup terbaru jika server mendukung symlink. Retensi default adalah 10 file backup terbaru; ketika backup ke-11 berhasil dibuat, file paling lama otomatis dihapus. Jumlah retensi dapat diubah dengan `DB_BACKUP_KEEP_COUNT`.
