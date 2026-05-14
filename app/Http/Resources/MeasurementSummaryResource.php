@@ -22,8 +22,13 @@ class MeasurementSummaryResource extends JsonResource
                 'name' => $this->subject?->name ?? 'Pasien Terhapus',
                 'gender' => $this->subject?->gender ?? '-',
                 'date_of_birth' => $this->subject?->date_of_birth?->toDateString() ?? '0000-00-00',
+                'is_deleted' => (bool) $this->subject?->trashed(),
+                'deleted_at' => $this->subject?->deleted_at?->toIso8601String(),
+                'restore_available' => (bool) $this->subject?->trashed(),
             ],
             'petugas_name' => $this->user?->name ?? 'Petugas Terhapus',
+            'subject_is_deleted' => (bool) $this->subject?->trashed(),
+            'subject_deleted_at' => $this->subject?->deleted_at?->toIso8601String(),
             'measurement_date' => $this->measurement_date?->toDateString() ?? '0000-00-00', // YYYY-MM-DD
             'measured_at' => $this->created_at?->toIso8601String(), // Full datetime
             'category' => $this->category,

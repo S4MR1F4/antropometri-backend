@@ -19,6 +19,9 @@ class HistoryGroupedResource extends JsonResource
             'name' => $this->name,
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth?->toDateString(),
+            'is_deleted' => (bool) $this->trashed(),
+            'deleted_at' => $this->deleted_at?->toIso8601String(),
+            'restore_available' => (bool) $this->trashed(),
             'measurement_count' => $this->measurements_count ?? 0,
 
             // Latest measurement formatted as a summary

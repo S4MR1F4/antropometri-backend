@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\ActivityLog;
 use App\Models\User;
+use App\Services\DataRetentionService;
 use App\Services\StatisticsService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
@@ -21,7 +22,8 @@ class AdminController extends Controller
     use ApiResponse;
 
     public function __construct(
-        protected StatisticsService $statisticsService
+        protected StatisticsService $statisticsService,
+        protected DataRetentionService $dataRetentionService
     ) {
     }
 
@@ -161,9 +163,18 @@ class AdminController extends Controller
         }
 
         $oldValues = $user->toArray();
+        try {
+            $reassigned = $this->dataRetentionService->reassignUserDataToAdmin($user);
+        } catch (\RuntimeException $e) {
+            return $this->errorResponse(
+                message: $e->getMessage(),
+                code: 422
+            );
+        }
+
         $user->delete();
 
-        ActivityLog::log('admin_delete_user', 'User', $user->id, null, $oldValues);
+        ActivityLog::log('admin_delete_user', 'User', $user->id, $reassigned, $oldValues);
 
         return $this->successResponse(
             message: 'User berhasil dihapus'

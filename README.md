@@ -73,6 +73,31 @@ Jadwal production yang direkomendasikan:
 
 Dengan jadwal ini database dibackup setiap jam 02:00 waktu server. File `latest.sql.gz` akan menunjuk backup terbaru jika server mendukung symlink. Retensi default adalah 10 file backup terbaru; ketika backup ke-11 berhasil dibuat, file paling lama otomatis dihapus. Jumlah retensi dapat diubah dengan `DB_BACKUP_KEEP_COUNT`.
 
+## Retensi Data Terhapus
+
+Soft delete tetap menjadi tahap aman untuk pasien, pemeriksaan, dan user. Data yang sudah soft-deleted lebih dari 60 hari akan diproses oleh command:
+
+```bash
+php artisan data:prune-soft-deleted
+```
+
+Command ini:
+
+- Menghitung pasien, pemeriksaan, dan user soft-deleted yang melewati retensi `DATA_RETENTION_SOFT_DELETE_DAYS` (default `60`).
+- Membuat backup database terlebih dahulu memakai `scripts/backup_database.sh`.
+- Memakai retensi backup yang sama, yaitu 10 backup terbaru via `DB_BACKUP_KEEP_COUNT`.
+- Menghapus permanen pasien yang sudah melewati retensi; semua pemeriksaan milik pasien tersebut ikut terhapus permanen oleh relasi database.
+- Menghapus permanen pemeriksaan yang soft-deleted sendiri dan sudah melewati retensi.
+- Saat user dihapus, data pasien dan pemeriksaan milik user dipindahkan ke admin aktif terlebih dahulu, sehingga penghapusan user tidak menghapus data lapangan.
+
+Scheduler Laravel menjalankan command ini setiap hari jam `02:15` dan menulis log ke `storage/logs/data-retention.log`. Untuk simulasi tanpa backup dan tanpa penghapusan:
+
+```bash
+php artisan data:prune-soft-deleted --dry-run
+```
+
+Foreign key `subjects.user_id` dan `measurements.user_id` dibuat `restrictOnDelete` supaya force delete user tidak pernah menghapus data pasien/pemeriksaan secara cascade. Relasi pasien ke pemeriksaan tetap `cascadeOnDelete`, sesuai aturan bahwa pemeriksaan ikut hilang permanen hanya ketika pasien dihapus permanen.
+
 ## Struktur Folder
 
 ```text
