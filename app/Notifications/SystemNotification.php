@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\MobileLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -40,11 +41,17 @@ class SystemNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
+        $actionUrl = isset($this->meta['measurement_id'])
+            ? MobileLink::url('/measurements/' . $this->meta['measurement_id'], [
+                'subject_id' => $this->meta['subject_id'] ?? null,
+            ])
+            : MobileLink::url('/notifications');
+
         return (new MailMessage)
             ->subject($this->title)
             ->greeting('Halo, ' . $notifiable->name . '!')
             ->line($this->message)
-            ->action('Buka Aplikasi', url(config('app.url')))
+            ->action('Buka Aplikasi', $actionUrl)
             ->line('Terima kasih telah menggunakan aplikasi kami!');
     }
 

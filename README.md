@@ -40,6 +40,7 @@ Template yang digenerate mengikuti `docs/Template_Perhitungan_Antropometri.xlsx`
 
 ```env
 APP_URL=http://127.0.0.1:8000
+APP_DEEP_LINK_BASE=antropometri://app
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -216,6 +217,8 @@ Response:
 ### POST `/api/auth/forgot-password`
 
 Membuat password acak baru dan mencoba mengirimkannya ke email user. Jika SMTP/email gagal, password tetap sudah direset dan API mengembalikan `new_password` agar dapat disalin langsung oleh pengguna.
+
+Email sukses mengirim tombol `Login ke Aplikasi` ke deep link mobile `APP_DEEP_LINK_BASE/login?reset=success` agar tidak membuka root website.
 
 Request:
 
@@ -653,6 +656,8 @@ List notifikasi user aktif.
 ### POST `/api/notifications/{id}/read`
 
 Tandai notifikasi sebagai sudah dibaca.
+
+Email notifikasi sistem memakai `APP_DEEP_LINK_BASE`. Jika notification memiliki `measurement_id`, tombol email diarahkan ke `/measurements/{measurement_id}?subject_id={subject_id}` agar mobile membuka detail pemeriksaan langsung. Jika tidak ada measurement, tombol diarahkan ke `/notifications`.
 
 ## Admin API
 

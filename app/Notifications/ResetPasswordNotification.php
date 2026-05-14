@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\MobileLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -45,8 +46,10 @@ class ResetPasswordNotification extends Notification
             ->line('Anda menerima email ini karena kami menerima permintaan reset kata sandi untuk akun Anda.')
             ->line('Silakan gunakan token berikut untuk mereset kata sandi Anda di aplikasi:')
             ->line('TOKEN: ' . $this->token)
-            ->line('Atau jika Anda menggunakan browser, klik tombol di bawah ini:')
-            ->action('Reset Kata Sandi', url('password/reset', $this->token))
+            ->line('Atau klik tombol di bawah ini untuk membuka halaman reset di aplikasi:')
+            ->action('Reset Kata Sandi', MobileLink::url('/password/reset/' . $this->token, [
+                'email' => $notifiable->email,
+            ]))
             ->line('Link reset password ini akan kadaluarsa dalam 60 menit.')
             ->line('Jika Anda tidak meminta reset kata sandi, abaikan email ini.');
     }

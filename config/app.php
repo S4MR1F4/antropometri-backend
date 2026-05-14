@@ -54,6 +54,8 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'mobile_deep_link_base' => env('APP_DEEP_LINK_BASE', 'antropometri://app'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Timezone

@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\MobileLink;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
@@ -38,7 +39,7 @@ class PasswordResetNotification extends Notification
             ->line('Berikut adalah kata sandi baru Anda:')
             ->line('**' . $this->newPassword . '**')
             ->line('Silakan login menggunakan kata sandi ini dan segera ubah melalui menu Profil.')
-            ->action('Login ke Aplikasi', url('/'))
+            ->action('Login ke Aplikasi', MobileLink::url('/login', ['reset' => 'success']))
             ->line('Jika Anda tidak merasa meminta reset kata sandi, abaikan email ini.');
     }
 

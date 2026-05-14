@@ -2,6 +2,7 @@
 
 namespace App\Notifications;
 
+use App\Support\MobileLink;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
@@ -39,7 +40,7 @@ class WelcomeNotification extends Notification
             ->greeting('Halo, ' . $notifiable->name . '!')
             ->line('Terima kasih telah mendaftar di Aplikasi Antropometri.')
             ->line('Akun Anda telah berhasil dibuat.')
-            ->action('Login Sekarang', url('http://antropometri.go.id/login'))
+            ->action('Login Sekarang', MobileLink::url('/login'))
             ->line('Selamat menggunakan aplikasi kami!');
     }
 
