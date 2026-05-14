@@ -143,7 +143,50 @@ Response:
 
 Cek versi aplikasi mobile terbaru.
 
-Response berisi metadata versi, link update, dan flag update jika tersedia.
+Response berisi metadata versi, link update, dan flag update jika tersedia. Nilai default diarahkan ke versi `2.0.0` dan Play Store `com.samrifa.antropometri`.
+
+Environment yang dapat diatur:
+
+```env
+APP_LATEST_VERSION=2.0.0
+APP_MIN_SUPPORTED_VERSION=2.0.0
+APP_FORCE_UPDATE=false
+APP_PLAY_STORE_URL=https://play.google.com/store/apps/details?id=com.samrifa.antropometri
+APP_MARKET_URL=market://details?id=com.samrifa.antropometri
+APP_RELEASE_NOTES="Pembaruan Antropometri tersedia."
+```
+
+Response:
+
+```json
+{
+  "status": "success",
+  "data": {
+    "latest_version": "2.0.0",
+    "min_version": "2.0.0",
+    "force_update": false,
+    "play_store_url": "https://play.google.com/store/apps/details?id=com.samrifa.antropometri",
+    "market_url": "market://details?id=com.samrifa.antropometri",
+    "release_notes": "Pembaruan Antropometri tersedia."
+  }
+}
+```
+
+### App Links Mobile
+
+Email login, reset password, dan notifikasi memakai link HTTPS backend agar Android dapat membuka aplikasi secara langsung. Jika App Link belum terverifikasi atau aplikasi belum terpasang, halaman fallback mencoba custom scheme `antropometri://app/...` lalu mengarahkan ke Play Store.
+
+Environment:
+
+```env
+APP_LINK_BASE=https://antropometri.samrifa.com
+APP_DEEP_LINK_BASE=antropometri://app
+APP_PLAY_STORE_URL=https://play.google.com/store/apps/details?id=com.samrifa.antropometri
+ANDROID_PACKAGE_NAME=com.samrifa.antropometri
+ANDROID_SHA256_CERT_FINGERPRINTS=AA:BB:CC:...
+```
+
+Endpoint `/.well-known/assetlinks.json` membaca `ANDROID_PACKAGE_NAME` dan `ANDROID_SHA256_CERT_FINGERPRINTS`. Isi fingerprint harus memakai SHA-256 dari Play App Signing certificate agar verified App Links aktif di perangkat Android produksi.
 
 ### POST `/api/auth/register`
 

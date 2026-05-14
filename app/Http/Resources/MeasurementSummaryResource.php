@@ -16,6 +16,7 @@ class MeasurementSummaryResource extends JsonResource
         return [
             'id' => $this->id,
             'subject_id' => $this->subject_id,
+            'user_id' => $this->user_id,
             'subject' => [
                 'id' => $this->subject?->id,
                 'name' => $this->subject?->name ?? 'Pasien Terhapus',

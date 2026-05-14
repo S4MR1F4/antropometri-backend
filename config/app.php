@@ -54,7 +54,17 @@ return [
 
     'url' => env('APP_URL', 'http://localhost'),
 
+    'mobile_app_link_base' => env('APP_LINK_BASE', 'https://antropometri.samrifa.com'),
     'mobile_deep_link_base' => env('APP_DEEP_LINK_BASE', 'antropometri://app'),
+    'mobile_play_store_url' => env(
+        'APP_PLAY_STORE_URL',
+        'https://play.google.com/store/apps/details?id=com.samrifa.antropometri'
+    ),
+    'android_package_name' => env('ANDROID_PACKAGE_NAME', 'com.samrifa.antropometri'),
+    'android_sha256_cert_fingerprints' => array_filter(array_map(
+        'trim',
+        explode(',', env('ANDROID_SHA256_CERT_FINGERPRINTS', ''))
+    )),
 
     /*
     |--------------------------------------------------------------------------

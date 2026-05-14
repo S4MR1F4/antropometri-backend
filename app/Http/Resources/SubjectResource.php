@@ -20,6 +20,7 @@ class SubjectResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'user_id' => $this->user_id,
             'name' => $this->name,
             'normalized_name' => $this->normalized_name,
             'date_of_birth' => $this->date_of_birth?->toDateString() ?? '0000-00-00',
