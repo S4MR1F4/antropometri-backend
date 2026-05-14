@@ -74,11 +74,14 @@ Laravel scheduler sudah menjadwalkan backup setiap jam `02:00`:
 php artisan schedule:list
 ```
 
-Server/hosting cukup memiliki satu Cron Jobs untuk scheduler Laravel:
+Untuk shared hosting, opsi paling ringan adalah membuat dua Cron Jobs harian langsung dari panel hosting:
 
 ```cron
-* * * * * cd /home/u863643602/domains/samrifa.com/antropometri_app && php artisan schedule:run >> storage/logs/scheduler.log 2>&1
+0 2 * * * cd /home/u863643602/domains/samrifa.com/antropometri_app && php artisan db:backup >> storage/logs/database-backup.log 2>&1
+15 2 * * * cd /home/u863643602/domains/samrifa.com/antropometri_app && php artisan data:prune-soft-deleted >> storage/logs/data-retention.log 2>&1
 ```
+
+Alternatif standar Laravel adalah satu Cron Jobs `schedule:run` setiap menit. Itu tetap ringan karena hanya mengecek task yang sudah due, tetapi opsi dua Cron Jobs harian di atas lebih hemat proses untuk shared hosting.
 
 Dengan jadwal ini database dibackup setiap jam 02:00 waktu server. File `latest.sql.gz` akan menunjuk backup terbaru jika server mendukung symlink. Retensi default adalah 10 file backup terbaru; ketika backup ke-11 berhasil dibuat, file paling lama otomatis dihapus. Jumlah retensi dapat diubah dengan `DB_BACKUP_KEEP_COUNT`.
 
