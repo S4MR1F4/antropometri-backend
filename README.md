@@ -41,6 +41,7 @@ Template yang digenerate mengikuti `docs/Template_Perhitungan_Antropometri.xlsx`
 ```env
 APP_URL=http://127.0.0.1:8000
 APP_DEEP_LINK_BASE=antropometri://app
+PRIMARY_ADMIN_EMAIL=antropometri@samrifa.com
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
 DB_PORT=3306
@@ -97,6 +98,16 @@ php artisan data:prune-soft-deleted --dry-run
 ```
 
 Foreign key `subjects.user_id` dan `measurements.user_id` dibuat `restrictOnDelete` supaya force delete user tidak pernah menghapus data pasien/pemeriksaan secara cascade. Relasi pasien ke pemeriksaan tetap `cascadeOnDelete`, sesuai aturan bahwa pemeriksaan ikut hilang permanen hanya ketika pasien dihapus permanen.
+
+## Akun Utama Admin
+
+Akun `PRIMARY_ADMIN_EMAIL` (default `antropometri@samrifa.com`) adalah akun utama pemilik aplikasi. Admin lain tetap bisa melihat akun ini di daftar user, tetapi API akan menolak edit, reset password, atau delete terhadap akun utama dengan HTTP `403`. Response daftar user menyertakan flag:
+
+- `is_current_user`: akun yang sedang login.
+- `is_primary`: akun utama pemilik aplikasi.
+- `can_manage`: boleh/tidaknya akun login menjalankan aksi manajemen user terhadap target.
+
+Export PDF/Excel mengikuti scope role yang sama dengan API data: admin mengekspor seluruh data sesuai filter, petugas otomatis dibatasi ke `user_id` miliknya. PDF tidak lagi membatasi daftar detail ke 500 baris agar hasil export sesuai penuh dengan filter yang dipilih.
 
 ## Struktur Folder
 

@@ -116,12 +116,8 @@ class ExportService
             }
         }
 
-        // Limit for the list display if needed, but if user wants full report, maybe don't limit?
-        // User said "summary nya saja", but implies enriching the PDF.
-        // If the dataset is huge, PDF generation might fail. 
-        // I will keep the limit of 300 for the *list* to prevent OOM, or maybe 500.
-        // But aggregates are on full dataset.
-        $measurementsList = $allMeasurements->take(500);
+        // The exported report must match the selected scope exactly.
+        $measurementsList = $allMeasurements;
 
         $pdf = Pdf::loadView('reports.summary', [
             'stats' => $stats,

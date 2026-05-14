@@ -21,6 +21,8 @@ class AdminController extends Controller
 {
     use ApiResponse;
 
+    private const PRIMARY_ADMIN_EMAIL = 'antropometri@samrifa.com';
+
     public function __construct(
         protected StatisticsService $statisticsService,
         protected DataRetentionService $dataRetentionService
@@ -56,6 +58,16 @@ class AdminController extends Controller
         }
 
         $users = $query->paginate($request->integer('per_page', 15));
+        $currentUser = $request->user();
+
+        $users->getCollection()->transform(function (User $user) use ($currentUser) {
+            $data = $user->toArray();
+            $data['is_current_user'] = $currentUser && $user->id === $currentUser->id;
+            $data['is_primary'] = $this->isPrimaryAdminAccount($user);
+            $data['can_manage'] = $this->canManageUser($currentUser, $user);
+
+            return $data;
+        });
 
         return $this->successResponse(
             data: [
@@ -111,6 +123,10 @@ class AdminController extends Controller
      */
     public function updateUser(Request $request, User $user): JsonResponse
     {
+        if (!$this->canManageUser($request->user(), $user)) {
+            return $this->primaryAccountDeniedResponse();
+        }
+
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|min:3|max:255',
             'email' => 'sometimes|email|unique:users,email,' . $user->id,
@@ -154,6 +170,10 @@ class AdminController extends Controller
      */
     public function destroyUser(User $user): JsonResponse
     {
+        if (!$this->canManageUser(auth()->user(), $user)) {
+            return $this->primaryAccountDeniedResponse();
+        }
+
         // Prevent self-deletion
         if ($user->id === auth()->id()) {
             return $this->errorResponse(
@@ -187,6 +207,10 @@ class AdminController extends Controller
      */
     public function resetPassword(User $user): JsonResponse
     {
+        if (!$this->canManageUser(request()->user(), $user)) {
+            return $this->primaryAccountDeniedResponse();
+        }
+
         request()->validate([
             'password' => ['sometimes', 'string', 'min:8'],
         ]);
@@ -226,5 +250,36 @@ class AdminController extends Controller
                 message: 'Password berhasil direset, tetapi email gagal dikirim. Admin dapat menyalin password baru.'
             );
         }
+    }
+
+    private function primaryAdminEmail(): string
+    {
+        return strtolower((string) env('PRIMARY_ADMIN_EMAIL', self::PRIMARY_ADMIN_EMAIL));
+    }
+
+    private function isPrimaryAdminAccount(User $user): bool
+    {
+        return strtolower($user->email) === $this->primaryAdminEmail();
+    }
+
+    private function canManageUser(?User $actor, User $target): bool
+    {
+        if (!$actor) {
+            return false;
+        }
+
+        if (!$this->isPrimaryAdminAccount($target)) {
+            return true;
+        }
+
+        return $actor->id === $target->id;
+    }
+
+    private function primaryAccountDeniedResponse(): JsonResponse
+    {
+        return $this->errorResponse(
+            message: 'Akun utama hanya dapat diubah oleh pemilik akun utama.',
+            code: 403
+        );
     }
 }
