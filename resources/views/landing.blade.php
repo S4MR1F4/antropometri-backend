@@ -693,6 +693,7 @@
             }
         }
     </style>
+    <script defer src="https://umami.samrifa.com/script.js" data-website-id="7883a719-cea1-4b99-ab74-df78c2775aef"></script>
 </head>
 <body>
     <nav class="nav" aria-label="Navigasi utama">
