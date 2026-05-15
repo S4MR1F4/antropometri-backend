@@ -89,86 +89,56 @@ class StatisticsService
      */
     protected function getStatusDistribution($query): array
     {
-        $stats = [
-            'normal' => 0,
-            'stunting' => 0,
-            'wasting' => 0,
-            'obesity' => 0,
-        ];
+        $stuntingCondition = "LOWER(COALESCE(status_tbu, '')) LIKE '%pendek%'";
+        $wastingCondition = implode(' OR ', [
+            "LOWER(COALESCE(status_bbtb, '')) LIKE '%kurang%'",
+            "LOWER(COALESCE(status_bbtb, '')) LIKE '%buruk%'",
+            "LOWER(COALESCE(status_bbtb, '')) LIKE '%wasting%'",
+            "LOWER(COALESCE(status_bbtb, '')) LIKE '%kurus%'",
+            "LOWER(COALESCE(status_imtu, '')) LIKE '%kurus%'",
+            "LOWER(COALESCE(status_imtu, '')) LIKE '%kurang%'",
+            "LOWER(COALESCE(status_bmi, '')) LIKE '%kurus%'",
+            "LOWER(COALESCE(status_bmi, '')) LIKE '%kurang%'",
+        ]);
+        $obesityCondition = implode(' OR ', [
+            "LOWER(COALESCE(status_bbtb, '')) LIKE '%lebih%'",
+            "LOWER(COALESCE(status_bbtb, '')) LIKE '%gemuk%'",
+            "LOWER(COALESCE(status_bbtb, '')) LIKE '%obesitas%'",
+            "LOWER(COALESCE(status_imtu, '')) LIKE '%lebih%'",
+            "LOWER(COALESCE(status_imtu, '')) LIKE '%gemuk%'",
+            "LOWER(COALESCE(status_imtu, '')) LIKE '%obese%'",
+            "LOWER(COALESCE(status_bmi, '')) LIKE '%lebih%'",
+            "LOWER(COALESCE(status_bmi, '')) LIKE '%gemuk%'",
+            "LOWER(COALESCE(status_bmi, '')) LIKE '%obesitas%'",
+        ]);
 
-        // Process latest status for each subject in the filtered results
-        $results = (clone $query)
-            ->with('subject') // Assuming relationship exists
-            ->orderBy('measurement_date', 'desc')
-            ->get();
+        // Keep this as SQL aggregation. Pulling all measurements into PHP makes
+        // the dashboard slow and memory-heavy once the table grows.
+        $stats = (clone $query)
+            ->selectRaw("SUM(CASE WHEN {$stuntingCondition} THEN 1 ELSE 0 END) as stunting")
+            ->selectRaw("SUM(CASE WHEN {$wastingCondition} THEN 1 ELSE 0 END) as wasting")
+            ->selectRaw("SUM(CASE WHEN {$obesityCondition} THEN 1 ELSE 0 END) as obesity")
+            ->selectRaw("SUM(CASE WHEN NOT ({$stuntingCondition}) AND NOT ({$wastingCondition}) AND NOT ({$obesityCondition}) THEN 1 ELSE 0 END) as normal")
+            ->first();
 
-        // We no longer group by subject_id. Instead, we include all measurements
-        // so that the total distribution matches the total count of measurements.
-        foreach ($results as $m) {
-            $isStunting = false;
-            $isWasting = false;
-            $isObesity = false;
-
-            // Stunting logic (TB/U)
-            if ($m->status_tbu) {
-                $s = strtolower($m->status_tbu);
-                if (str_contains($s, 'pendek'))
-                    $isStunting = true;
-            }
-
-            // Wasting logic (BB/TB)
-            if ($m->status_bbtb) {
-                $s = strtolower($m->status_bbtb);
-                if (str_contains($s, 'kurang') || str_contains($s, 'buruk') || str_contains($s, 'wasting') || str_contains($s, 'kurus')) {
-                    $isWasting = true;
-                }
-                if (str_contains($s, 'lebih') || str_contains($s, 'gemuk') || str_contains($s, 'obesitas')) {
-                    $isObesity = true;
-                }
-            }
-
-            // Remaja/Dewasa BMI logic
-            if ($m->status_imtu) {
-                $s = strtolower($m->status_imtu);
-                if (str_contains($s, 'kurus') || str_contains($s, 'kurang'))
-                    $isWasting = true;
-                if (str_contains($s, 'lebih') || str_contains($s, 'gemuk') || str_contains($s, 'obese'))
-                    $isObesity = true;
-            }
-
-            if ($m->status_bmi) {
-                $s = strtolower($m->status_bmi);
-                if (str_contains($s, 'kurus') || str_contains($s, 'kurang'))
-                    $isWasting = true;
-                if (str_contains($s, 'lebih') || str_contains($s, 'gemuk') || str_contains($s, 'obesitas'))
-                    $isObesity = true;
-            }
-
-            if ($isStunting)
-                $stats['stunting']++;
-            if ($isWasting)
-                $stats['wasting']++;
-            if ($isObesity)
-                $stats['obesity']++;
-
-            if (!$isStunting && !$isWasting && !$isObesity) {
-                $stats['normal']++;
-            }
-        }
+        $normal = (int) ($stats->normal ?? 0);
+        $stunting = (int) ($stats->stunting ?? 0);
+        $wasting = (int) ($stats->wasting ?? 0);
+        $obesity = (int) ($stats->obesity ?? 0);
 
         return [
             // Mobile aligned keys
-            'normal_count' => $stats['normal'],
-            'stunting_count' => $stats['stunting'],
-            'wasting_count' => $stats['wasting'],
-            'obesity_count' => $stats['obesity'],
+            'normal_count' => $normal,
+            'stunting_count' => $stunting,
+            'wasting_count' => $wasting,
+            'obesity_count' => $obesity,
 
             // Backward compatibility for reports
-            'gizi_baik' => $stats['normal'],
-            'gizi_kurang' => $stats['stunting'], // Aligned logic: Stunting = Pendek/Kurang
-            'gizi_buruk' => $stats['wasting'],  // Aligned logic: Wasting = Buruk/Kurus
-            'gizi_lebih' => $stats['obesity'],
-            'obesitas' => $stats['obesity'],
+            'gizi_baik' => $normal,
+            'gizi_kurang' => $stunting, // Aligned logic: Stunting = Pendek/Kurang
+            'gizi_buruk' => $wasting,  // Aligned logic: Wasting = Buruk/Kurus
+            'gizi_lebih' => $obesity,
+            'obesitas' => $obesity,
         ];
     }
 }

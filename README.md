@@ -120,6 +120,17 @@ Akun `PRIMARY_ADMIN_EMAIL` (default `antropometri@samrifa.com`) adalah akun utam
 
 Export PDF/Excel mengikuti scope role yang sama dengan API data: admin mengekspor seluruh data sesuai filter, petugas otomatis dibatasi ke `user_id` miliknya. PDF tidak lagi membatasi daftar detail ke 500 baris agar hasil export sesuai penuh dengan filter yang dipilih.
 
+## Skalabilitas Query
+
+Backend ditargetkan tetap ringan di shared/web hosting dengan aturan berikut:
+
+- Dashboard statistik memakai agregasi SQL untuk distribusi status gizi, bukan mengambil seluruh baris measurement ke PHP.
+- Index tambahan disiapkan untuk filter umum: `measurement_date`, `user_id + measurement_date`, `category + measurement_date`, duplicate check subject, dan retensi soft delete.
+- Endpoint list/history wajib tetap memakai pagination. Hindari request mobile/web yang menarik seluruh riwayat tanpa batas.
+- Search nama dengan pola `%keyword%` masih cukup untuk data kecil-menengah, tetapi untuk jutaan data sebaiknya dinaikkan menjadi prefix search/normalized search atau FULLTEXT index.
+- Export besar sebaiknya diberi filter periode. Pada hosting terbatas, export tahunan/jutaan baris perlu dipindahkan ke job/queue atau dibuat per-batch agar tidak terkena timeout PHP.
+- Mode offline mobile tidak boleh menjadi mirror jutaan data server. Cache lokal dipakai sebagai working set perangkat; sinkronisasi massal sebaiknya memakai cursor `updated_at/deleted_at` jika volume data sudah besar.
+
 ## Struktur Folder
 
 ```text
