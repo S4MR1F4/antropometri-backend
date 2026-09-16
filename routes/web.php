@@ -52,7 +52,11 @@ Route::get('/measurements/{measurement}', function (string $measurement) {
 });
 
 Route::get('/', function () {
-    return view('landing');
+    return view('dashboard');
+});
+
+Route::get('/dashboard', function () {
+    return view('dashboard');
 });
 
 Route::any('{any}', function () {
