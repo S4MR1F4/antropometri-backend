@@ -42,7 +42,7 @@ class SummaryExport implements FromCollection, WithHeadings, WithTitle, ShouldAu
     public function collection()
     {
         // 1. Fetch Data
-        $query = Measurement::query()->with('subject');
+        $query = Measurement::query()->with('subject')->whereHas('subject');
 
         if (!empty($this->filters['from_date'])) {
             $query->where('measurement_date', '>=', $this->filters['from_date']);

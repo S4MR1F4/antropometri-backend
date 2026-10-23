@@ -11,6 +11,8 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithMultipleSheets;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
+use App\Services\MeasurementService;
+
 class MeasurementsImport implements ToCollection, WithHeadingRow, WithMultipleSheets
 {
     public $importedCount = 0;
@@ -19,9 +21,7 @@ class MeasurementsImport implements ToCollection, WithHeadingRow, WithMultipleSh
     public function sheets(): array
     {
         return [
-            // Handle specifically the 'Template Input' sheet if it exists, or the first sheet by index
-            'Template Input' => $this,
-            0 => $this // Fallback to first sheet
+            0 => $this,
         ];
     }
 
@@ -57,25 +57,26 @@ class MeasurementsImport implements ToCollection, WithHeadingRow, WithMultipleSh
 
                 $isPregnant = isset($row['hamil_yt']) && strtoupper(trim($row['hamil_yt'])) === 'Y';
 
-                // Find or create subject by name + DOB + gender
+                $userId = auth()->id() ?? 1;
+                $normalizedName = Subject::normalizeName($name);
+
+                // Find or create subject with proper tenant and normalized name
                 $subject = Subject::firstOrCreate(
                     [
-                        'name' => $name,
+                        'user_id' => $userId,
+                        'normalized_name' => $normalizedName,
                         'date_of_birth' => $dob,
+                    ],
+                    [
+                        'name' => $name,
                         'gender' => $gender,
                     ]
                 );
-
-                // If subject existed but basic info differed, we might minimally update it if needed.
-                // Keeping it simple for now and creating a new measurement.
 
                 $weight = $this->parseNumeric($row['berat_badan_kg'] ?? null);
                 $height = $this->parseNumeric($row['tinggi_badan_cm'] ?? null);
                 $lila = $this->parseNumeric($row['lila_cm'] ?? null);
                 $headCirc = $this->parseNumeric($row['lingkar_kepala_cm'] ?? null);
-
-                // Note: the template might have auto-calculated fields, but our backend will recalculate 
-                // the categories and z-scores upon saving via the Observers, so we just provide the raw inputs.
 
                 // Check if identical measurement already exists to avoid duplicates
                 $existing = Measurement::where('subject_id', $subject->id)
@@ -87,9 +88,9 @@ class MeasurementsImport implements ToCollection, WithHeadingRow, WithMultipleSh
                     continue; // Skip duplicate
                 }
 
-                Measurement::create([
-                    'subject_id' => $subject->id,
-                    'user_id' => auth()->id() ?? 1, // Fallback to ID 1 if no auth context
+                // Create measurement via service to trigger all calculations & Z-scores
+                app(MeasurementService::class)->createMeasurement($subject, [
+                    'user_id' => $userId,
                     'measurement_date' => $measurementDate,
                     'weight' => $weight,
                     'height' => $height,

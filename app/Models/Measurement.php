@@ -47,6 +47,7 @@ class Measurement extends Model
         'status_bbtb',
         'status_imtu',
         'status_bmi',
+        'status_lila',
         'has_central_obesity',
         'notes',
         'reference_data',

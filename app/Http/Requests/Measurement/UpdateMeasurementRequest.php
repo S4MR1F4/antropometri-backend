@@ -70,14 +70,9 @@ class UpdateMeasurementRequest extends FormRequest
             $measurementDate
         );
 
-        if ($ageInMonths < 60) {
-            return 'balita';
-        }
-
-        if ($ageInMonths < 216) {
-            return 'remaja';
-        }
-
-        return 'dewasa';
+        return app(SubjectService::class)->determineCategory(
+            $ageInMonths,
+            (bool) $this->input('is_pregnant', false)
+        );
     }
 }

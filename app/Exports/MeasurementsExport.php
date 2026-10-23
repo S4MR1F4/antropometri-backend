@@ -29,7 +29,7 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping, WithTi
 
     public function query()
     {
-        $query = Measurement::query()->with(['subject', 'user']);
+        $query = Measurement::query()->with(['subject', 'user'])->whereHas('subject');
 
         if (!empty($this->filters['from_date'])) {
             $query->where('measurement_date', '>=', $this->filters['from_date']);
