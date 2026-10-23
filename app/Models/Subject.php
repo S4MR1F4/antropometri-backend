@@ -25,6 +25,7 @@ class Subject extends Model
      */
     protected $fillable = [
         'user_id',
+        'card_token',
         'name',
         'normalized_name',
         'date_of_birth',
@@ -44,6 +45,30 @@ class Subject extends Model
         'date_of_birth' => 'date',
         'pregnancy_start_date' => 'date',
     ];
+
+    protected static function booted(): void
+    {
+        static::creating(function (Subject $subject) {
+            if (empty($subject->card_token)) {
+                $subject->card_token = (string) \Illuminate\Support\Str::uuid();
+            }
+        });
+    }
+
+    /**
+     * Get or create a secure unguessable card token.
+     */
+    public function getSecureCardToken(): string
+    {
+        if (!empty($this->card_token)) {
+            return $this->card_token;
+        }
+
+        $token = (string) \Illuminate\Support\Str::uuid();
+        $this->updateQuietly(['card_token' => $token]);
+
+        return $token;
+    }
 
 
     /**

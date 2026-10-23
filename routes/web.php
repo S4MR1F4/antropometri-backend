@@ -51,9 +51,11 @@ Route::get('/measurements/{measurement}', function (string $measurement) {
     ]);
 });
 
-Route::get('/card/patient/{subject}', [\App\Http\Controllers\PatientCardController::class, 'show'])->name('patient.card');
-Route::get('/card/measurement/{measurement}', [\App\Http\Controllers\PatientCardController::class, 'showMeasurement'])->name('measurement.card');
-Route::get('/patient/{subject}', [\App\Http\Controllers\PatientCardController::class, 'show'])->name('patient.card.alias');
+Route::middleware(['throttle:60,1'])->group(function () {
+    Route::get('/card/patient/{subject}', [\App\Http\Controllers\PatientCardController::class, 'show'])->name('patient.card');
+    Route::get('/card/measurement/{measurement}', [\App\Http\Controllers\PatientCardController::class, 'showMeasurement'])->name('measurement.card');
+    Route::get('/patient/{subject}', [\App\Http\Controllers\PatientCardController::class, 'show'])->name('patient.card.alias');
+});
 
 Route::get('/', function () {
     return view('dashboard');

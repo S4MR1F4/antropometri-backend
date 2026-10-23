@@ -128,20 +128,49 @@ class MeasurementController extends Controller
         );
         ActivityLog::log('measurement_create', 'Measurement', $measurement->id, $measurement->toArray());
 
-        // Send notification to all admins
+        // Send notification to all admins (Intelligent Clinical Alert & Anti-Spam)
         try {
             $weight = $measurement->weight ?? '-';
             $height = $measurement->height ?? '-';
             $admins = \App\Models\User::where('role', 'admin')->get();
 
             if ($admins->isNotEmpty()) {
+                $statusBbu = $measurement->status_bbu;
+                $statusTbu = $measurement->status_tbu;
+                $statusBbtb = $measurement->status_bbtb;
+                $statusLila = $measurement->status_lila;
+
+                $isCritical = in_array($statusBbu, ['Gizi Buruk', 'Gizi Kurang', 'Risiko Berat Badan Lebih'])
+                    || in_array($statusTbu, ['Sangat Pendek'])
+                    || in_array($statusBbtb, ['Gizi Buruk', 'Gizi Kurang', 'Gizi Lebih', 'Obesitas'])
+                    || in_array($statusLila, ['KEK']);
+
+                $primaryStatus = $statusBbtb ?? $statusBbu ?? $statusTbu ?? 'Normal';
+                $title = $isCritical 
+                    ? "[PERINGATAN GIZI] {$subject->name} — {$primaryStatus}" 
+                    : "Pemeriksaan Baru: {$subject->name}";
+
+                $cardUrl = route('patient.card', ['subject' => $subject->getSecureCardToken()]);
+
                 \Illuminate\Support\Facades\Notification::send($admins, new \App\Notifications\SystemNotification(
-                    'Pemeriksaan Baru',
-                    "{$subject->name} — BB: {$weight}kg, TB: {$height}cm (Petugas: {$request->user()->name})",
+                    $title,
+                    "Pemeriksaan antropometri untuk pasien {$subject->name} telah dicatat oleh {$request->user()->name}.",
                     [
                         'measurement_id' => $measurement->id,
                         'subject_id' => $subject->id,
                         'subject_name' => $subject->name,
+                        'card_url' => $cardUrl,
+                        'is_critical' => $isCritical,
+                        'details' => [
+                            'Nama Pasien' => $subject->name,
+                            'Kategori' => strtoupper($measurement->category ?? 'Balita'),
+                            'Berat / Tinggi' => "{$weight} kg / {$height} cm",
+                            'Status Gizi' => $primaryStatus,
+                            'Status Tinggi (TB/U)' => $statusTbu ?? 'Normal',
+                            'Petugas Pemeriksa' => $request->user()->name,
+                            'Tanggal Pemeriksaan' => $measurement->measurement_date?->format('d M Y') ?? now()->format('d M Y'),
+                        ],
+                        'recommendation' => $measurement->recommendation,
                     ]
                 ));
             }

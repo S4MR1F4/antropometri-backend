@@ -54,7 +54,7 @@ class PatientCardTest extends TestCase
             'recommendation' => 'Pertahankan asupan gizi seimbang',
         ]);
 
-        $response = $this->get('/card/patient/' . $subject->id);
+        $response = $this->get('/card/patient/' . $subject->card_token);
 
         $response->assertStatus(200);
         $response->assertSee('Ananda Pratama');
@@ -63,6 +63,42 @@ class PatientCardTest extends TestCase
         $response->assertSee('82.0');
         $response->assertSee('Pertahankan asupan gizi seimbang');
         $response->assertSee('Riwayat Pemeriksaan Pasien (2 Data)');
+    }
+
+    public function test_guest_cannot_bruteforce_patient_card_via_numeric_id(): void
+    {
+        $user = User::factory()->create(['role' => 'petugas']);
+
+        $subject = Subject::create([
+            'user_id' => $user->id,
+            'name' => 'Data Rahasia',
+            'normalized_name' => 'DATA RAHASIA',
+            'date_of_birth' => '2023-01-15',
+            'gender' => 'L',
+        ]);
+
+        // Unauthenticated guest attempting to brute-force by sequential integer ID
+        $response = $this->get('/card/patient/' . $subject->id);
+
+        $response->assertStatus(404);
+    }
+
+    public function test_authenticated_user_can_access_patient_card_via_numeric_id(): void
+    {
+        $user = User::factory()->create(['role' => 'petugas']);
+
+        $subject = Subject::create([
+            'user_id' => $user->id,
+            'name' => 'Data Petugas',
+            'normalized_name' => 'DATA PETUGAS',
+            'date_of_birth' => '2023-01-15',
+            'gender' => 'L',
+        ]);
+
+        $response = $this->actingAs($user)->get('/card/patient/' . $subject->id);
+
+        $response->assertStatus(200);
+        $response->assertSee('Data Petugas');
     }
 
     public function test_patient_card_redirects_from_measurement_id(): void
@@ -90,7 +126,7 @@ class PatientCardTest extends TestCase
 
         $response = $this->get('/card/measurement/' . $measurement->id);
 
-        $response->assertRedirect('/card/patient/' . $subject->id);
+        $response->assertRedirect('/card/patient/' . $subject->card_token);
     }
 
     public function test_non_existent_patient_card_returns_404(): void

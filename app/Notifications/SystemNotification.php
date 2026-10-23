@@ -33,7 +33,15 @@ class SystemNotification extends Notification
      */
     public function via(object $notifiable): array
     {
-        return ['mail', 'database'];
+        $channels = ['database'];
+
+        // Only send email for critical clinical alerts or when explicitly flagged,
+        // preventing email inbox spam on routine normal records.
+        if (!empty($this->meta['is_critical']) || !empty($this->meta['send_mail'])) {
+            $channels[] = 'mail';
+        }
+
+        return $channels;
     }
 
     /**
@@ -41,18 +49,40 @@ class SystemNotification extends Notification
      */
     public function toMail(object $notifiable): MailMessage
     {
-        $actionUrl = isset($this->meta['measurement_id'])
-            ? MobileLink::url('/measurements/' . $this->meta['measurement_id'], [
-                'subject_id' => $this->meta['subject_id'] ?? null,
-            ])
-            : MobileLink::url('/notifications');
+        $actionUrl = isset($this->meta['card_url'])
+            ? $this->meta['card_url']
+            : (isset($this->meta['measurement_id'])
+                ? MobileLink::url('/measurements/' . $this->meta['measurement_id'], [
+                    'subject_id' => $this->meta['subject_id'] ?? null,
+                ])
+                : MobileLink::url('/notifications'));
 
-        return (new MailMessage)
+        $mail = (new MailMessage)
             ->subject($this->title)
-            ->greeting('Halo, ' . $notifiable->name . '!')
-            ->line($this->message)
-            ->action('Buka Aplikasi', $actionUrl)
-            ->line('Terima kasih telah menggunakan aplikasi kami!');
+            ->greeting('Yth. ' . $notifiable->name . ',');
+
+        if (!empty($this->meta['is_critical'])) {
+            $mail->error();
+            $mail->line('PERINGATAN KLINIS: Sistem mendeteksi hasil antropometri yang memerlukan perhatian atau intervensi.');
+        }
+
+        $mail->line($this->message);
+
+        if (!empty($this->meta['details']) && is_array($this->meta['details'])) {
+            foreach ($this->meta['details'] as $label => $value) {
+                if ($value !== null && $value !== '') {
+                    $mail->line("{$label}: {$value}");
+                }
+            }
+        }
+
+        if (!empty($this->meta['recommendation'])) {
+            $mail->line('Rekomendasi Tindakan: ' . $this->meta['recommendation']);
+        }
+
+        return $mail
+            ->action('Lihat Kartu Pasien & Riwayat Lengkap', $actionUrl)
+            ->line('Pemberitahuan resmi dari Sistem Informasi Antropometri & Status Gizi Nasional.');
     }
 
     /**

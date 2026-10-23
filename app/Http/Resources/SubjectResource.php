@@ -20,6 +20,8 @@ class SubjectResource extends JsonResource
 
         return [
             'id' => $this->id,
+            'card_token' => $this->getSecureCardToken(),
+            'card_url' => route('patient.card', ['subject' => $this->getSecureCardToken()]),
             'user_id' => $this->user_id,
             'name' => $this->name,
             'normalized_name' => $this->normalized_name,
