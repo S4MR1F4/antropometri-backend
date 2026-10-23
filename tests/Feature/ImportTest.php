@@ -99,4 +99,60 @@ class ImportTest extends TestCase
             return true;
         });
     }
+
+    public function test_measurements_import_parses_collection_and_calculates_results()
+    {
+        $user = User::factory()->create(['role' => 'petugas']);
+        $this->actingAs($user);
+
+        $import = new \App\Imports\MeasurementsImport();
+        $rows = collect([
+            [
+                'nama_pasien' => 'Bayi Sehat',
+                'tanggal_lahir' => now()->subMonths(12)->format('Y-m-d'),
+                'tanggal_periksa' => now()->format('Y-m-d'),
+                'jenis_kelamin_lp' => 'L',
+                'hamil_yt' => 'T',
+                'berat_badan_kg' => 10.4,
+                'tinggi_badan_cm' => 75.7,
+                'lila_cm' => 15.0,
+                'lingkar_kepala_cm' => 46.0,
+            ],
+            // Duplicate row on same date should be skipped
+            [
+                'nama_pasien' => 'Bayi Sehat',
+                'tanggal_lahir' => now()->subMonths(12)->format('Y-m-d'),
+                'tanggal_periksa' => now()->format('Y-m-d'),
+                'jenis_kelamin_lp' => 'L',
+                'hamil_yt' => 'T',
+                'berat_badan_kg' => 10.4,
+                'tinggi_badan_cm' => 75.7,
+            ],
+            // Out of biological range should be rejected and skipped
+            [
+                'nama_pasien' => 'Invalid Data',
+                'tanggal_lahir' => now()->subMonths(12)->format('Y-m-d'),
+                'tanggal_periksa' => now()->format('Y-m-d'),
+                'jenis_kelamin_lp' => 'L',
+                'berat_badan_kg' => 9999.0,
+            ]
+        ]);
+
+        $import->collection($rows);
+
+        $this->assertEquals(1, $import->importedCount);
+        $this->assertEquals(2, $import->skippedCount);
+
+        // Verify subject was created with normalized_name
+        $subject = Subject::where('name', 'Bayi Sehat')->first();
+        $this->assertNotNull($subject);
+        $this->assertEquals('BAYI SEHAT', $subject->normalized_name);
+
+        // Verify measurement was created with calculated status
+        $measurement = Measurement::where('subject_id', $subject->id)->first();
+        $this->assertNotNull($measurement);
+        $this->assertEquals('balita', $measurement->category);
+        $this->assertEquals(12, $measurement->age_in_months);
+        $this->assertNotNull($measurement->status_bbu);
+    }
 }

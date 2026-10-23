@@ -86,14 +86,14 @@ class MeasurementsExport implements FromQuery, WithHeadings, WithMapping, WithTi
     public function map($measurement): array
     {
         $this->rowNumber++;
-        $ageInYears = is_numeric($measurement->age_in_months) ? round($measurement->age_in_months / 12, 1) : '-';
+        $ageInYears = is_numeric($measurement->age_in_months) ? round($measurement->age_in_months / 12, 1) : null;
         
         return [
             $this->rowNumber,
-            $measurement->subject->name ?? '-',
-            $measurement->subject->date_of_birth ? $measurement->subject->date_of_birth->format('Y-m-d') : '-',
-            $measurement->measurement_date ? $measurement->measurement_date->format('Y-m-d') : '-',
-            $measurement->subject->gender ?? '-',
+            $measurement->subject->name ?? '',
+            $measurement->subject->date_of_birth ? $measurement->subject->date_of_birth->format('Y-m-d') : null,
+            $measurement->measurement_date ? $measurement->measurement_date->format('Y-m-d') : null,
+            $measurement->subject->gender ?? '',
             $measurement->is_pregnant ? 'Y' : 'T',
             $measurement->weight,
             $measurement->height,
