@@ -168,10 +168,93 @@
             padding: 28px 32px;
             background: #FFFFFF;
             border-bottom: 1px solid var(--border-color);
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 24px;
+            display: block;
+        }
+
+        .bio-item-highlight {
+            background: #F0FDF4 !important;
+            border-color: #BBF7D0 !important;
+        }
+
+        /* Official Endorsement & Bottom Right QR Section */
+        .verification-footer-section {
+            padding: 24px 32px;
+            background: #F8FAFC;
+            border-top: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
             align-items: center;
+            gap: 24px;
+            flex-wrap: wrap;
+        }
+
+        .endorsement-left {
+            flex: 1;
+            min-width: 280px;
+        }
+
+        .endorsement-title {
+            font-size: 11px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.75px;
+            margin-bottom: 6px;
+        }
+
+        .endorsement-desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-bottom: 12px;
+            line-height: 1.5;
+        }
+
+        .endorsement-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            font-size: 11px;
+            color: var(--text-main);
+            margin-bottom: 14px;
+        }
+
+        .endorsement-buttons {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .endorsement-right {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        .qr-stamp-box {
+            background: #FFFFFF;
+            border: 2px solid var(--primary-light);
+            border-radius: 16px;
+            padding: 12px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(13, 148, 136, 0.08);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .qr-stamp-label {
+            font-size: 10px;
+            font-weight: 800;
+            color: var(--primary-dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .qr-stamp-sub {
+            font-size: 9px;
+            color: var(--text-muted);
+            font-weight: 600;
         }
 
         .patient-main-info {
@@ -620,13 +703,19 @@
                         <div class="bio-label">ID Pasien / Faskes</div>
                         <div class="bio-value">#{{ str_pad($subject->id, 5, '0', STR_PAD_LEFT) }}</div>
                     </div>
+                    @if($subject->pregnancy_start_date || ($latest && $latest->is_pregnant))
+                    <div class="bio-item bio-item-highlight">
+                        <div class="bio-label">Status Kehamilan</div>
+                        <div class="bio-value">
+                            @if($latest && $latest->is_pregnant)
+                                Sedang Hamil ({{ $latest->gestational_age_weeks ? $latest->gestational_age_weeks . ' Mgg' : 'Trimester ' . ($latest->trimester ?? 1) }})
+                            @else
+                                Riwayat Kehamilan Terdata
+                            @endif
+                        </div>
+                    </div>
+                    @endif
                 </div>
-            </div>
-
-            <!-- QR Code Section -->
-            <div class="qr-card-box">
-                <div class="qr-placeholder" id="qrcode"></div>
-                <div class="qr-label">Scan Verifikasi</div>
             </div>
         </div>
 
@@ -801,10 +890,51 @@
             @endif
         </div>
 
+        <!-- Official Endorsement & Bottom Right QR Section -->
+        <div class="verification-footer-section">
+            <div class="endorsement-left">
+                <div class="endorsement-title">PENGESAHAN REKAM MEDIS & VERIFIKASI RESMI</div>
+                <div class="endorsement-desc">
+                    Kartu ini memuat riwayat tumbuh kembang dan rekam gizi standar Kemenkes RI. Pindai kode QR di samping untuk memverifikasi keaslian dokumen secara online atau mengunduh arsip rekam medis digital.
+                </div>
+                <div class="endorsement-meta">
+                    <div>Waktu Verifikasi: <strong>{{ now()->translatedFormat('d F Y, H:i') }} WIB</strong></div>
+                    <div>Petugas Pemeriksa: <strong>{{ $latest->user->name ?? 'Tenaga Kesehatan Faskes' }}</strong></div>
+                    <div>Legalitas: <span class="badge status-normal">Dokumen Terdaftar Resmi</span></div>
+                </div>
+                <div class="endorsement-buttons">
+                    <button onclick="window.print()" class="btn btn-primary" style="padding: 8px 14px; font-size: 12px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 6 2 18 2 18 9"></polyline>
+                            <path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path>
+                            <rect x="6" y="14" width="12" height="8"></rect>
+                        </svg>
+                        Cetak Dokumen
+                    </button>
+                    <a href="{{ $cardUrl }}" target="_blank" class="btn btn-outline" style="padding: 8px 14px; font-size: 12px;">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                            <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                        </svg>
+                        Tautan Kartu Online
+                    </a>
+                </div>
+            </div>
+
+            <!-- Bottom Right QR Code -->
+            <div class="endorsement-right">
+                <div class="qr-stamp-box">
+                    <div class="qr-placeholder" id="qrcode"></div>
+                    <div class="qr-stamp-label">Scan Hasil Online</div>
+                    <div class="qr-stamp-sub">Verifikasi & Unduh Data</div>
+                </div>
+            </div>
+        </div>
+
         <!-- Card Footer -->
         <div class="card-footer">
-            <div>Standar Antropometri Anak & Dewasa (Permenkes RI).</div>
-            <div>Dicetak via Sistem Antropometri &bull; {{ now()->translatedFormat('d F Y H:i') }}</div>
+            <div>Standar Antropometri Anak & Dewasa (Permenkes RI). Dokumen sah tanpa tanda tangan basah bila QR code terverifikasi.</div>
+            <div>ID Dokumen: #DOC-{{ str_pad($subject->id, 5, '0', STR_PAD_LEFT) }}-{{ now()->format('Ymd') }}</div>
         </div>
     </div>
 </div>
