@@ -16,6 +16,7 @@ class HistoryGroupedResource extends JsonResource
     {
         return [
             'id' => $this->id,
+            'card_token' => $this->getSecureCardToken(),
             'name' => $this->name,
             'gender' => $this->gender,
             'date_of_birth' => $this->date_of_birth?->toDateString(),

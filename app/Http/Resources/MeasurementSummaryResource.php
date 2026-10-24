@@ -19,6 +19,7 @@ class MeasurementSummaryResource extends JsonResource
             'user_id' => $this->user_id,
             'subject' => [
                 'id' => $this->subject?->id,
+                'card_token' => $this->subject?->getSecureCardToken(),
                 'name' => $this->subject?->name ?? 'Pasien Terhapus',
                 'gender' => $this->subject?->gender ?? '-',
                 'date_of_birth' => $this->subject?->date_of_birth?->toDateString() ?? '0000-00-00',
