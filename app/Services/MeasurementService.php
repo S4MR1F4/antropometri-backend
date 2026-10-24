@@ -497,8 +497,8 @@ class MeasurementService
             $q->withTrashed();
         });
 
-        // Only filter by user_id if NOT an admin
-        if (!auth()->user()->isAdmin()) {
+        // Filter by user_id only when explicitly requested (e.g. only_mine)
+        if (!empty($filters['only_mine'])) {
             $query->where('user_id', auth()->id());
         }
 
@@ -550,32 +550,28 @@ class MeasurementService
             $query->where('name', 'like', "%{$filters['search']}%");
         }
 
-        // Filter by subjects that have measurements by this user
-        $query->whereHas('measurements', function ($q) {
-            if (!auth()->user()->isAdmin()) {
+        // Filter by subjects that have measurements by this user if specifically requested
+        if (!empty($filters['only_mine'])) {
+            $query->whereHas('measurements', function ($q) {
                 $q->where('user_id', auth()->id());
-            }
-        });
-
-        // We allow subjects without measurements to show up in the patient list/history
-        // for better visibility of newly added patients.
-        // $query->has('measurements');
+            });
+        }
 
         // Load latest measurement and count
         $query->with([
             'latestMeasurement',
-            'measurements' => function ($q) {
-                if (!auth()->user()->isAdmin()) {
+            'measurements' => function ($q) use ($filters) {
+                if (!empty($filters['only_mine'])) {
                     $q->where('user_id', auth()->id());
                 }
             }
         ])->withCount([
-                    'measurements' => function ($q) {
-                        if (!auth()->user()->isAdmin()) {
-                            $q->where('user_id', auth()->id());
-                        }
-                    }
-                ]);
+            'measurements' => function ($q) use ($filters) {
+                if (!empty($filters['only_mine'])) {
+                    $q->where('user_id', auth()->id());
+                }
+            }
+        ]);
 
         // Order by latest measurement date using subquery for sorting
         $query->addSelect([
