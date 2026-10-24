@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kartu Pasien - {{ $subject->name }} | Antropometri Indonesia</title>
+    <link rel="icon" type="image/png" href="{{ asset('landing-assets/images/icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('landing-assets/images/icon.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -609,9 +611,7 @@
     <!-- Top Action Bar -->
     <div class="top-action-bar">
         <div class="brand-badge">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
-            </svg>
+            <img src="{{ asset('landing-assets/images/icon.png') }}" alt="Logo Antropometri" style="width: 20px; height: 20px; border-radius: 6px; object-fit: cover;">
             SISTEM ANTROPOMETRI NASIONAL
         </div>
         <div class="action-group">
@@ -637,7 +637,8 @@
     <div class="patient-card">
         <!-- Card Header -->
         <div class="card-header">
-            <div class="header-content">
+            <div class="header-content" style="display: flex; align-items: center; gap: 16px;">
+                <img src="{{ asset('landing-assets/images/icon.png') }}" alt="Logo Antropometri" style="width: 48px; height: 48px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(0,0,0,0.15); border: 2px solid rgba(255,255,255,0.4);">
                 <div class="header-title-box">
                     <h1>Kartu Tumbuh Kembang Pasien</h1>
                     <div class="header-subtitle">Rekam Jejak Status Gizi & Pertumbuhan Standar Kemenkes RI</div>

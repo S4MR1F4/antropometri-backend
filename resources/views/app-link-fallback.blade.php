@@ -4,6 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ $title }} - Antropometri</title>
+    <link rel="icon" type="image/png" href="{{ asset('landing-assets/images/icon.png') }}">
+    <link rel="apple-touch-icon" href="{{ asset('landing-assets/images/icon.png') }}">
     <style>
         body {
             margin: 0;
@@ -54,6 +56,13 @@
 </head>
 <body>
     <main>
+        <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 20px;">
+            <img src="{{ asset('landing-assets/images/icon.png') }}" alt="Logo Antropometri" style="width: 44px; height: 44px; border-radius: 12px; object-fit: cover; box-shadow: 0 4px 12px rgba(23, 107, 77, 0.2);">
+            <div>
+                <div style="font-weight: 800; font-size: 16px; color: #176b4d;">Antropometri</div>
+                <div style="font-size: 11px; color: #66756d;">Sistem Pemantauan Status Gizi</div>
+            </div>
+        </div>
         <h1>{{ $title }}</h1>
         <p>{{ $message }} Jika aplikasi tidak terbuka otomatis, gunakan tombol di bawah.</p>
         <a class="primary" href="{{ $appUrl }}">Buka Aplikasi</a>

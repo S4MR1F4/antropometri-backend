@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Antropometri Indonesia | Dashboard Pemantauan Status Gizi &amp; Standar Klinis</title>
     <meta name="description" content="Platform web terpadu pemantauan antropometri, kalkulator status gizi WHO 2006 & Permenkes No. 2/2020, format round-trip Excel, dan unduh APK Android dengan launcher widget.">
+    <link rel="icon" type="image/png" href="/landing-assets/images/icon.png">
+    <link rel="apple-touch-icon" href="/landing-assets/images/icon.png">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
@@ -1231,7 +1233,10 @@
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <h4>Antropometri Indonesia</h4>
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <img src="/landing-assets/images/icon.png" alt="Logo Antropometri" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover;">
+                        <h4 style="margin: 0; font-size: 18px;">Antropometri Indonesia</h4>
+                    </div>
                     <p>Platform standar nasional pengukuran antropometri dan penilaian status gizi terintegrasi untuk posyandu, puskesmas, dan tenaga medis Indonesia. Menjamin kepatuhan standar baku WHO 2006 dan Permenkes No. 2 Tahun 2020.</p>
                 </div>
                 <div class="footer-col">
