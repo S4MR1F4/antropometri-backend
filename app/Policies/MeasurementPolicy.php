@@ -26,11 +26,11 @@ class MeasurementPolicy
 
     /**
      * Determine whether the user can view the model.
-     * Owner or admin only.
+     * All authenticated users (admin or petugas) can view measurements for clinical collaboration.
      */
     public function view(User $user, Measurement $measurement): bool
     {
-        return $user->isAdmin() || $measurement->user_id === $user->id;
+        return true;
     }
 
     /**

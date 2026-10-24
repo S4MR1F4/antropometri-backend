@@ -26,11 +26,11 @@ class SubjectPolicy
 
     /**
      * Determine whether the user can view the model.
-     * Owner or admin only.
+     * All authenticated users (admin or petugas) can view patient profiles for team collaboration.
      */
     public function view(User $user, Subject $subject): bool
     {
-        return $user->isAdmin() || $subject->user_id === $user->id;
+        return true;
     }
 
     /**

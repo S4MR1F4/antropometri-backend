@@ -53,7 +53,8 @@ Route::middleware(['auth:sanctum'])->group(function () {
     Route::post('subjects/{subject}/restore', [SubjectController::class, 'restore'])->withTrashed();
     Route::apiResource('subjects', SubjectController::class)->withTrashed(['show', 'update']);
 
-    // Measurements
+    // Measurements & Collaboration
+    Route::get('/collaboration/stats', [MeasurementController::class, 'collaborationStats']);
     Route::post('/measurements/{id}/restore', [MeasurementController::class, 'restore']);
     Route::get('/measurements/grouped', [MeasurementController::class, 'groupedHistory']);
     Route::get('/measurements', [MeasurementController::class, 'history']);

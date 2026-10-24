@@ -258,4 +258,49 @@ class MeasurementController extends Controller
             message: 'Pengukuran berhasil dipulihkan'
         );
     }
+
+    /**
+     * Get team collaboration statistics & staff contribution leaderboard.
+     * GET /collaboration/stats
+     */
+    public function collaborationStats(Request $request): JsonResponse
+    {
+        $fromDate = $request->query('from_date');
+        $toDate = $request->query('to_date');
+
+        $query = Measurement::withoutGlobalScope('user');
+        if (!empty($fromDate)) {
+            $query->where('measurement_date', '>=', $fromDate);
+        }
+        if (!empty($toDate)) {
+            $query->where('measurement_date', '<=', $toDate);
+        }
+
+        $total = (clone $query)->count();
+
+        $rawContributions = (clone $query)
+            ->join('users', 'measurements.user_id', '=', 'users.id')
+            ->selectRaw('users.id as user_id, users.name as name, users.role as role, COUNT(measurements.id) as count')
+            ->groupBy('users.id', 'users.name', 'users.role')
+            ->orderByDesc('count')
+            ->get();
+
+        $contributions = $rawContributions->map(function ($item) use ($total) {
+            return [
+                'user_id' => (int) $item->user_id,
+                'name' => $item->name,
+                'role' => $item->role,
+                'count' => (int) $item->count,
+                'percentage' => $total > 0 ? round(($item->count / $total) * 100, 1) : 0.0,
+            ];
+        });
+
+        return $this->successResponse(
+            data: [
+                'total_system' => $total,
+                'online_server' => $total,
+                'contributions' => $contributions,
+            ]
+        );
+    }
 }
