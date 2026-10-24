@@ -786,11 +786,7 @@
     <header class="navbar">
         <div class="container nav-content">
             <a href="/" class="brand-logo">
-                <div class="logo-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path>
-                    </svg>
-                </div>
+                <img src="/landing-assets/images/icon.png" alt="Logo Antropometri" class="logo-icon" style="object-fit: cover; width: 44px; height: 44px; border-radius: 12px; box-shadow: 0 4px 14px rgba(13, 148, 136, 0.28);">
                 <div class="brand-text">
                     <h1>Antropometri</h1>
                     <span>Sistem Pemantauan Gizi</span>
