@@ -203,16 +203,16 @@
         }
 
         .logo-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: var(--radius-sm);
-            background: linear-gradient(135deg, var(--primary) 0%, #042F2E 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: var(--white);
-            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+            width: 38px;
+            height: 38px;
+            border-radius: 8px;
             object-fit: cover;
+            object-position: center 25%;
+            display: block;
+            flex-shrink: 0;
+            border: none;
+            background: transparent;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
         }
 
         .brand-text h1 {
@@ -462,7 +462,8 @@
             font-weight: 800;
             color: var(--slate-900);
             line-height: 1.1;
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.02em;
             margin-bottom: 4px;
         }
 
@@ -509,7 +510,7 @@
 
         .cat-pill-val {
             color: var(--slate-900);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Poppins', sans-serif;
             font-weight: 700;
         }
 
@@ -597,7 +598,8 @@
             font-size: 22px;
             font-weight: 700;
             color: var(--slate-900);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.01em;
             line-height: 1.2;
             margin-bottom: 4px;
         }
@@ -605,6 +607,91 @@
         .traffic-sub {
             font-size: 11px;
             color: var(--slate-500);
+        }
+
+        /* Feature Exploration Grid in Body */
+        .feature-modules-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        @media (max-width: 1024px) {
+            .feature-modules-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 640px) {
+            .feature-modules-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .feature-module-card {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-subtle);
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: all 0.25s ease;
+        }
+
+        .feature-module-card:hover {
+            transform: translateY(-3px);
+            border-color: rgba(13, 148, 136, 0.4);
+            box-shadow: var(--shadow-card);
+        }
+
+        .feature-module-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+        }
+
+        .feature-module-icon {
+            width: 42px;
+            height: 42px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .feature-module-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .feature-module-desc {
+            font-size: 12px;
+            color: var(--slate-600);
+            line-height: 1.55;
+            margin-bottom: 16px;
+            flex-grow: 1;
+        }
+
+        .feature-module-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            font-weight: 700;
+            color: var(--primary);
+            text-decoration: none;
+            transition: gap 0.2s ease, color 0.2s ease;
+        }
+
+        .feature-module-link:hover {
+            color: var(--primary-dark);
+            gap: 9px;
         }
 
         /* Sections General */
@@ -813,10 +900,11 @@
         }
 
         .result-chip-val {
-            font-size: 17px;
+            font-size: 18px;
             font-weight: 700;
             color: var(--slate-900);
-            font-family: 'JetBrains Mono', monospace;
+            font-family: 'Poppins', sans-serif;
+            letter-spacing: -0.02em;
             margin-bottom: 4px;
         }
 
@@ -1180,8 +1268,48 @@
             .footer-grid {
                 grid-template-columns: 1fr;
             }
-            .nav-tabs {
+            .navbar {
+                padding: 8px 12px;
+            }
+            .brand-text span {
                 display: none;
+            }
+            .nav-tabs {
+                display: flex;
+            }
+            .nav-tab-btn {
+                padding: 5px 8px;
+                font-size: 11.5px;
+            }
+        }
+
+        @media (max-width: 540px) {
+            .navbar-outer {
+                padding: 0 8px;
+                top: 8px;
+            }
+            .brand-text h1 {
+                font-size: 14.5px;
+            }
+            .nav-actions {
+                gap: 6px;
+            }
+            .btn-secondary span {
+                display: none;
+            }
+            .btn-secondary {
+                padding: 6px 8px;
+            }
+            .btn-primary span {
+                font-size: 11px;
+            }
+            .btn-primary {
+                padding: 6px 9px;
+            }
+            .nav-tab-btn {
+                padding: 5px 6px;
+                font-size: 11px;
+                gap: 4px;
             }
         }
 
@@ -1261,32 +1389,16 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
                         Kalkulator Gizi
                     </a>
-                    <a href="#trend" class="nav-tab-btn" onclick="switchNav(this)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
-                        Tren Pertumbuhan
-                    </a>
-                    <a href="#excel" class="nav-tab-btn" onclick="switchNav(this)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg>
-                        Standar Excel
-                    </a>
-                    <a href="#theory" class="nav-tab-btn" onclick="switchNav(this)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
-                        Landasan Klinis
-                    </a>
-                    <a href="#mobile-app" class="nav-tab-btn" onclick="switchNav(this)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                        Widget &amp; APK
-                    </a>
                 </nav>
 
                 <div class="nav-actions">
-                    <a href="/downloads/playstore" class="btn-playstore" title="Buka di Google Play Store" target="_blank" rel="noopener">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.372-.344-.61-.83-.61-1.386V3.2c0-.555.238-1.042.61-1.386zM15.207 13.414l2.793 2.793-12.78 7.377 9.987-10.17zm0-2.828L5.22 .416l12.78 7.377-2.793 2.793zm1.414 1.414l3.869-2.233c.895-.517.895-1.353 0-1.87l-3.869-2.234-2.121 2.121 2.121 2.121z"/></svg>
-                        Google Play
-                    </a>
                     <a href="/downloads/antropometri-latest.apk" class="btn-primary" download title="Unduh Langsung File APK Android">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        Unduh APK
+                        <span>Unduh APK</span>
+                    </a>
+                    <a href="/login" class="btn-secondary" title="Login Petugas Medis">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
+                        <span>Masuk</span>
                     </a>
                 </div>
             </div>
@@ -1436,6 +1548,86 @@
                         <div class="traffic-val">{{ $stats['traffic']['avg_latency'] ?? '< 120 ms' }}</div>
                         <div class="traffic-sub">{{ $stats['traffic']['uptime'] ?? '99.98%' }} Uptime &bull; AES-256</div>
                     </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section Modul Fitur Unggulan (Pilar Utama Platform) -->
+        <section class="section-wrapper" style="margin-top: -10px; margin-bottom: 40px;">
+            <div class="section-header" style="margin-bottom: 16px;">
+                <div class="section-title">
+                    <div class="hero-badge" style="margin-bottom: 6px;">
+                        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                        <span>Eksplorasi Modul &amp; Kapabilitas Sistem</span>
+                    </div>
+                    <h3 style="font-size: 20px; font-weight: 800; color: var(--slate-900);">Pilar Utama &amp; Layanan Terintegrasi</h3>
+                    <p style="font-size: 13px; color: var(--slate-600); margin-top: 2px;">Akses cepat ke modul analisis pertumbuhan, pertukaran data dua arah, referensi regulasi, dan aplikasi lapangan.</p>
+                </div>
+            </div>
+
+            <div class="feature-modules-grid">
+                <!-- Card 1: Tren Pertumbuhan WHO -->
+                <div class="feature-module-card">
+                    <div class="feature-module-header">
+                        <div class="feature-module-icon" style="background: #EFF6FF; color: #1D4ED8;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        </div>
+                        <span class="stat-badge" style="background: #DBEAFE; color: #1E40AF;">WHO Child 2006</span>
+                    </div>
+                    <h4 class="feature-module-title">Kurva Tren &amp; Z-Score</h4>
+                    <p class="feature-module-desc">Visualisasi grafik pertumbuhan longitudinal (BB/U, TB/U, BB/TB, IMT/U) dengan deteksi stunting, wasting, dan risiko obesitas.</p>
+                    <a href="#trend" class="feature-module-link">
+                        <span>Lihat Grafik &amp; Interpretasi</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+
+                <!-- Card 2: Standar Excel Round-Trip -->
+                <div class="feature-module-card">
+                    <div class="feature-module-header">
+                        <div class="feature-module-icon" style="background: #ECFDF5; color: #047857;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg>
+                        </div>
+                        <span class="stat-badge" style="background: #DEF7EC; color: #03543F;">100% Dua Arah</span>
+                    </div>
+                    <h4 class="feature-module-title">Standar Excel Round-Trip</h4>
+                    <p class="feature-module-desc">Ekspor dan impor formulir Excel dengan struktur kolom 100% identik. Isi offline di spreadsheet, unggah kembali tanpa risiko formula rusak.</p>
+                    <a href="#excel" class="feature-module-link">
+                        <span>Unduh Template &amp; Panduan</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+
+                <!-- Card 3: Landasan Klinis WHO & Permenkes -->
+                <div class="feature-module-card">
+                    <div class="feature-module-header">
+                        <div class="feature-module-icon" style="background: #FEF3C7; color: #B45309;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        </div>
+                        <span class="stat-badge" style="background: #FEF3C7; color: #92400E;">Permenkes No. 2/2020</span>
+                    </div>
+                    <h4 class="feature-module-title">Landasan Klinis &amp; Regulasi</h4>
+                    <p class="feature-module-desc">Rumus LMS (Box-Cox), standar antropometri balita WHO 2006, IMT batas Asia-Pasifik, dan proteksi integritas data pasien.</p>
+                    <a href="#theory" class="feature-module-link">
+                        <span>Pelajari Rumus &amp; Teori</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+
+                <!-- Card 4: Mobile App & Widget -->
+                <div class="feature-module-card">
+                    <div class="feature-module-header">
+                        <div class="feature-module-icon" style="background: #F5F3FF; color: #6D28D9;">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                        </div>
+                        <span class="stat-badge" style="background: #EDE9FE; color: #5B21B6;">Android &bull; AES-256</span>
+                    </div>
+                    <h4 class="feature-module-title">Aplikasi Android &amp; Widget</h4>
+                    <p class="feature-module-desc">Solusi mobile Posyandu offline-first dengan sinkronisasi background otomatis, enkripsi lokal AES-256, dan home screen widget praktis.</p>
+                    <a href="#mobile-app" class="feature-module-link">
+                        <span>Jelajahi Fitur Mobile &amp; Unduh</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
                 </div>
             </div>
         </section>
