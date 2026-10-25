@@ -58,8 +58,7 @@ Route::middleware(['throttle:60,1'])->group(function () {
 });
 
 Route::get('/', [\App\Http\Controllers\LandingPageController::class, 'index']);
-
-Route::get('/dashboard', [\App\Http\Controllers\LandingPageController::class, 'index']);
+Route::redirect('/dashboard', '/', 301);
 
 Route::any('{any}', function () {
     return response()->json([
