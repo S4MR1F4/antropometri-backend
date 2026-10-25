@@ -24,13 +24,16 @@ class StoreMeasurementRequest extends FormRequest
         $subject = $this->route('subject');
         $category = $this->determineCategory($subject);
 
+        // Buffer timezone differences (Indonesia WIT/WITA/WIB vs server UTC) by allowing up to next day
+        $maxDate = now('Asia/Jayapura')->addDay()->toDateString();
+
         $rules = [
-            'measurement_date' => ['required', 'date', 'before_or_equal:today'],
+            'measurement_date' => ['required', 'date', "before_or_equal:$maxDate"],
             'weight' => ['required', 'numeric'],
             'height' => ['required', 'numeric'],
             'arm_circumference' => ['nullable', 'numeric', 'min:10', 'max:60'],
             'is_pregnant' => ['nullable', 'boolean'],
-            'pregnancy_start_date' => ['nullable', 'date', 'before_or_equal:today'],
+            'pregnancy_start_date' => ['nullable', 'date', "before_or_equal:$maxDate"],
             'notes' => ['nullable', 'string', 'max:1000'],
         ];
 

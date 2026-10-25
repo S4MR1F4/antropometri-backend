@@ -24,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 // Public routes (no authentication required)
 Route::get('/health', [\App\Http\Controllers\HealthController::class, 'check']);
 Route::get('/version/check', [\App\Http\Controllers\Api\VersionController::class, 'check']);
+Route::get('/public/coverage-stats', [\App\Http\Controllers\LandingPageController::class, 'statsApi'])->middleware('throttle:60,1');
 
 Route::prefix('auth')->group(function () {
     Route::post('/register', [AuthController::class, 'register'])->middleware('throttle:6,1');

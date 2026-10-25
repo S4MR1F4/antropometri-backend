@@ -34,8 +34,16 @@ class MeasurementsImport implements ToCollection, WithHeadingRow, WithMultipleSh
             
             $name = $this->getValue($row, ['nama_pasien', 'nama_subjek', 'nama', 'patient_name', 'name', 'subject_name']);
 
-            // Skip empty rows or template filler rows
-            if (empty($name) || trim($name) === '' || trim($name) === 'Lengkapi Data!') {
+            // Skip empty rows, template filler rows, or summary calculation rows
+            $upperName = strtoupper(trim((string)$name));
+            if (
+                empty($name) ||
+                $upperName === '' ||
+                $upperName === 'LENGKAPI DATA!' ||
+                str_starts_with($upperName, 'TOTAL') ||
+                str_starts_with($upperName, 'RATA-RATA') ||
+                str_starts_with($upperName, 'RINGKASAN')
+            ) {
                 $this->skippedCount++;
                 continue;
             }

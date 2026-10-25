@@ -12,7 +12,11 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
+        $middleware->web(prepend: [
+            \App\Http\Middleware\SecurityHardeningMiddleware::class,
+        ]);
         $middleware->api(prepend: [
+            \App\Http\Middleware\SecurityHardeningMiddleware::class,
             \App\Http\Middleware\EncryptPayload::class,
         ]);
         $middleware->alias([

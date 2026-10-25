@@ -136,7 +136,7 @@ class AuthController extends Controller
         ActivityLog::log('logout', 'User', $request->user()->id, [
             'token_name' => $request->user()->currentAccessToken()?->name,
         ]);
-        $request->user()->currentAccessToken()->delete();
+        $request->user()->currentAccessToken()?->delete();
 
         return $this->successResponse(
             message: 'Logout berhasil'

@@ -57,13 +57,9 @@ Route::middleware(['throttle:60,1'])->group(function () {
     Route::get('/patient/{subject}', [\App\Http\Controllers\PatientCardController::class, 'show'])->name('patient.card.alias');
 });
 
-Route::get('/', function () {
-    return view('dashboard');
-});
+Route::get('/', [\App\Http\Controllers\LandingPageController::class, 'index']);
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-});
+Route::get('/dashboard', [\App\Http\Controllers\LandingPageController::class, 'index']);
 
 Route::any('{any}', function () {
     return response()->json([

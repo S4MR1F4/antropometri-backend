@@ -20,7 +20,7 @@ class StoreSubjectRequest extends FormRequest
     {
         return [
             'name' => ['required', 'string', 'min:3', 'max:255'],
-            'date_of_birth' => ['required', 'date', 'before_or_equal:today'],
+            'date_of_birth' => ['required', 'date', 'before_or_equal:' . now('Asia/Jayapura')->addDay()->toDateString()],
             'gender' => ['required', Rule::in(['L', 'P'])],
             'address' => ['nullable', 'string', 'max:500'],
             'parent_name' => ['nullable', 'string', 'max:255'],
