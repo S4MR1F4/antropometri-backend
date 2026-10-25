@@ -27,23 +27,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antropometri Indonesia | Dashboard Pemantauan Status Gizi &amp; Standar Klinis</title>
-    <meta name="description" content="Platform web terpadu pemantauan antropometri, kalkulator status gizi WHO 2006 & Permenkes No. 2/2020, format round-trip Excel, dan unduh APK Android dengan launcher widget.">
+    <title>Antropometri Indonesia | Sistem Pemantauan Gizi Nasional &amp; Standar Baku Klinis</title>
+    
+    <!-- Meta SEO Komprehensif -->
+    <meta name="description" content="Platform standar antropometri nasional untuk pemantauan pertumbuhan dan status gizi balita, remaja, dewasa, dan ibu hamil. Mengacu standar WHO Child Growth 2006 dan Permenkes No. 2/2020 dengan kalkulator Z-score akurat, enkripsi lokal AES-256, format round-trip Excel dua arah, dan aplikasi Android offline-first.">
+    <meta name="keywords" content="antropometri indonesia, kalkulator status gizi, z-score balita who 2006, permenkes no 2 2020, deteksi stunting, gizi buruk, gizi seimbang, antropometri posyandu, apk antropometri android, standar antropometri anak">
+    <meta name="author" content="Samrifa Studio Teknologi">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="{{ url('/') }}">
+
+    <!-- OpenGraph (OG) Meta Tags -->
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Antropometri Indonesia | Sistem Pemantauan Gizi &amp; Standar Klinis">
+    <meta property="og:description" content="Platform pencatatan antropometri dan penilaian status gizi terintegrasi untuk Posyandu, Puskesmas, dan Tenaga Medis Indonesia berstandar WHO 2006 dan Permenkes No. 2/2020.">
+    <meta property="og:url" content="{{ url('/') }}">
+    <meta property="og:site_name" content="Antropometri Indonesia">
+    <meta property="og:locale" content="id_ID">
+    <meta property="og:image" content="{{ url('/landing-assets/images/icon.png') }}">
+
+    <!-- Twitter Card Meta Tags -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="Antropometri Indonesia | Sistem Pemantauan Gizi &amp; Standar Klinis">
+    <meta name="twitter:description" content="Kalkulator status gizi WHO 2006 &amp; Permenkes No. 2/2020, format round-trip Excel, dan aplikasi Android offline-first.">
+    <meta name="twitter:image" content="{{ url('/landing-assets/images/icon.png') }}">
+
+    <!-- Geographic & Regional Meta Tags (GEO) -->
+    <meta name="geo.region" content="ID">
+    <meta name="geo.placename" content="Indonesia">
+    <meta name="geo.position" content="-0.789275;113.921327">
+    <meta name="ICBM" content="-0.789275, 113.921327">
+    <meta name="language" content="Indonesian">
+
+    <!-- Schema.org JSON-LD Structured Data -->
+    <script type="application/ld+json">
+    {!! json_encode([
+      '@context' => 'https://schema.org',
+      '@graph' => [
+        [
+          '@type' => 'MedicalWebPage',
+          '@id' => url('/') . '#webpage',
+          'url' => url('/'),
+          'name' => 'Antropometri Indonesia - Sistem Pemantauan Status Gizi Nasional',
+          'description' => 'Platform pencatatan antropometri klinis dan evaluasi status gizi berbasis standar baku WHO 2006 dan Permenkes No. 2 Tahun 2020.',
+          'inLanguage' => 'id-ID',
+          'about' => [
+            ['@type' => 'MedicalCondition', 'name' => 'Stunting'],
+            ['@type' => 'MedicalCondition', 'name' => 'Wasting'],
+            ['@type' => 'MedicalCondition', 'name' => 'Kurang Energi Kronis (KEK)']
+          ]
+        ],
+        [
+          '@type' => 'SoftwareApplication',
+          '@id' => url('/') . '#software',
+          'name' => 'Antropometri Mobile',
+          'operatingSystem' => 'Android',
+          'applicationCategory' => 'MedicalApplication',
+          'softwareVersion' => '2.2.0',
+          'offers' => [
+            '@type' => 'Offer',
+            'price' => '0',
+            'priceCurrency' => 'IDR'
+          ]
+        ]
+      ]
+    ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE) !!}
+    </script>
+
+    <!-- Favicon & Touch Icons -->
     <link rel="icon" type="image/png" href="/landing-assets/images/icon.png">
     <link rel="apple-touch-icon" href="/landing-assets/images/icon.png">
+
+    <!-- Google Fonts: Poppins (Identik dengan Aplikasi Mobile) & JetBrains Mono -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --primary: #0D9488;
             --primary-dark: #0F766E;
             --primary-light: #F0FDFA;
             --primary-border: #CCFBF1;
-            --secondary: #3B82F6;
+            --secondary: #2563EB;
+            --secondary-light: #EFF6FF;
             --accent-emerald: #10B981;
             --accent-amber: #F59E0B;
-            --accent-rose: #F43F5E;
+            --accent-rose: #EF4444;
             --accent-purple: #8B5CF6;
             --slate-900: #0F172A;
             --slate-800: #1E293B;
@@ -51,16 +120,22 @@
             --slate-600: #475569;
             --slate-500: #64748B;
             --slate-400: #94A3B8;
+            --slate-300: #CBD5E1;
             --slate-200: #E2E8F0;
             --slate-100: #F1F5F9;
             --slate-50: #F8FAFC;
             --white: #FFFFFF;
-            --radius-lg: 18px;
+
+            /* Radius disesuaikan identik dengan aplikasi mobile Flutter (12px - 16px) */
+            --radius-xl: 18px;
+            --radius-lg: 16px;
             --radius-md: 12px;
             --radius-sm: 8px;
-            --shadow-subtle: 0 4px 20px -2px rgba(15, 23, 42, 0.05);
-            --shadow-card: 0 12px 32px -4px rgba(15, 23, 42, 0.08);
-            --shadow-elevated: 0 24px 48px -12px rgba(13, 148, 136, 0.16);
+            --radius-xs: 6px;
+
+            --shadow-subtle: 0 4px 18px -2px rgba(15, 23, 42, 0.05);
+            --shadow-card: 0 10px 25px -4px rgba(15, 23, 42, 0.07);
+            --shadow-float: 0 14px 34px -6px rgba(13, 148, 136, 0.15);
         }
 
         * {
@@ -70,54 +145,53 @@
         }
 
         body {
-            font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background-color: var(--slate-50);
             color: var(--slate-800);
             line-height: 1.6;
             overflow-x: hidden;
             background-image: 
-                radial-gradient(at 0% 0%, rgba(13, 148, 136, 0.06) 0px, transparent 50%),
-                radial-gradient(at 100% 100%, rgba(59, 130, 246, 0.04) 0px, transparent 50%);
+                radial-gradient(at 0% 0%, rgba(13, 148, 136, 0.05) 0px, transparent 45%),
+                radial-gradient(at 100% 100%, rgba(37, 99, 235, 0.04) 0px, transparent 45%);
             background-attachment: fixed;
         }
 
         .container {
-            width: min(1240px, calc(100% - 48px));
+            width: min(1200px, calc(100% - 40px));
             margin: 0 auto;
         }
 
-        /* Floating Rounded Header */
+        /* Header Navbar: Bersih, Rapi, Radius Sedang Seperti Mobile */
         .navbar-outer {
             position: sticky;
-            top: 14px;
+            top: 12px;
             z-index: 50;
             padding: 0 16px;
             margin-bottom: 24px;
         }
 
         .navbar {
-            max-width: 1240px;
+            max-width: 1200px;
             margin: 0 auto;
-            background: rgba(255, 255, 255, 0.94);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
             border: 1px solid var(--slate-200);
-            border-radius: 9999px;
-            box-shadow: 0 10px 32px -4px rgba(15, 23, 42, 0.08), 0 2px 8px -2px rgba(15, 23, 42, 0.04);
-            padding: 8px 20px;
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-card);
+            padding: 10px 20px;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         .navbar:hover {
-            box-shadow: 0 16px 36px -6px rgba(13, 148, 136, 0.14);
-            border-color: rgba(13, 148, 136, 0.35);
+            border-color: rgba(13, 148, 136, 0.4);
+            box-shadow: var(--shadow-float);
         }
 
         .nav-content {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            height: 56px;
             gap: 16px;
         }
 
@@ -129,23 +203,24 @@
         }
 
         .logo-icon {
-            width: 42px;
-            height: 42px;
-            border-radius: 9999px;
+            width: 40px;
+            height: 40px;
+            border-radius: var(--radius-sm);
             background: linear-gradient(135deg, var(--primary) 0%, #042F2E 100%);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--white);
-            box-shadow: 0 6px 14px -2px rgba(13, 148, 136, 0.35);
+            box-shadow: 0 4px 10px rgba(13, 148, 136, 0.25);
+            object-fit: cover;
         }
 
         .brand-text h1 {
             font-size: 16px;
-            font-weight: 800;
+            font-weight: 700;
             color: var(--slate-900);
-            letter-spacing: -0.02em;
             line-height: 1.2;
+            letter-spacing: -0.01em;
         }
 
         .brand-text span {
@@ -153,67 +228,71 @@
             font-weight: 700;
             color: var(--primary);
             text-transform: uppercase;
-            letter-spacing: 0.08em;
+            letter-spacing: 0.06em;
+            display: block;
         }
 
+        /* Nav Tabs: Radius Sedang 8px */
         .nav-tabs {
             display: flex;
             align-items: center;
             gap: 4px;
             background: var(--slate-100);
             padding: 4px;
-            border-radius: 9999px;
+            border-radius: var(--radius-sm);
             border: 1px solid var(--slate-200);
         }
 
         .nav-tab-btn {
-            padding: 7px 16px;
-            font-size: 13px;
-            font-weight: 700;
+            padding: 6px 14px;
+            font-size: 12.5px;
+            font-weight: 600;
             color: var(--slate-600);
             background: transparent;
             border: none;
-            border-radius: 9999px;
+            border-radius: var(--radius-xs);
             cursor: pointer;
             transition: all 0.2s ease;
             text-decoration: none;
             display: flex;
             align-items: center;
             gap: 6px;
+            white-space: nowrap;
         }
 
         .nav-tab-btn:hover {
             color: var(--slate-900);
+            background: rgba(255, 255, 255, 0.6);
         }
 
         .nav-tab-btn.active {
             background: var(--white);
             color: var(--primary-dark);
-            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.08);
+            box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
         }
 
         .nav-actions {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
         .status-pill {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            padding: 6px 12px;
-            border-radius: 9999px;
+            padding: 5px 10px;
+            border-radius: var(--radius-xs);
             background: var(--primary-light);
             border: 1px solid var(--primary-border);
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11.5px;
+            font-weight: 600;
             color: var(--primary-dark);
         }
 
         .pulse-dot {
-            width: 8px;
-            height: 8px;
+            width: 7px;
+            height: 7px;
             border-radius: 50%;
             background-color: var(--accent-emerald);
             box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
@@ -222,39 +301,242 @@
 
         @keyframes pulse-ring {
             0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
-            70% { box-shadow: 0 0 0 8px rgba(16, 185, 129, 0); }
+            70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
             100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
         }
 
+        /* Buttons: Radius 10px identik Flutter */
         .btn-primary {
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            padding: 9px 20px;
+            padding: 8px 16px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: var(--white);
             border: none;
-            border-radius: 9999px;
-            font-size: 13px;
-            font-weight: 700;
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
             text-decoration: none;
-            box-shadow: 0 4px 14px rgba(13, 148, 136, 0.28);
+            box-shadow: 0 3px 10px rgba(13, 148, 136, 0.25);
             transition: all 0.2s ease;
             cursor: pointer;
         }
 
         .btn-primary:hover {
             transform: translateY(-1px);
-            box-shadow: 0 8px 22px rgba(13, 148, 136, 0.38);
+            box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
+        }
+
+        .btn-playstore {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--slate-900);
+            color: var(--white);
+            border: 1px solid var(--slate-800);
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            text-decoration: none;
+            box-shadow: 0 3px 10px rgba(15, 23, 42, 0.2);
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-playstore:hover {
+            background: #000000;
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(15, 23, 42, 0.3);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: var(--white);
+            color: var(--slate-700);
+            border: 1px solid var(--slate-300);
+            border-radius: var(--radius-sm);
+            font-size: 12.5px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+
+        .btn-secondary:hover {
+            background: var(--slate-50);
+            border-color: var(--slate-400);
+            color: var(--slate-900);
+        }
+
+        /* Hero Section */
+        .hero {
+            padding: 30px 0 20px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 14px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-light);
+            border: 1px solid var(--primary-border);
+            color: var(--primary-dark);
+            font-size: 12px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .hero h2 {
+            font-size: clamp(26px, 3.8vw, 36px);
+            font-weight: 800;
+            color: var(--slate-900);
+            letter-spacing: -0.02em;
+            line-height: 1.25;
+            max-width: 860px;
+            margin: 0 auto 14px;
+        }
+
+        .hero p {
+            font-size: 14.5px;
+            color: var(--slate-600);
+            max-width: 780px;
+            margin: 0 auto 28px;
+            line-height: 1.65;
+        }
+
+        /* 4 Stat Cards Agregat */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            box-shadow: var(--shadow-subtle);
+            text-align: left;
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-2px);
+            border-color: var(--primary);
+        }
+
+        .stat-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 12px;
+        }
+
+        .stat-icon {
+            width: 38px;
+            height: 38px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .stat-badge {
+            font-size: 11px;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: var(--radius-xs);
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 800;
+            color: var(--slate-900);
+            line-height: 1.1;
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
+        }
+
+        .stat-label {
+            font-size: 12.5px;
+            color: var(--slate-500);
+            font-weight: 500;
+        }
+
+        /* Coverage Pills & Privacy Notice */
+        .coverage-banner-wrapper {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            margin-bottom: 36px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .coverage-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+
+        .coverage-cat-pill {
+            flex: 1;
+            min-width: 170px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 14px;
+            background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+        }
+
+        .cat-pill-label {
+            color: var(--slate-600);
+            font-weight: 500;
+        }
+
+        .cat-pill-val {
+            color: var(--slate-900);
+            font-family: 'JetBrains Mono', monospace;
+            font-weight: 700;
+        }
+
+        .privacy-notice {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding-top: 12px;
+            border-top: 1px dashed var(--slate-200);
+            font-size: 12px;
+            color: var(--slate-600);
+            line-height: 1.5;
+        }
+
+        .privacy-notice svg {
+            color: var(--primary);
+            flex-shrink: 0;
+            margin-top: 2px;
         }
 
         /* Traffic Section & Live App Telemetry */
         .traffic-section {
             background: var(--white);
             border: 1px solid var(--slate-200);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            margin: -24px 0 48px;
+            border-radius: var(--radius-md);
+            padding: 22px;
+            margin-bottom: 48px;
             box-shadow: var(--shadow-subtle);
         }
 
@@ -262,7 +544,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 20px;
+            margin-bottom: 18px;
             flex-wrap: wrap;
             gap: 12px;
         }
@@ -270,13 +552,13 @@
         .traffic-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 16px;
+            gap: 14px;
         }
 
         .traffic-card {
             background: var(--slate-50);
             border: 1px solid var(--slate-200);
-            border-radius: var(--radius-md);
+            border-radius: var(--radius-sm);
             padding: 16px;
             transition: all 0.2s ease;
         }
@@ -284,7 +566,6 @@
         .traffic-card:hover {
             background: var(--white);
             border-color: var(--primary);
-            box-shadow: 0 6px 18px rgba(13, 148, 136, 0.08);
             transform: translateY(-2px);
         }
 
@@ -297,230 +578,76 @@
 
         .traffic-card-title {
             font-size: 11px;
-            font-weight: 700;
+            font-weight: 600;
             color: var(--slate-500);
             text-transform: uppercase;
-            letter-spacing: 0.04em;
+            letter-spacing: 0.05em;
         }
 
         .traffic-icon {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
+            width: 28px;
+            height: 28px;
+            border-radius: var(--radius-xs);
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
         .traffic-val {
-            font-size: 24px;
-            font-weight: 800;
+            font-size: 22px;
+            font-weight: 700;
             color: var(--slate-900);
-            line-height: 1.1;
+            font-family: 'JetBrains Mono', monospace;
+            line-height: 1.2;
             margin-bottom: 4px;
         }
 
         .traffic-sub {
-            font-size: 12px;
-            color: var(--slate-500);
-            font-weight: 600;
-        }
-
-        /* Hero Section */
-        .hero {
-            padding: 48px 0 32px;
-        }
-
-        .hero-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            padding: 6px 14px;
-            border-radius: 9999px;
-            background: var(--white);
-            border: 1px solid var(--slate-200);
-            font-size: 12px;
-            font-weight: 700;
-            color: var(--slate-700);
-            margin-bottom: 18px;
-            box-shadow: var(--shadow-subtle);
-        }
-
-        .hero h2 {
-            font-size: 38px;
-            font-weight: 800;
-            color: var(--slate-900);
-            letter-spacing: -0.03em;
-            line-height: 1.25;
-            max-width: 860px;
-            margin-bottom: 14px;
-        }
-
-        .hero p {
-            font-size: 16px;
-            color: var(--slate-600);
-            max-width: 780px;
-            line-height: 1.7;
-        }
-
-        /* Stat Cards Grid */
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-            margin: 32px 0 48px;
-        }
-
-        .stat-card {
-            background: var(--white);
-            border: 1px solid var(--slate-200);
-            border-radius: var(--radius-lg);
-            padding: 24px;
-            box-shadow: var(--shadow-subtle);
-            transition: all 0.25s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-            box-shadow: var(--shadow-card);
-            border-color: var(--primary-border);
-        }
-
-        .stat-card-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 14px;
-        }
-
-        .stat-icon {
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .stat-badge {
             font-size: 11px;
-            font-weight: 700;
-            padding: 4px 8px;
-            border-radius: 6px;
-        }
-
-        .stat-value {
-            font-size: 32px;
-            font-weight: 800;
-            color: var(--slate-900);
-            letter-spacing: -0.03em;
-            line-height: 1.1;
-            margin-bottom: 6px;
-        }
-
-        .stat-label {
-            font-size: 13px;
-            font-weight: 600;
             color: var(--slate-500);
         }
 
-        /* Coverage Banner & Privacy Notice */
-        .coverage-banner-wrapper {
-            background: var(--white);
-            border: 1px solid var(--slate-200);
-            border-radius: var(--radius-lg);
-            padding: 18px 24px;
-            margin: -24px 0 48px;
-            box-shadow: var(--shadow-subtle);
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-
-        .coverage-categories {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .coverage-cat-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 6px 14px;
-            border-radius: 9999px;
-            background: var(--slate-100);
-            font-size: 12px;
-            color: var(--slate-700);
-            border: 1px solid var(--slate-200);
-            transition: all 0.2s ease;
-        }
-
-        .coverage-cat-pill:hover {
-            border-color: var(--primary);
-            background: var(--primary-light);
-        }
-
-        .cat-pill-label {
-            font-weight: 600;
-        }
-
-        .cat-pill-val {
-            font-weight: 800;
-            color: var(--primary-dark);
-        }
-
-        .privacy-notice {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 12px;
-            color: var(--slate-600);
-            max-width: 520px;
-            line-height: 1.4;
-        }
-
-        .privacy-notice svg {
-            color: var(--primary);
-            flex-shrink: 0;
-        }
-
-        /* Tabs Section Wrapper */
+        /* Sections General */
         .section-wrapper {
-            margin-bottom: 64px;
+            margin-bottom: 48px;
+            scroll-margin-top: 90px;
         }
 
         .section-header {
             display: flex;
             align-items: flex-end;
             justify-content: space-between;
-            margin-bottom: 24px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
-            gap: 16px;
+            gap: 14px;
         }
 
         .section-title h3 {
-            font-size: 24px;
-            font-weight: 800;
+            font-size: 22px;
+            font-weight: 700;
             color: var(--slate-900);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.01em;
+            margin-bottom: 4px;
         }
 
         .section-title p {
-            font-size: 14px;
+            font-size: 13.5px;
             color: var(--slate-500);
+        }
+
+        .card-surface {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 26px;
+            box-shadow: var(--shadow-subtle);
         }
 
         /* Two-Column Layout for Calculator */
         .calc-layout {
             display: grid;
-            grid-template-columns: 1.1fr 0.9fr;
-            gap: 28px;
+            grid-template-columns: 1.05fr 0.95fr;
+            gap: 24px;
         }
 
         @media (max-width: 960px) {
@@ -529,32 +656,24 @@
             }
         }
 
-        .card-surface {
-            background: var(--white);
-            border: 1px solid var(--slate-200);
-            border-radius: var(--radius-lg);
-            padding: 32px;
-            box-shadow: var(--shadow-subtle);
-        }
-
         .mode-toggle {
             display: flex;
-            gap: 8px;
+            gap: 6px;
             background: var(--slate-100);
-            padding: 6px;
-            border-radius: var(--radius-md);
-            margin-bottom: 24px;
+            padding: 4px;
+            border-radius: var(--radius-sm);
+            margin-bottom: 20px;
         }
 
         .mode-btn {
             flex: 1;
-            padding: 10px 14px;
-            font-size: 13px;
-            font-weight: 700;
+            padding: 8px 12px;
+            font-size: 12.5px;
+            font-weight: 600;
             color: var(--slate-600);
             background: transparent;
             border: none;
-            border-radius: var(--radius-sm);
+            border-radius: var(--radius-xs);
             cursor: pointer;
             transition: all 0.2s ease;
         }
@@ -562,13 +681,13 @@
         .mode-btn.active {
             background: var(--white);
             color: var(--primary-dark);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 18px;
+            gap: 16px;
             margin-bottom: 20px;
         }
 
@@ -578,8 +697,8 @@
 
         .input-group label {
             display: block;
-            font-size: 12px;
-            font-weight: 700;
+            font-size: 11.5px;
+            font-weight: 600;
             color: var(--slate-700);
             margin-bottom: 6px;
             text-transform: uppercase;
@@ -588,10 +707,10 @@
 
         .input-control {
             width: 100%;
-            padding: 12px 14px;
+            padding: 10px 12px;
             border: 1px solid var(--slate-200);
-            border-radius: var(--radius-md);
-            font-size: 14px;
+            border-radius: var(--radius-sm);
+            font-size: 13.5px;
             font-family: inherit;
             color: var(--slate-900);
             background: var(--slate-50);
@@ -606,181 +725,311 @@
         }
 
         .btn-calculate {
-            width: 100%;
-            padding: 14px 20px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 11px 20px;
             background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
             color: var(--white);
             border: none;
-            border-radius: var(--radius-md);
-            font-size: 15px;
-            font-weight: 800;
+            border-radius: var(--radius-sm);
+            font-size: 13px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            box-shadow: 0 8px 20px -4px rgba(13, 148, 136, 0.35);
+            box-shadow: 0 3px 10px rgba(13, 148, 136, 0.25);
         }
 
         .btn-calculate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 12px 24px -4px rgba(13, 148, 136, 0.45);
+            transform: translateY(-1px);
+            box-shadow: 0 6px 16px rgba(13, 148, 136, 0.35);
         }
 
-        /* Result Display Card */
+        /* Result Card */
         .result-card {
-            background: linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%);
+            background: var(--white);
             border: 1px solid var(--slate-200);
-            border-radius: var(--radius-lg);
-            padding: 32px;
+            border-radius: var(--radius-md);
+            padding: 24px;
+            box-shadow: var(--shadow-subtle);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .result-card.highlight-pulse {
+            animation: card-flash 0.6s ease;
+        }
+
+        @keyframes card-flash {
+            0% { border-color: var(--primary); box-shadow: 0 0 0 4px rgba(13, 148, 136, 0.25); }
+            100% { border-color: var(--slate-200); box-shadow: var(--shadow-subtle); }
         }
 
         .result-header {
             display: flex;
-            align-items: center;
+            align-items: flex-start;
             justify-content: space-between;
-            padding-bottom: 18px;
+            padding-bottom: 14px;
+            margin-bottom: 16px;
             border-bottom: 1px solid var(--slate-200);
-            margin-bottom: 20px;
         }
 
         .result-header h4 {
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 17px;
+            font-weight: 700;
             color: var(--slate-900);
+            margin-bottom: 2px;
+        }
+
+        .result-header span {
+            font-size: 12px;
+            color: var(--slate-500);
         }
 
         .result-chips-grid {
             display: grid;
             grid-template-columns: 1fr 1fr;
-            gap: 14px;
-            margin-bottom: 24px;
+            gap: 12px;
+            margin-bottom: 16px;
         }
 
         .result-chip {
-            background: var(--white);
+            background: var(--slate-50);
             border: 1px solid var(--slate-200);
-            border-radius: var(--radius-md);
-            padding: 14px;
+            border-radius: var(--radius-sm);
+            padding: 12px;
         }
 
         .result-chip-label {
             font-size: 11px;
-            font-weight: 700;
             color: var(--slate-500);
+            font-weight: 600;
             text-transform: uppercase;
-            letter-spacing: 0.05em;
+            letter-spacing: 0.04em;
             margin-bottom: 4px;
         }
 
         .result-chip-val {
-            font-size: 15px;
-            font-weight: 800;
+            font-size: 17px;
+            font-weight: 700;
             color: var(--slate-900);
+            font-family: 'JetBrains Mono', monospace;
+            margin-bottom: 4px;
         }
 
         .chip-badge {
             display: inline-block;
             font-size: 11px;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
-            margin-top: 4px;
+            font-weight: 600;
+            padding: 2px 7px;
+            border-radius: var(--radius-xs);
         }
 
-        .badge-normal {
-            background: #DEF7EC;
-            color: #03543F;
-        }
-
-        .badge-warning {
-            background: #FEF3C7;
-            color: #92400E;
-        }
-
-        .badge-danger {
-            background: #FDE8E8;
-            color: #9B1C1C;
-        }
+        .badge-normal { background: #DEF7EC; color: #03543F; }
+        .badge-warning { background: #FEF08A; color: #854D0E; }
+        .badge-danger { background: #FDE8E8; color: #9B1C1C; }
 
         .recommendation-box {
-            background: var(--primary-light);
-            border: 1px solid var(--primary-border);
-            border-radius: var(--radius-md);
-            padding: 16px;
-            margin-bottom: 20px;
+            background: #F0FDFA;
+            border: 1px solid #CCFBF1;
+            border-radius: var(--radius-sm);
+            padding: 14px;
+            margin-bottom: 16px;
         }
 
         .recommendation-box h5 {
-            font-size: 13px;
-            font-weight: 800;
+            font-size: 12.5px;
+            font-weight: 700;
             color: var(--primary-dark);
-            margin-bottom: 4px;
+            margin-bottom: 6px;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
         .recommendation-box p {
-            font-size: 13px;
+            font-size: 12px;
             color: var(--slate-700);
-            line-height: 1.5;
+            line-height: 1.55;
         }
 
-        /* Excel Round-Trip Table Preview */
-        .excel-table-wrapper {
+        /* Growth Trend Section */
+        .trend-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 20px;
+        }
+
+        @media (max-width: 900px) {
+            .trend-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .trend-chart-box {
             background: var(--white);
             border: 1px solid var(--slate-200);
-            border-radius: var(--radius-lg);
-            overflow: hidden;
+            border-radius: var(--radius-md);
+            padding: 20px;
             box-shadow: var(--shadow-subtle);
         }
 
-        .excel-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 13px;
-            text-align: left;
+        .sd-curve-bar {
+            height: 14px;
+            border-radius: var(--radius-xs);
+            display: flex;
+            overflow: hidden;
+            margin: 12px 0 8px;
         }
 
-        .excel-table th {
-            background: var(--slate-900);
-            color: var(--white);
-            padding: 14px 16px;
-            font-weight: 700;
-            font-size: 12px;
-            letter-spacing: 0.03em;
-            white-space: nowrap;
+        .sd-segment {
+            height: 100%;
+            transition: opacity 0.2s ease;
         }
 
-        .excel-table td {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--slate-100);
-            color: var(--slate-700);
-            white-space: nowrap;
+        .sd-segment:hover {
+            opacity: 0.85;
         }
 
-        .excel-table tr:hover td {
+        .sd-legend-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 8px;
+            margin-top: 14px;
+        }
+
+        .sd-legend-item {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 11.5px;
+            color: var(--slate-600);
+        }
+
+        .sd-color-box {
+            width: 10px;
+            height: 10px;
+            border-radius: 2px;
+            flex-shrink: 0;
+        }
+
+        /* Excel Schema Showcase Grid (Zero Patient List) */
+        .excel-schema-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 16px;
+            margin-bottom: 20px;
+        }
+
+        .schema-card {
             background: var(--slate-50);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-sm);
+            padding: 16px;
         }
 
-        .badge-auto {
-            font-size: 10px;
+        .schema-card h5 {
+            font-size: 13px;
             font-weight: 700;
-            padding: 2px 6px;
-            border-radius: 4px;
-            background: #EFF6FF;
-            color: #1E40AF;
+            color: var(--slate-900);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
-        /* Android Launcher Widget Showcase */
+        .schema-card ul {
+            list-style: none;
+            font-size: 12px;
+            color: var(--slate-600);
+        }
+
+        .schema-card li {
+            padding: 3px 0;
+            border-bottom: 1px dashed var(--slate-200);
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .schema-card li:last-child {
+            border-bottom: none;
+        }
+
+        .schema-tag {
+            font-size: 10px;
+            font-weight: 600;
+            background: var(--slate-200);
+            color: var(--slate-700);
+            padding: 1px 6px;
+            border-radius: var(--radius-xs);
+        }
+
+        /* Theory & Scientific Foundation Cards */
+        .theory-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 18px;
+        }
+
+        .theory-card {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 22px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .theory-card-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .theory-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: var(--radius-sm);
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .theory-card h4 {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--slate-900);
+            line-height: 1.3;
+        }
+
+        .theory-card p {
+            font-size: 12.5px;
+            color: var(--slate-600);
+            line-height: 1.6;
+            margin-bottom: 12px;
+        }
+
+        .formula-box {
+            background: var(--slate-900);
+            color: #A7F3D0;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 10px 14px;
+            border-radius: var(--radius-sm);
+            font-size: 12px;
+            overflow-x: auto;
+            margin-bottom: 10px;
+        }
+
+        /* Android Widget Showcase */
         .widget-showcase-grid {
             display: grid;
-            grid-template-columns: 1fr 1fr;
+            grid-template-columns: 1.1fr 0.9fr;
             gap: 32px;
             align-items: center;
         }
@@ -792,56 +1041,55 @@
         }
 
         .phone-mockup {
-            width: min(340px, 100%);
+            width: min(320px, 100%);
             margin: 0 auto;
-            background: var(--slate-900);
-            border-radius: 40px;
-            padding: 14px;
-            box-shadow: 0 25px 60px -15px rgba(15, 23, 42, 0.35);
-            border: 4px solid #334155;
+            background: #1E293B;
+            border-radius: 36px;
+            padding: 12px;
+            box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.3);
+            border: 3px solid #334155;
         }
 
         .phone-screen {
             background: #F1F5F9;
-            border-radius: 28px;
-            padding: 16px;
-            min-height: 480px;
+            border-radius: 26px;
+            padding: 14px;
+            min-height: 420px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
-            overflow: hidden;
             background-image: linear-gradient(180deg, #E2E8F0 0%, #CBD5E1 100%);
         }
 
         .phone-notch {
-            width: 100px;
-            height: 18px;
+            width: 80px;
+            height: 14px;
             background: var(--slate-900);
-            border-radius: 0 0 12px 12px;
-            margin: -16px auto 16px;
+            border-radius: 0 0 10px 10px;
+            margin: -14px auto 14px;
         }
 
         .widget-preview-card {
             background: var(--white);
-            border-radius: 20px;
+            border-radius: var(--radius-md);
             padding: 14px;
             border: 1px solid var(--slate-200);
-            box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
         }
 
         .widget-preview-header {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .widget-preview-title {
             font-size: 11px;
-            font-weight: 800;
+            font-weight: 700;
             color: var(--primary-dark);
-            letter-spacing: 0.05em;
+            letter-spacing: 0.04em;
         }
 
         .widget-preview-actions {
@@ -853,30 +1101,25 @@
         .widget-preview-btn {
             background: var(--primary-light);
             border: 1px solid var(--primary-border);
-            border-radius: 12px;
+            border-radius: var(--radius-xs);
             padding: 8px 4px;
             display: flex;
             flex-direction: column;
             align-items: center;
             text-align: center;
             cursor: pointer;
-            transition: transform 0.15s ease;
-        }
-
-        .widget-preview-btn:hover {
-            transform: scale(1.04);
         }
 
         .widget-preview-btn svg {
-            width: 20px;
-            height: 20px;
+            width: 18px;
+            height: 18px;
             color: var(--primary);
             margin-bottom: 4px;
         }
 
         .widget-preview-btn span {
-            font-size: 10px;
-            font-weight: 800;
+            font-size: 9.5px;
+            font-weight: 700;
             color: var(--slate-900);
             line-height: 1.1;
         }
@@ -886,19 +1129,51 @@
             color: var(--slate-500);
         }
 
+        /* Policy & Terms Accordion/Boxes */
+        .policy-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 16px;
+        }
+
+        .policy-card {
+            background: var(--white);
+            border: 1px solid var(--slate-200);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            box-shadow: var(--shadow-subtle);
+        }
+
+        .policy-card h5 {
+            font-size: 13.5px;
+            font-weight: 700;
+            color: var(--slate-900);
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .policy-card p {
+            font-size: 12px;
+            color: var(--slate-600);
+            line-height: 1.6;
+        }
+
         /* Footer */
         .footer {
             background: var(--slate-900);
             color: var(--slate-400);
-            padding: 60px 0 30px;
+            padding: 50px 0 24px;
             border-top: 1px solid var(--slate-800);
+            margin-top: 40px;
         }
 
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
-            gap: 40px;
-            margin-bottom: 40px;
+            gap: 36px;
+            margin-bottom: 36px;
         }
 
         @media (max-width: 768px) {
@@ -911,25 +1186,25 @@
         }
 
         .footer-brand h4 {
-            font-size: 18px;
-            font-weight: 800;
+            font-size: 17px;
+            font-weight: 700;
             color: var(--white);
             margin-bottom: 8px;
         }
 
         .footer-brand p {
-            font-size: 13px;
+            font-size: 12.5px;
             line-height: 1.6;
             max-width: 440px;
         }
 
         .footer-col h5 {
-            font-size: 13px;
+            font-size: 12.5px;
             font-weight: 700;
             color: var(--white);
             text-transform: uppercase;
             letter-spacing: 0.05em;
-            margin-bottom: 14px;
+            margin-bottom: 12px;
         }
 
         .footer-col ul {
@@ -942,7 +1217,7 @@
 
         .footer-col a {
             color: var(--slate-400);
-            font-size: 13px;
+            font-size: 12.5px;
             text-decoration: none;
             transition: color 0.2s ease;
         }
@@ -952,9 +1227,9 @@
         }
 
         .footer-bottom {
-            padding-top: 24px;
+            padding-top: 20px;
             border-top: 1px solid var(--slate-800);
-            font-size: 12px;
+            font-size: 11.5px;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -965,44 +1240,52 @@
 </head>
 <body>
 
-    <!-- Floating Rounded Header -->
+    <!-- Header Navbar: Clean Rounded Card Structure -->
     <div class="navbar-outer">
         <header class="navbar">
             <div class="nav-content">
-                <a href="/" class="brand-logo">
-                    <img src="/landing-assets/images/icon.png" alt="Logo Antropometri" class="logo-icon" style="object-fit: cover;">
+                <a href="/" class="brand-logo" title="Beranda Antropometri Indonesia">
+                    <img src="/landing-assets/images/icon.png" alt="Logo Antropometri" class="logo-icon">
                     <div class="brand-text">
                         <h1>Antropometri</h1>
                         <span>Sistem Pemantauan Gizi</span>
                     </div>
                 </a>
 
-                <nav class="nav-tabs">
+                <nav class="nav-tabs" aria-label="Navigasi Utama">
                     <a href="#overview" class="nav-tab-btn active" onclick="switchNav(this)">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
                         Ikhtisar
                     </a>
                     <a href="#calculator" class="nav-tab-btn" onclick="switchNav(this)">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
                         Kalkulator Gizi
                     </a>
+                    <a href="#trend" class="nav-tab-btn" onclick="switchNav(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        Tren Pertumbuhan
+                    </a>
                     <a href="#excel" class="nav-tab-btn" onclick="switchNav(this)">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
-                        Excel Round-Trip
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="8" y1="13" x2="16" y2="13"></line><line x1="8" y1="17" x2="16" y2="17"></line></svg>
+                        Standar Excel
+                    </a>
+                    <a href="#theory" class="nav-tab-btn" onclick="switchNav(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        Landasan Klinis
                     </a>
                     <a href="#mobile-app" class="nav-tab-btn" onclick="switchNav(this)">
-                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                         Widget &amp; APK
                     </a>
                 </nav>
 
                 <div class="nav-actions">
-                    <div class="status-pill">
-                        <span class="pulse-dot"></span>
-                        <span>API v2.2.0 Online</span>
-                    </div>
-                    <a href="/downloads/antropometri-latest.apk" class="btn-primary" download>
-                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                    <a href="/downloads/playstore" class="btn-playstore" title="Buka di Google Play Store" target="_blank" rel="noopener">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.372-.344-.61-.83-.61-1.386V3.2c0-.555.238-1.042.61-1.386zM15.207 13.414l2.793 2.793-12.78 7.377 9.987-10.17zm0-2.828L5.22 .416l12.78 7.377-2.793 2.793zm1.414 1.414l3.869-2.233c.895-.517.895-1.353 0-1.87l-3.869-2.234-2.121 2.121 2.121 2.121z"/></svg>
+                        Google Play
+                    </a>
+                    <a href="/downloads/antropometri-latest.apk" class="btn-primary" download title="Unduh Langsung File APK Android">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         Unduh APK
                     </a>
                 </div>
@@ -1026,7 +1309,7 @@
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div class="stat-icon" style="background: #E8F5E9; color: #2E7D32;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         </div>
                         <span class="stat-badge" style="background: #DEF7EC; color: #03543F;">Subjek Unik</span>
                     </div>
@@ -1037,7 +1320,7 @@
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div class="stat-icon" style="background: #EFF6FF; color: #1D4ED8;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                         </div>
                         <span class="stat-badge" style="background: #DBEAFE; color: #1E40AF;">Rasio ~{{ $stats['avg_per_client'] ?? 1.0 }}x / Pasien</span>
                     </div>
@@ -1048,7 +1331,7 @@
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div class="stat-icon" style="background: #FEF3C7; color: #B45309;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
                         </div>
                         <span class="stat-badge" style="background: #FEF3C7; color: #92400E;">Tenaga Medis</span>
                     </div>
@@ -1059,7 +1342,7 @@
                 <div class="stat-card">
                     <div class="stat-card-header">
                         <div class="stat-icon" style="background: #F3E8FF; color: #6B21A8;">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                         </div>
                         <span class="stat-badge" style="background: #F3E8FF; color: #6B21A8;">WHO / Permenkes</span>
                     </div>
@@ -1068,7 +1351,7 @@
                 </div>
             </div>
 
-            <!-- Aggregate Category Coverage Breakdown & Privacy Guarantee -->
+            <!-- Breakdown Cakupan Agregat & Pernyataan Zero PII -->
             <div class="coverage-banner-wrapper">
                 <div class="coverage-categories">
                     <div class="coverage-cat-pill">
@@ -1094,17 +1377,17 @@
                 </div>
             </div>
 
-            <!-- Real Platform Traffic & Application Usage Metrics -->
+            <!-- Live Telemetry & Traffic Section -->
             <div class="traffic-section">
                 <div class="traffic-header">
                     <div>
-                        <div class="hero-badge" style="margin-bottom: 8px;">
+                        <div class="hero-badge" style="margin-bottom: 6px;">
                             <span class="pulse-dot"></span>
                             <span>Telemetri &amp; Trafik Operasional Lapangan</span>
                         </div>
-                        <h3 style="font-size: 20px; font-weight: 800; color: var(--slate-900);">Metrik Pemakaian Aplikasi &amp; Performa Sistem</h3>
+                        <h3 style="font-size: 19px; font-weight: 700; color: var(--slate-900);">Metrik Pemakaian Aplikasi &amp; Performa Sistem</h3>
                     </div>
-                    <div style="font-size: 12px; color: var(--slate-500); font-weight: 600;">
+                    <div style="font-size: 11.5px; color: var(--slate-500); font-weight: 500;">
                         Sinkronisasi Terakhir: {{ $stats['last_updated'] ?? now()->translatedFormat('d M Y, H:i') }}
                     </div>
                 </div>
@@ -1114,7 +1397,7 @@
                         <div class="traffic-card-top">
                             <span class="traffic-card-title">Aktivitas Operasional</span>
                             <div class="traffic-icon" style="background: #EFF6FF; color: #1D4ED8;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"></path></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
                             </div>
                         </div>
                         <div class="traffic-val">{{ number_format($stats['traffic']['total_activities'] ?? 0, 0, ',', '.') }}</div>
@@ -1125,7 +1408,7 @@
                         <div class="traffic-card-top">
                             <span class="traffic-card-title">Batch Sinkronisasi</span>
                             <div class="traffic-icon" style="background: #ECFDF5; color: #047857;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
                             </div>
                         </div>
                         <div class="traffic-val">{{ number_format($stats['traffic']['total_sync_batches'] ?? 0, 0, ',', '.') }}</div>
@@ -1136,7 +1419,7 @@
                         <div class="traffic-card-top">
                             <span class="traffic-card-title">Pemeriksaan 30 Hari</span>
                             <div class="traffic-icon" style="background: #FEF3C7; color: #B45309;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
                             </div>
                         </div>
                         <div class="traffic-val">{{ number_format($stats['traffic']['recent_30d'] ?? 0, 0, ',', '.') }}</div>
@@ -1147,7 +1430,7 @@
                         <div class="traffic-card-top">
                             <span class="traffic-card-title">Performa &amp; Keamanan</span>
                             <div class="traffic-icon" style="background: #F3E8FF; color: #7C3AED;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                             </div>
                         </div>
                         <div class="traffic-val">{{ $stats['traffic']['avg_latency'] ?? '< 120 ms' }}</div>
@@ -1157,17 +1440,17 @@
             </div>
         </section>
 
-        <!-- Live Interactive Calculator Section -->
+        <!-- Kalkulator Antropometri Interaktif (Hanya Hitung Saat Tombol Ditekan) -->
         <section id="calculator" class="section-wrapper">
             <div class="section-header">
                 <div class="section-title">
-                    <h3>Kalkulator Antropometri &amp; Status Gizi Langsung</h3>
-                    <p>Uji perhitungan status gizi secara interaktif dan real-time dengan standar baku WHO 2006 dan Permenkes RI.</p>
+                    <h3>Kalkulator Antropometri &amp; Status Gizi Klinis</h3>
+                    <p>Uji perhitungan Z-score dan status gizi secara presisi berdasarkan standar baku WHO 2006 dan Permenkes RI.</p>
                 </div>
             </div>
 
             <div class="calc-layout">
-                <!-- Left: Interactive Form -->
+                <!-- Sisi Kiri: Form Masukan -->
                 <div class="card-surface">
                     <div class="mode-toggle">
                         <button type="button" class="mode-btn active" onclick="setMode('balita')">Balita (0-60 Bln)</button>
@@ -1175,21 +1458,21 @@
                         <button type="button" class="mode-btn" onclick="setMode('bumil')">Ibu Hamil</button>
                     </div>
 
-                    <form id="calcForm" onsubmit="event.preventDefault(); calculateNutrition();">
+                    <form id="calcForm" onsubmit="event.preventDefault(); triggerCalculate();">
                         <div class="form-grid">
                             <div class="input-group form-full">
                                 <label for="patientName">Inisial / ID Subjek (Simulasi Anonim)</label>
-                                <input type="text" id="patientName" class="input-control" value="KL-BL-01" oninput="calculateNutrition()" placeholder="Inisial atau ID subjek simulasi">
+                                <input type="text" id="patientName" class="input-control" value="KL-BL-01" placeholder="Contoh: KL-BL-01">
                             </div>
 
                             <div class="input-group">
                                 <label for="dob">Tanggal Lahir</label>
-                                <input type="date" id="dob" class="input-control" value="2024-03-15" required onchange="calculateNutrition()">
+                                <input type="date" id="dob" class="input-control" value="2024-03-15" required>
                             </div>
 
                             <div class="input-group">
                                 <label for="gender">Jenis Kelamin</label>
-                                <select id="gender" class="input-control" onchange="calculateNutrition()">
+                                <select id="gender" class="input-control">
                                     <option value="L">Laki-laki (L)</option>
                                     <option value="P">Perempuan (P)</option>
                                 </select>
@@ -1197,50 +1480,47 @@
 
                             <div class="input-group">
                                 <label for="weight">Berat Badan (kg)</label>
-                                <input type="number" step="0.1" id="weight" class="input-control" value="12.2" required oninput="calculateNutrition()">
+                                <input type="number" step="0.1" id="weight" class="input-control" value="12.2" required>
                             </div>
 
                             <div class="input-group">
                                 <label for="height">Tinggi / Panjang (cm)</label>
-                                <input type="number" step="0.1" id="height" class="input-control" value="86.5" required oninput="calculateNutrition()">
+                                <input type="number" step="0.1" id="height" class="input-control" value="86.5" required>
                             </div>
 
                             <div class="input-group">
                                 <label for="lila">LILA (cm)</label>
-                                <input type="number" step="0.1" id="lila" class="input-control" value="15.0" placeholder="Opsional" oninput="calculateNutrition()">
+                                <input type="number" step="0.1" id="lila" class="input-control" value="15.0" placeholder="Opsional">
                             </div>
 
                             <div class="input-group">
                                 <label for="head">Lingkar Kepala (cm)</label>
-                                <input type="number" step="0.1" id="head" class="input-control" value="48.0" placeholder="Opsional" oninput="calculateNutrition()">
+                                <input type="number" step="0.1" id="head" class="input-control" value="48.0" placeholder="Opsional">
                             </div>
 
                             <div id="waistGroup" class="input-group form-full" style="display: none;">
                                 <label for="waist">Lingkar Perut (cm) - Dewasa</label>
-                                <input type="number" step="0.1" id="waist" class="input-control" value="82.0" placeholder="Batas: L &le;90cm, P &le;80cm" oninput="calculateNutrition()">
+                                <input type="number" step="0.1" id="waist" class="input-control" value="82.0" placeholder="Batas: L &le;90cm, P &le;80cm">
                             </div>
                         </div>
 
-                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 6px;">
-                            <div style="font-size: 12px; color: var(--slate-500); display: flex; align-items: center; gap: 6px;">
-                                <span class="pulse-dot" style="width: 6px; height: 6px;"></span>
-                                <span>Kalkulasi Real-time Otomatis Aktif</span>
-                            </div>
-                            <button type="submit" class="btn-calculate" style="width: auto; padding: 10px 18px; font-size: 13px;">
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
-                                Hitung Ulang
+                        <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 8px;">
+                            <span style="font-size: 11.5px; color: var(--slate-500);">Tekan tombol untuk memproses perhitungan klinis</span>
+                            <button type="submit" id="btnHitung" class="btn-calculate">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M23 4v6h-6M1 20v-6h6M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+                                <span>Hitung Status Gizi</span>
                             </button>
                         </div>
                     </form>
                 </div>
 
-                <!-- Right: Output Card -->
-                <div class="result-card">
+                <!-- Sisi Kanan: Kartu Hasil Output -->
+                <div id="resultCard" class="result-card">
                     <div>
                         <div class="result-header">
                             <div>
-                                <h4 id="resPatientName">KL-BL-01 (Inisial Anonim)</h4>
-                                <span id="resAgeInfo" style="font-size: 13px; color: var(--slate-500); font-weight: 600;">Usia: 24 Bulan (2 Tahun) &bull; Mode Simulasi Anonim</span>
+                                <h4 id="resPatientName">KL-BL-01 (Inisial Terproteksi)</h4>
+                                <span id="resAgeInfo">Usia: 24 Bulan (2.0 Tahun) &bull; Mode Simulasi Anonim</span>
                             </div>
                             <span id="resCategoryBadge" class="stat-badge" style="background: #DEF7EC; color: #03543F;">BALITA</span>
                         </div>
@@ -1273,16 +1553,16 @@
 
                         <div class="recommendation-box">
                             <h5>
-                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
                                 Rekomendasi Klinis &amp; Nutrisi
                             </h5>
-                            <p id="resRecommendation">Pertumbuhan anak berjalan optimal sesuai kurva standar WHO. Lanjutkan pola asuh gizi seimbang, sanitasi lingkungan, dan jadwalkan penimbangan posyandu bulan berikutnya.</p>
+                            <p id="resRecommendation">Pertumbuhan dan status gizi anak berada dalam rentang ideal kurva baku WHO 2006. Lanjutkan pola makan gizi seimbang kaya protein hewani dan kontrol berkala setiap bulan.</p>
                         </div>
                     </div>
 
                     <div style="display: flex; gap: 10px; margin-top: 10px;">
                         <button type="button" class="btn-primary" style="flex: 1; justify-content: center;" onclick="window.print()">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
                             Cetak Laporan Hasil
                         </button>
                     </div>
@@ -1290,99 +1570,233 @@
             </div>
         </section>
 
-        <!-- Round-Trip Excel Center -->
+        <!-- Tren Pertumbuhan & Distribusi Z-Score Klinis -->
+        <section id="trend" class="section-wrapper">
+            <div class="section-header">
+                <div class="section-title">
+                    <h3>Tren Pertumbuhan &amp; Sebaran Deviasi Standar WHO</h3>
+                    <p>Pemantauan longitudinal pertumbuhan anak untuk pencegahan stunting dan wasting secara dini.</p>
+                </div>
+            </div>
+
+            <div class="trend-grid">
+                <div class="trend-chart-box">
+                    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+                        <h4 style="font-size: 15px; font-weight: 700; color: var(--slate-900);">Kurva Baku Distribusi Z-Score Antropometri (WHO 2006)</h4>
+                        <span class="stat-badge" style="background: #DEF7EC; color: #03543F;">Rentang Normal: -2 SD s.d. +1 SD</span>
+                    </div>
+                    <p style="font-size: 12px; color: var(--slate-600); margin-bottom: 16px;">
+                        Standar deviasi menggambarkan posisi relatif status gizi anak terhadap populasi referensi WHO. Pemantauan tiap bulan mendeteksi tren melandai (*growth faltering*) sebelum anak jatuh ke status stunting atau gizi buruk akut.
+                    </p>
+
+                    <!-- Bar Representasi Z-Score Spectrum -->
+                    <div class="sd-curve-bar">
+                        <div class="sd-segment" style="width: 15%; background: #EF4444;" title="Z < -3 SD (Gizi Buruk / Severely Stunted)"></div>
+                        <div class="sd-segment" style="width: 15%; background: #F59E0B;" title="-3 SD <= Z < -2 SD (Gizi Kurang / Stunted)"></div>
+                        <div class="sd-segment" style="width: 45%; background: #10B981;" title="-2 SD <= Z <= +1 SD (Gizi Baik / Normal)"></div>
+                        <div class="sd-segment" style="width: 15%; background: #FBBF24;" title="+1 SD < Z <= +2 SD (Berisiko Gizi Lebih)"></div>
+                        <div class="sd-segment" style="width: 10%; background: #DC2626;" title="Z > +2 SD (Gizi Lebih / Obesitas)"></div>
+                    </div>
+
+                    <div class="sd-legend-grid">
+                        <div class="sd-legend-item">
+                            <span class="sd-color-box" style="background: #EF4444;"></span>
+                            <span>&lt; -3 SD: Sangat Kurang / Pendek</span>
+                        </div>
+                        <div class="sd-legend-item">
+                            <span class="sd-color-box" style="background: #F59E0B;"></span>
+                            <span>-2 SD: Kurang / Stunting</span>
+                        </div>
+                        <div class="sd-legend-item">
+                            <span class="sd-color-box" style="background: #10B981;"></span>
+                            <span>-2 s.d. +1 SD: Normal / Ideal</span>
+                        </div>
+                        <div class="sd-legend-item">
+                            <span class="sd-color-box" style="background: #FBBF24;"></span>
+                            <span>+1 s.d. +2 SD: Risiko Lebih</span>
+                        </div>
+                        <div class="sd-legend-item">
+                            <span class="sd-color-box" style="background: #DC2626;"></span>
+                            <span>&gt; +2 SD: Obesitas</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card-surface" style="padding: 20px;">
+                    <h4 style="font-size: 15px; font-weight: 700; color: var(--slate-900); margin-bottom: 8px;">Protokol Evaluasi Tren Posyandu</h4>
+                    <ul style="list-style: none; font-size: 12px; color: var(--slate-600); line-height: 1.7;">
+                        <li style="margin-bottom: 8px; display: flex; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary); flex-shrink: 0; margin-top: 2px;"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                            <span><strong>Tren Naik (N):</strong> Kenaikan berat dan tinggi badan mengikuti kurva baku bulanan anak sehat.</span>
+                        </li>
+                        <li style="margin-bottom: 8px; display: flex; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-amber); flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>
+                            <span><strong>Tren Tetap/Turun (T):</strong> Sinyal bahaya awal gangguan pertumbuhan (*faltering*). Wajib konseling gizi dan investigasi infeksi.</span>
+                        </li>
+                        <li style="display: flex; gap: 8px;">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--secondary); flex-shrink: 0; margin-top: 2px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline></svg>
+                            <span><strong>Pencatatan Berkelanjutan:</strong> Rekam riwayat multi-kunjungan per subjek otomatis tersimpan di SQLite lokal dan tersinkronisasi.</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+
+        <!-- Standar Ekspor-Impor Excel Round-Trip (Spesifikasi Format & Kolom) -->
         <section id="excel" class="section-wrapper">
             <div class="section-header">
                 <div class="section-title">
                     <h3>Standar Ekspor-Impor Excel Round-Trip</h3>
-                    <p>Format ekspor dari sistem dan impor dari luar dirancang 100% identik dua arah, mempermudah entri massal di lapangan.</p>
+                    <p>Format dua arah 100% kompatibel tanpa merusak struktur kolom, formula otomatis, atau integritas data.</p>
                 </div>
-                <a href="/downloads/Template_Perhitungan_Antropometri.xlsx" class="btn-primary" download>
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                <a href="/downloads/Template_Perhitungan_Antropometri.xlsx" class="btn-primary" download title="Unduh Template Resmi (.xlsx)">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                     Unduh Template Excel (.xlsx)
                 </a>
             </div>
 
-            <div class="excel-table-wrapper">
-                <div style="overflow-x: auto;">
-                    <table class="excel-table">
-                        <thead>
-                            <tr>
-                                <th>No</th>
-                                <th>ID Subjek (Anonim)</th>
-                                <th>Tanggal Lahir</th>
-                                <th>Tgl Periksa</th>
-                                <th>JK</th>
-                                <th>Hamil?</th>
-                                <th>BB (kg)</th>
-                                <th>TB (cm)</th>
-                                <th>LILA</th>
-                                <th>LK</th>
-                                <th>Umur (Bln) <span class="badge-auto">Auto</span></th>
-                                <th>Z BB/U <span class="badge-auto">Auto</span></th>
-                                <th>Status BB/U <span class="badge-auto">Auto</span></th>
-                                <th>Z TB/U <span class="badge-auto">Auto</span></th>
-                                <th>Status TB/U <span class="badge-auto">Auto</span></th>
-                                <th>Rekomendasi <span class="badge-auto">Auto</span></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td>1</td>
-                                <td><strong>ID-BAL-001 (Anonim)</strong></td>
-                                <td>2024-02-10</td>
-                                <td>2026-02-10</td>
-                                <td>L</td>
-                                <td>T</td>
-                                <td>12.4</td>
-                                <td>87.5</td>
-                                <td>15.2</td>
-                                <td>48.1</td>
-                                <td>24 Bln</td>
-                                <td>+0.15 SD</td>
-                                <td><span class="chip-badge badge-normal">Gizi Baik</span></td>
-                                <td>+0.10 SD</td>
-                                <td><span class="chip-badge badge-normal">Normal</span></td>
-                                <td>Pola makan gizi seimbang adekuat.</td>
-                            </tr>
-                            <tr>
-                                <td>2</td>
-                                <td><strong>ID-BAL-002 (Anonim)</strong></td>
-                                <td>2023-08-15</td>
-                                <td>2026-02-10</td>
-                                <td>P</td>
-                                <td>T</td>
-                                <td>13.8</td>
-                                <td>93.0</td>
-                                <td>16.0</td>
-                                <td>49.0</td>
-                                <td>30 Bln</td>
-                                <td>+0.25 SD</td>
-                                <td><span class="chip-badge badge-normal">Gizi Baik</span></td>
-                                <td>+0.30 SD</td>
-                                <td><span class="chip-badge badge-normal">Normal</span></td>
-                                <td>Pertumbuhan optimal, timbang rutin.</td>
-                            </tr>
-                            <tr>
-                                <td>3</td>
-                                <td><strong>ID-BUM-001 (Anonim)</strong></td>
-                                <td>1998-05-20</td>
-                                <td>2026-02-10</td>
-                                <td>P</td>
-                                <td>Y</td>
-                                <td>58.0</td>
-                                <td>158.0</td>
-                                <td>25.5</td>
-                                <td>-</td>
-                                <td>333 Bln</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>-</td>
-                                <td>Konsumsi tablet tambah darah &amp; asam folat.</td>
-                            </tr>
-                        </tbody>
-                    </table>
+            <!-- Schema Card Showcase (Tanpa Data List Pasien) -->
+            <div class="excel-schema-grid">
+                <div class="schema-card">
+                    <h5>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                        1. Variabel Demografi
+                    </h5>
+                    <ul>
+                        <li><span>No. Urut Peserta</span> <span class="schema-tag">Kolom A</span></li>
+                        <li><span>Nama Pasien (Tersamarkan)</span> <span class="schema-tag">Kolom B</span></li>
+                        <li><span>Tanggal Lahir (YYYY-MM-DD)</span> <span class="schema-tag">Kolom C</span></li>
+                        <li><span>Tanggal Pemeriksaan</span> <span class="schema-tag">Kolom D</span></li>
+                        <li><span>Jenis Kelamin (L / P)</span> <span class="schema-tag">Kolom E</span></li>
+                        <li><span>Status Kehamilan (Y / T)</span> <span class="schema-tag">Kolom F</span></li>
+                    </ul>
+                </div>
+
+                <div class="schema-card">
+                    <h5>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        2. Parameter Fisik Lapangan
+                    </h5>
+                    <ul>
+                        <li><span>Berat Badan (kg, presisi 0.1)</span> <span class="schema-tag">Kolom G</span></li>
+                        <li><span>Tinggi / Panjang Badan (cm)</span> <span class="schema-tag">Kolom H</span></li>
+                        <li><span>Lingkar Lengan Atas / LILA (cm)</span> <span class="schema-tag">Kolom I</span></li>
+                        <li><span>Lingkar Kepala Anak (cm)</span> <span class="schema-tag">Kolom J</span></li>
+                        <li><span>Umur Bulan Otomatis</span> <span class="schema-tag">Kolom K [Auto]</span></li>
+                        <li><span>Kategori Usia Otomatis</span> <span class="schema-tag">Kolom M [Auto]</span></li>
+                    </ul>
+                </div>
+
+                <div class="schema-card">
+                    <h5>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                        3. Formula &amp; Z-Score Otomatis
+                    </h5>
+                    <ul>
+                        <li><span>Z-Score Berat per Umur (BB/U)</span> <span class="schema-tag">Formula WHO</span></li>
+                        <li><span>Status Klinis BB/U</span> <span class="schema-tag">Auto Status</span></li>
+                        <li><span>Z-Score Tinggi per Umur (TB/U)</span> <span class="schema-tag">Deteksi Stunting</span></li>
+                        <li><span>Status Klinis TB/U</span> <span class="schema-tag">Auto Status</span></li>
+                        <li><span>Z-Score BB per TB (BB/TB)</span> <span class="schema-tag">Deteksi Wasting</span></li>
+                        <li><span>Status Gizi Akut BB/TB</span> <span class="schema-tag">Auto Status</span></li>
+                    </ul>
+                </div>
+
+                <div class="schema-card">
+                    <h5>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        4. Dewasa, Bumil, &amp; Rekap
+                    </h5>
+                    <ul>
+                        <li><span>Indeks Massa Tubuh (IMT)</span> <span class="schema-tag">BB/(TB/100)²</span></li>
+                        <li><span>Klasifikasi IMT Dewasa</span> <span class="schema-tag">Permenkes 2014</span></li>
+                        <li><span>Status Risiko KEK (LILA &lt;23.5)</span> <span class="schema-tag">Standar Bumil</span></li>
+                        <li><span>Baris Rekapitulasi Rata-rata</span> <span class="schema-tag">Row Summary</span></li>
+                        <li><span>Baris Rekapitulasi Total</span> <span class="schema-tag">Row Summary</span></li>
+                        <li><span>Rekomendasi Tindak Lanjut</span> <span class="schema-tag">Auto Klinis</span></li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card-surface" style="padding: 18px 22px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px;">
+                <div style="font-size: 12.5px; color: var(--slate-600); max-width: 800px;">
+                    <strong>Standar Round-Trip Dua Arah:</strong> Berkas yang diekspor dari aplikasi mobile/web dapat dibuka di Microsoft Excel atau Google Sheets, diisi ratusan data tambahan di lapangan, dan diimpor kembali ke database tanpa pergeseran kolom atau galat formula.
+                </div>
+                <div style="display: flex; gap: 10px;">
+                    <a href="/downloads/Template_Perhitungan_Antropometri.xlsx" class="btn-primary" download>
+                        Unduh Template (.xlsx)
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Landasan Teori, Standar Regulasi, & Landasan Perhitungan Klinis -->
+        <section id="theory" class="section-wrapper">
+            <div class="section-header">
+                <div class="section-title">
+                    <h3>Landasan Teori &amp; Baku Mutu Klinis Nasional</h3>
+                    <p>Kepatuhan ilmiah pada standar antropometri anak WHO dan regulasi Kementerian Kesehatan Republik Indonesia.</p>
+                </div>
+            </div>
+
+            <div class="theory-grid">
+                <div class="theory-card">
+                    <div class="theory-card-header">
+                        <div class="theory-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+                        </div>
+                        <div>
+                            <h4>Permenkes RI No. 2 Tahun 2020</h4>
+                            <span style="font-size: 11px; color: var(--slate-500);">Standar Antropometri Anak Nasional</span>
+                        </div>
+                    </div>
+                    <p>
+                        Peraturan Menteri Kesehatan No. 2 Tahun 2020 menetapkan acuan baku pengukuran pertumbuhan balita usia 0–60 bulan di seluruh fasilitas kesehatan dan posyandu Indonesia menggunakan standar deviasi (Z-Score) pada 4 indeks utama: BB/U, TB/U, BB/TB, dan IMT/U.
+                    </p>
+                    <div style="font-size: 11.5px; color: var(--slate-600); background: var(--slate-50); padding: 8px 12px; border-radius: var(--radius-xs); border: 1px solid var(--slate-200);">
+                        <strong>Indeks Stunting:</strong> TB/U &lt; -2 SD (Pendek) dan &lt; -3 SD (Sangat Pendek / Severely Stunted).
+                    </div>
+                </div>
+
+                <div class="theory-card">
+                    <div class="theory-card-header">
+                        <div class="theory-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>
+                        </div>
+                        <div>
+                            <h4>WHO Child Growth Standards 2006</h4>
+                            <span style="font-size: 11px; color: var(--slate-500);">Metode Z-Score LMS Box-Cox</span>
+                        </div>
+                    </div>
+                    <p>
+                        Menggunakan metode transformasi LMS (Lambda, Mu, Sigma) dari World Health Organization untuk mengatasi asimetri distribusi pertumbuhan anak:
+                    </p>
+                    <div class="formula-box">
+                        Z = [ (y / M)^L - 1 ] / ( S * L )  |  jika L != 0
+                        <br>
+                        Z = ln( y / M ) / S                |  jika L == 0
+                    </div>
+                    <p style="font-size: 11.5px; color: var(--slate-500); margin-bottom: 0;">
+                        Di mana <em>y</em> adalah nilai terukur, <em>M</em> adalah median standar, <em>L</em> adalah koefisien Box-Cox kecondongan, dan <em>S</em> adalah koefisien variasi.
+                    </p>
+                </div>
+
+                <div class="theory-card">
+                    <div class="theory-card-header">
+                        <div class="theory-icon">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                        </div>
+                        <div>
+                            <h4>Standar Klinis Bumil &amp; Dewasa</h4>
+                            <span style="font-size: 11px; color: var(--slate-500);">Permenkes 41/2014 &amp; Panduan ANC</span>
+                        </div>
+                    </div>
+                    <p>
+                        <strong>Ibu Hamil (KEK):</strong> Lingkar Lengan Atas (LILA) &lt; 23.5 cm mengindikasikan Kurang Energi Kronis (KEK) berisiko melahirkan bayi BBLR.
+                    </p>
+                    <p style="margin-bottom: 0;">
+                        <strong>Dewasa:</strong> IMT dihitung $BB / (TB)^2$. Obesitas Sentral dievaluasi dari Lingkar Perut dengan ambang batas batas Pria &gt; 90 cm dan Wanita &gt; 80 cm.
+                    </p>
                 </div>
             </div>
         </section>
@@ -1393,108 +1807,81 @@
                 <div class="widget-showcase-grid">
                     <div>
                         <div class="hero-badge">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
                             Fitur Layar Beranda Smartphone (AppWidgetProvider)
                         </div>
-                        <h3 style="font-size: 28px; font-weight: 800; margin-bottom: 12px; color: var(--slate-900);">Widget Layar Utama Android 4-in-1</h3>
-                        <p style="color: var(--slate-600); margin-bottom: 24px;">Pengukuran cepat tanpa perlu membuka drawer atau navigasi bertingkat. Cukup 1 sentuhan dari layar beranda HP untuk mencatat balita, mengukur dewasa, membuka kalkulator, atau sinkronisasi antrean lokal.</p>
+                        <h3 style="font-size: 26px; font-weight: 700; margin-bottom: 12px; color: var(--slate-900);">Widget Layar Utama Android 4-in-1</h3>
+                        <p style="color: var(--slate-600); margin-bottom: 22px; font-size: 13.5px;">
+                            Pencatatan cepat tanpa perlu membuka drawer atau menu bertingkat. Cukup 1 sentuhan dari layar beranda HP untuk mencatat balita, mengukur dewasa, membuka kalkulator, atau sinkronisasi antrean lokal.
+                        </p>
 
-                        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px;">
-                            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                <div style="width: 28px; height: 28px; border-radius: 8px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">1</div>
-                                <div>
-                                    <strong style="color: var(--slate-900); font-size: 14px;">Aksi Cepat Balita:</strong>
-                                    <span style="color: var(--slate-600); font-size: 13px;"> Membuka form pemeriksaan balita (0-5 tahun) dengan preset otomatis.</span>
-                                </div>
+                        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-xs); background: var(--primary-light); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;">1</div>
+                                <div style="font-size: 12.5px; color: var(--slate-700);"><strong>Entri Balita Langsung:</strong> Membuka form penimbangan balita terintegrasi baku WHO.</div>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                <div style="width: 28px; height: 28px; border-radius: 8px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">2</div>
-                                <div>
-                                    <strong style="color: var(--slate-900); font-size: 14px;">Aksi Cepat Dewasa:</strong>
-                                    <span style="color: var(--slate-600); font-size: 13px;"> Form pengukuran IMT, lingkar perut, dan lingkar lengan atas (LILA).</span>
-                                </div>
+                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-xs); background: var(--primary-light); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;">2</div>
+                                <div style="font-size: 12.5px; color: var(--slate-700);"><strong>Pemeriksaan Dewasa &amp; Bumil:</strong> Cepat mencatat IMT, LILA KEK, dan lingkar perut.</div>
                             </div>
-                            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                <div style="width: 28px; height: 28px; border-radius: 8px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">3</div>
-                                <div>
-                                    <strong style="color: var(--slate-900); font-size: 14px;">Kalkulator Tamu / Mandiri:</strong>
-                                    <span style="color: var(--slate-600); font-size: 13px;"> Hitung status gizi mandiri tanpa keharusan login petugas.</span>
-                                </div>
-                            </div>
-                            <div style="display: flex; align-items: flex-start; gap: 12px;">
-                                <div style="width: 28px; height: 28px; border-radius: 8px; background: var(--primary-light); color: var(--primary); display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 13px;">4</div>
-                                <div>
-                                    <strong style="color: var(--slate-900); font-size: 14px;">Sinkronisasi Latar Belakang:</strong>
-                                    <span style="color: var(--slate-600); font-size: 13px;"> Mengirim data antrean lokal SQLite ke server Sanctum seketika online.</span>
-                                </div>
+                            <div style="display: flex; gap: 10px; align-items: flex-start;">
+                                <div style="width: 24px; height: 24px; border-radius: var(--radius-xs); background: var(--primary-light); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;">3</div>
+                                <div style="font-size: 12.5px; color: var(--slate-700);"><strong>Sinkronisasi Sekali Sentuh:</strong> Mengunggah batch data offline saat mendeteksi sinyal internet.</div>
                             </div>
                         </div>
 
-                        <div style="display: flex; gap: 14px; flex-wrap: wrap;">
-                            <a href="/downloads/antropometri-latest.apk" class="btn-primary" download style="padding: 14px 24px; font-size: 15px;">
-                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                Unduh APK Resmi (v2.2.0)
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <a href="/downloads/playstore" class="btn-playstore" target="_blank" rel="noopener">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.372-.344-.61-.83-.61-1.386V3.2c0-.555.238-1.042.61-1.386zM15.207 13.414l2.793 2.793-12.78 7.377 9.987-10.17zm0-2.828L5.22 .416l12.78 7.377-2.793 2.793zm1.414 1.414l3.869-2.233c.895-.517.895-1.353 0-1.87l-3.869-2.234-2.121 2.121 2.121 2.121z"/></svg>
+                                Unduh di Google Play
                             </a>
-                            <a href="/privacy-policy" class="btn-primary" style="background: var(--white); color: var(--slate-700); border-color: var(--slate-200); box-shadow: none;">
-                                Kebijakan Privasi
+                            <a href="/downloads/antropometri-latest.apk" class="btn-primary" download>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                                Unduh Langsung APK (.apk)
                             </a>
                         </div>
                     </div>
 
-                    <!-- Right: Interactive Widget Smartphone Mockup -->
+                    <!-- Mockup Phone Display -->
                     <div>
                         <div class="phone-mockup">
                             <div class="phone-screen">
-                                <div>
-                                    <div class="phone-notch"></div>
-                                    <div style="display: flex; justify-content: space-between; font-size: 11px; font-weight: 700; color: var(--slate-600); margin-bottom: 24px;">
-                                        <span>09:41</span>
-                                        <span>4G &bull; 100%</span>
-                                    </div>
-
-                                    <!-- The Actual Device Launcher Widget -->
-                                    <div class="widget-preview-card">
-                                        <div class="widget-preview-header">
-                                            <div>
-                                                <div class="widget-preview-title">ANTROPOMETRI</div>
-                                                <small style="color: var(--slate-500); font-size: 9px; font-weight: 600;">Aksi Cepat Layanan Gizi</small>
+                                <div class="phone-notch"></div>
+                                <div class="widget-preview-card">
+                                    <div class="widget-preview-header">
+                                        <div style="display: flex; align-items: center; gap: 6px;">
+                                            <div style="width: 18px; height: 18px; border-radius: 4px; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white;">
+                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
                                             </div>
-                                            <span style="font-size: 9px; font-weight: 700; color: var(--primary); background: var(--primary-light); padding: 2px 6px; border-radius: 4px;">Aktif</span>
+                                            <span class="widget-preview-title">ANTROPOMETRI WIDGET</span>
                                         </div>
-
-                                        <div class="widget-preview-actions">
-                                            <div class="widget-preview-btn" onclick="alert('Deep Link Triggered: antropometri://measure/balita')">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"></path><path d="M6 21v-2a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v2"></path></svg>
-                                                <span>Balita</span>
-                                                <small>0-5 Thn</small>
-                                            </div>
-
-                                            <div class="widget-preview-btn" onclick="alert('Deep Link Triggered: antropometri://measure/dewasa')">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
-                                                <span>Dewasa</span>
-                                                <small>IMT</small>
-                                            </div>
-
-                                            <div class="widget-preview-btn" onclick="alert('Deep Link Triggered: antropometri://guest-calculator')">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
-                                                <span>Kalkulator</span>
-                                                <small>Mandiri</small>
-                                            </div>
-
-                                            <div class="widget-preview-btn" onclick="alert('Deep Link Triggered: antropometri://sync')">
-                                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-                                                <span>Sinkron</span>
-                                                <small>Server</small>
-                                            </div>
+                                        <span class="pulse-dot"></span>
+                                    </div>
+                                    <div class="widget-preview-actions">
+                                        <div class="widget-preview-btn">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
+                                            <span>Balita</span>
+                                            <small>WHO</small>
+                                        </div>
+                                        <div class="widget-preview-btn">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
+                                            <span>Dewasa</span>
+                                            <small>IMT</small>
+                                        </div>
+                                        <div class="widget-preview-btn">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line></svg>
+                                            <span>Kalkulator</span>
+                                            <small>Mandiri</small>
+                                        </div>
+                                        <div class="widget-preview-btn">
+                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
+                                            <span>Sinkron</span>
+                                            <small>Server</small>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div style="display: flex; justify-content: space-around; padding: 12px 0;">
-                                    <div style="width: 44px; height: 44px; background: rgba(255,255,255,0.7); border-radius: 12px;"></div>
-                                    <div style="width: 44px; height: 44px; background: rgba(255,255,255,0.7); border-radius: 12px;"></div>
-                                    <div style="width: 44px; height: 44px; background: rgba(255,255,255,0.7); border-radius: 12px;"></div>
-                                    <div style="width: 44px; height: 44px; background: rgba(255,255,255,0.7); border-radius: 12px;"></div>
+                                <div style="text-align: center; font-size: 10px; color: var(--slate-600); font-weight: 600; padding-bottom: 8px;">
+                                    Android 15 Ready &bull; AppWidgetProvider 4x2
                                 </div>
                             </div>
                         </div>
@@ -1503,16 +1890,58 @@
             </div>
         </section>
 
+        <!-- Kebijakan Privasi, Keamanan Data, & Ketentuan Layanan -->
+        <section id="policy" class="section-wrapper">
+            <div class="section-header">
+                <div class="section-title">
+                    <h3>Kebijakan Privasi, Keamanan, &amp; Perlindungan Data</h3>
+                    <p>Jaminan kepatuhan terhadap regulasi pelindungan data pribadi medis nasional.</p>
+                </div>
+            </div>
+
+            <div class="policy-grid">
+                <div class="policy-card">
+                    <h5>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary);"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
+                        UU PDP No. 27 Tahun 2022
+                    </h5>
+                    <p>
+                        Seluruh pengelolaan data subjek dan rekam antropometri tunduk pada Undang-Undang Pelindungan Data Pribadi. Data kesehatan bersifat spesifik dan dilindungi dengan kontrol hak akses ketat serta persetujuan medis.
+                    </p>
+                </div>
+
+                <div class="policy-card">
+                    <h5>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--secondary);"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                        Enkripsi Lokal AES-256
+                    </h5>
+                    <p>
+                        Database SQLite pada perangkat petugas lapangan diamankan menggunakan enkripsi SQLCipher berbasis standar AES-256. Data tidak dapat dibaca dari luar aplikasi meskipun perangkat hilang atau di-root.
+                    </p>
+                </div>
+
+                <div class="policy-card">
+                    <h5>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--accent-emerald);"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><line x1="18" y1="8" x2="23" y2="13"></line><line x1="23" y1="8" x2="18" y2="13"></line></svg>
+                        Isolasi Hak Kepemilikan (Multi-Tenant)
+                    </h5>
+                    <p>
+                        Setiap petugas hanya memiliki hak akses baca dan sunting terhadap data pasien yang tercatat dalam wilayah tugasnya. Server memvalidasi token Sanctum dan mengisolasi akses secara deterministik.
+                    </p>
+                </div>
+            </div>
+        </section>
+
     </main>
 
-    <!-- Footer -->
+    <!-- Footer Publik Resmi -->
     <footer class="footer">
         <div class="container">
             <div class="footer-grid">
                 <div class="footer-brand">
-                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-                        <img src="/landing-assets/images/icon.png" alt="Logo Antropometri" style="width: 36px; height: 36px; border-radius: 10px; object-fit: cover;">
-                        <h4 style="margin: 0; font-size: 18px;">Antropometri Indonesia</h4>
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                        <img src="/landing-assets/images/icon.png" alt="Logo Antropometri" style="width: 34px; height: 34px; border-radius: var(--radius-xs); object-fit: cover;">
+                        <h4 style="margin: 0; font-size: 17px;">Antropometri Indonesia</h4>
                     </div>
                     <p>Platform standar nasional pengukuran antropometri dan penilaian status gizi terintegrasi untuk posyandu, puskesmas, dan tenaga medis Indonesia. Menjamin kepatuhan standar baku WHO 2006 dan Permenkes No. 2 Tahun 2020.</p>
                 </div>
@@ -1521,17 +1950,19 @@
                     <ul>
                         <li><a href="#overview">Ikhtisar Sistem</a></li>
                         <li><a href="#calculator">Kalkulator Gizi</a></li>
+                        <li><a href="#trend">Tren Pertumbuhan</a></li>
                         <li><a href="#excel">Standar Excel</a></li>
+                        <li><a href="#theory">Landasan Klinis</a></li>
                         <li><a href="#mobile-app">Widget &amp; APK</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
-                    <h5>Dokumentasi &amp; Unduhan</h5>
+                    <h5>Unduhan &amp; Legal</h5>
                     <ul>
+                        <li><a href="/downloads/playstore" target="_blank" rel="noopener">Google Play Store</a></li>
                         <li><a href="/downloads/antropometri-latest.apk" download>Unduh APK (v2.2.0)</a></li>
-                        <li><a href="/downloads/Template_Perhitungan_Antropometri.xlsx" download>Template Excel</a></li>
-                        <li><a href="/privacy-policy">Kebijakan Privasi</a></li>
-                        <li><a href="https://outline.samrifa.com/">Outline Master Docs</a></li>
+                        <li><a href="/downloads/Template_Perhitungan_Antropometri.xlsx" download>Template Excel (.xlsx)</a></li>
+                        <li><a href="/privacy-policy">Kebijakan Privasi Resmi</a></li>
                     </ul>
                 </div>
             </div>
@@ -1542,7 +1973,7 @@
         </div>
     </footer>
 
-    <!-- Interactive Clinical Calculation Engine: Real-time Reactive Processing -->
+    <!-- Interactive Clinical Calculation Engine: Triggered On Button Press -->
     <script>
         let currentMode = 'balita';
 
@@ -1595,6 +2026,7 @@
                 categoryBadge.style.background = '#FDF2F8';
                 categoryBadge.style.color = '#9D174D';
             }
+            // Langsung hitung ulang ketika mode diganti
             calculateNutrition();
         }
 
@@ -1730,7 +2162,7 @@
                 badgeImtu = 'badge-danger';
             }
 
-            // Clinical Nutrition Recommendation
+            // Rekomendasi Klinis & Nutrisi
             let rec = 'Pertumbuhan dan status gizi anak berada dalam rentang ideal kurva baku WHO 2006. Lanjutkan pola makan gizi seimbang kaya protein hewani dan kontrol berkala setiap bulan.';
             if (zTbuVal < -2) {
                 rec = 'PERHATIAN INDIKASI STUNTING: Nilai TB/U menunjukkan perawakan pendek. Evaluasi asupan protein hewani (telur, ikan, daging), higienitas air bersih, serta rujuk ke Puskesmas untuk evaluasi komprehensif.';
@@ -1751,6 +2183,25 @@
                 statusImtu, badgeImtu,
                 recommendation: rec
             };
+        }
+
+        // Pemicu Tombol Hitung dengan Animasi Feedback
+        function triggerCalculate() {
+            const btn = document.getElementById('btnHitung');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="animation: spin 0.8s linear infinite;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg> <span>Menghitung...</span>`;
+            btn.disabled = true;
+
+            setTimeout(() => {
+                calculateNutrition();
+                btn.innerHTML = originalContent;
+                btn.disabled = false;
+
+                const card = document.getElementById('resultCard');
+                card.classList.remove('highlight-pulse');
+                void card.offsetWidth; // Trigger reflow
+                card.classList.add('highlight-pulse');
+            }, 180);
         }
 
         function calculateNutrition() {
@@ -1857,7 +2308,7 @@
             }
         }
 
-        // Initialize calculation on page load
+        // Jalankan kalkulasi awal saat halaman selesai dimuat
         document.addEventListener('DOMContentLoaded', function () {
             calculateNutrition();
         });

@@ -82,9 +82,25 @@ class LandingPageAndSecurityTest extends TestCase
         $response = $this->get('/');
         $response->assertOk();
         $response->assertDontSee('Ananda Pratama');
-        $response->assertSee('ID Subjek (Anonim)');
+        $response->assertDontSee('outline.samrifa.com');
+        $response->assertSee('Inisial / ID Subjek (Simulasi Anonim)');
         $response->assertSee('Perlindungan Privasi Mutlak');
         $response->assertSee('Telemetri & Trafik Operasional Lapangan');
+        $response->assertSee('Permenkes RI No. 2 Tahun 2020');
+        $response->assertSee('WHO Child Growth Standards 2006');
+    }
+
+    public function test_downloads_template_route_returns_excel_attachment(): void
+    {
+        $response = $this->get('/downloads/Template_Perhitungan_Antropometri.xlsx');
+        $response->assertOk();
+        $response->assertHeader('content-disposition', 'attachment; filename=Template_Perhitungan_Antropometri.xlsx');
+    }
+
+    public function test_downloads_playstore_route_redirects_to_play_store(): void
+    {
+        $response = $this->get('/downloads/playstore');
+        $response->assertRedirect();
     }
 
     public function test_security_hardening_blocks_php2shell_and_cve_2024_4577_attacks(): void

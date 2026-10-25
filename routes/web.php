@@ -60,6 +60,33 @@ Route::middleware(['throttle:60,1'])->group(function () {
 Route::get('/', [\App\Http\Controllers\LandingPageController::class, 'index']);
 Route::redirect('/dashboard', '/', 301);
 
+Route::get('/downloads/Template_Perhitungan_Antropometri.xlsx', function () {
+    $path = public_path('downloads/Template_Perhitungan_Antropometri.xlsx');
+    if (!file_exists($path)) {
+        abort(404, 'Template Excel belum tersedia.');
+    }
+    return response()->download($path, 'Template_Perhitungan_Antropometri.xlsx', [
+        'Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        'Content-Disposition' => 'attachment; filename="Template_Perhitungan_Antropometri.xlsx"',
+    ]);
+});
+
+Route::get('/downloads/antropometri-latest.apk', function () {
+    $path = public_path('downloads/antropometri-latest.apk');
+    if (!file_exists($path)) {
+        abort(404, 'File APK belum tersedia.');
+    }
+    return response()->download($path, 'antropometri-v2.2.0.apk', [
+        'Content-Type' => 'application/vnd.android.package-archive',
+        'Content-Disposition' => 'attachment; filename="antropometri-v2.2.0.apk"',
+    ]);
+});
+
+Route::get('/downloads/playstore', function () {
+    $playStoreUrl = config('app.mobile_play_store_url', 'https://play.google.com/store/apps/details?id=com.samrifa.antropometri');
+    return redirect()->away($playStoreUrl);
+});
+
 Route::any('{any}', function () {
     return response()->json([
         'success' => false,
