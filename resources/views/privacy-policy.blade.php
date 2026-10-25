@@ -18,9 +18,16 @@
     <meta property="og:description" content="Penjelasan ringkas penggunaan dan perlindungan data pada aplikasi Antropometri Indonesia.">
     <meta property="og:url" content="{{ $canonicalUrl }}">
     <meta property="og:image" content="{{ asset('landing-assets/images/icon.png') }}">
+
+    <!-- Google Fonts: Poppins -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
     <style>
         :root {
             --green: #246b4a;
+            --green-dark: #1b5238;
             --green-soft: #e9f5ef;
             --ink: #111827;
             --muted: #64748b;
@@ -32,13 +39,13 @@
 
         body {
             margin: 0;
-            font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
             color: var(--ink);
             background: var(--bg);
             line-height: 1.7;
         }
 
-        a { color: var(--green); font-weight: 800; text-decoration: none; }
+        a { color: var(--green); font-weight: 700; text-decoration: none; }
 
         .shell {
             width: min(860px, calc(100% - 32px));
@@ -46,9 +53,9 @@
         }
 
         header {
-            padding: 28px 0;
+            padding: 20px 0;
             border-bottom: 1px solid var(--line);
-            background: rgba(248, 250, 252, 0.92);
+            background: rgba(248, 250, 252, 0.95);
             backdrop-filter: blur(16px);
         }
 
@@ -62,27 +69,55 @@
         .brand-main {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             color: var(--ink);
-            font-weight: 900;
+            font-weight: 800;
+            font-size: 16px;
         }
 
         .brand img {
             width: 42px;
             height: 42px;
-            border-radius: 10px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(36, 107, 74, 0.18);
+        }
+
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .btn {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            min-height: 42px;
-            padding: 0 14px;
+            min-height: 40px;
+            padding: 0 16px;
             border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            text-decoration: none;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .btn-subtle {
             background: white;
             border: 1px solid var(--line);
-            font-size: 14px;
+            color: var(--ink);
+        }
+
+        .btn-primary {
+            background: var(--green);
+            color: white;
+            border: 1px solid var(--green);
+            box-shadow: 0 2px 8px rgba(36, 107, 74, 0.25);
+        }
+
+        .btn-primary:hover {
+            background: var(--green-dark);
+            color: white;
         }
 
         main { padding: 46px 0 70px; }
@@ -160,7 +195,10 @@
                 <img src="{{ asset('landing-assets/images/icon.png') }}" alt="Logo {{ $appName }}">
                 <span>{{ $appName }}</span>
             </a>
-            <a class="btn" href="{{ $playStoreUrl }}" rel="noopener">Google Play</a>
+            <div class="header-actions">
+                <a class="btn btn-primary" href="/#unduh">Unduh Aplikasi</a>
+                <a class="btn btn-subtle" href="{{ $playStoreUrl }}" rel="noopener">Google Play</a>
+            </div>
         </div>
     </header>
 

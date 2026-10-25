@@ -87,6 +87,12 @@ Route::get('/downloads/playstore', function () {
     return redirect()->away($playStoreUrl);
 });
 
+Route::get('/unduh', fn() => redirect('/#unduh'));
+Route::get('/download', fn() => redirect('/#unduh'));
+Route::get('/downloads', fn() => redirect('/#unduh'));
+Route::get('/downloads/template', fn() => redirect('/downloads/Template_Perhitungan_Antropometri.xlsx'));
+Route::get('/download/template', fn() => redirect('/downloads/Template_Perhitungan_Antropometri.xlsx'));
+
 Route::any('{any}', function () {
     return response()->json([
         'success' => false,

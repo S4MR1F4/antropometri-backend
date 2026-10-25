@@ -156,6 +156,10 @@
             background-attachment: fixed;
         }
 
+        button, input, select, textarea, optgroup {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+        }
+
         .container {
             width: min(1200px, calc(100% - 40px));
             margin: 0 auto;
@@ -1389,12 +1393,16 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
                         Kalkulator Gizi
                     </a>
+                    <a href="#unduh" class="nav-tab-btn" onclick="switchNav(this)">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                        Unduh
+                    </a>
                 </nav>
 
                 <div class="nav-actions">
-                    <a href="/downloads/antropometri-latest.apk" class="btn-primary" download title="Unduh Langsung File APK Android">
+                    <a href="#unduh" class="btn-primary" title="Halaman Unduh Aplikasi Mobile">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        <span>Unduh APK</span>
+                        <span>Unduh Aplikasi</span>
                     </a>
                     <a href="/login" class="btn-secondary" title="Login Petugas Medis">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
@@ -1993,44 +2001,43 @@
             </div>
         </section>
 
-        <!-- Android Home Screen Widget & APK Section -->
-        <section id="mobile-app" class="section-wrapper">
+        <!-- Halaman / Section Unduh Aplikasi Mobile, Play Store, & Manual Install -->
+        <section id="unduh" class="section-wrapper">
             <div class="card-surface">
                 <div class="widget-showcase-grid">
                     <div>
                         <div class="hero-badge">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="2" width="14" height="20" rx="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
-                            Fitur Layar Beranda Smartphone (AppWidgetProvider)
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+                            Pusat Unduhan Resmi Aplikasi Mobile Antropometri
                         </div>
-                        <h3 style="font-size: 26px; font-weight: 700; margin-bottom: 12px; color: var(--slate-900);">Widget Layar Utama Android 4-in-1</h3>
-                        <p style="color: var(--slate-600); margin-bottom: 22px; font-size: 13.5px;">
-                            Pencatatan cepat tanpa perlu membuka drawer atau menu bertingkat. Cukup 1 sentuhan dari layar beranda HP untuk mencatat balita, mengukur dewasa, membuka kalkulator, atau sinkronisasi antrean lokal.
+                        <h3 style="font-size: 26px; font-weight: 700; margin-bottom: 12px; color: var(--slate-900);">Unduh Aplikasi Lapangan Android</h3>
+                        <p style="color: var(--slate-600); margin-bottom: 20px; font-size: 13.5px;">
+                            Gunakan aplikasi Antropometri di smartphone Android untuk pencatatan lapangan secara 100% offline, perhitungan Z-score otomatis, dan sinkronisasi instan ke server posyandu.
                         </p>
 
-                        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
-                            <div style="display: flex; gap: 10px; align-items: flex-start;">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-xs); background: var(--primary-light); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;">1</div>
-                                <div style="font-size: 12.5px; color: var(--slate-700);"><strong>Entri Balita Langsung:</strong> Membuka form penimbangan balita terintegrasi baku WHO.</div>
-                            </div>
-                            <div style="display: flex; gap: 10px; align-items: flex-start;">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-xs); background: var(--primary-light); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;">2</div>
-                                <div style="font-size: 12.5px; color: var(--slate-700);"><strong>Pemeriksaan Dewasa &amp; Bumil:</strong> Cepat mencatat IMT, LILA KEK, dan lingkar perut.</div>
-                            </div>
-                            <div style="display: flex; gap: 10px; align-items: flex-start;">
-                                <div style="width: 24px; height: 24px; border-radius: var(--radius-xs); background: var(--primary-light); color: var(--primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 12px; flex-shrink: 0;">3</div>
-                                <div style="font-size: 12.5px; color: var(--slate-700);"><strong>Sinkronisasi Sekali Sentuh:</strong> Mengunggah batch data offline saat mendeteksi sinyal internet.</div>
-                            </div>
-                        </div>
-
-                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                        <!-- Pilihan Unduhan: Play Store & Direct APK -->
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap; margin-bottom: 22px;">
                             <a href="/downloads/playstore" class="btn-playstore" target="_blank" rel="noopener">
                                 <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M3.609 1.814L13.793 12 3.61 22.186c-.372-.344-.61-.83-.61-1.386V3.2c0-.555.238-1.042.61-1.386zM15.207 13.414l2.793 2.793-12.78 7.377 9.987-10.17zm0-2.828L5.22 .416l12.78 7.377-2.793 2.793zm1.414 1.414l3.869-2.233c.895-.517.895-1.353 0-1.87l-3.869-2.234-2.121 2.121 2.121 2.121z"/></svg>
-                                Unduh di Google Play
+                                Buka di Google Play
                             </a>
-                            <a href="/downloads/antropometri-latest.apk" class="btn-primary" download>
+                            <a href="/downloads/antropometri-latest.apk" class="btn-primary" download title="Unduh File APK Android (v2.2.0)">
                                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                                Unduh Langsung APK (.apk)
+                                Unduh Langsung APK (v2.2.0)
                             </a>
+                        </div>
+
+                        <!-- Panduan Manual Install -->
+                        <div style="background: var(--slate-50); border: 1px solid var(--slate-200); border-radius: var(--radius-sm); padding: 14px 16px; margin-bottom: 8px;">
+                            <div style="font-size: 12px; font-weight: 700; color: var(--slate-800); margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary);"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                                Panduan Pasang Manual APK (Bagi yang mengunduh langsung)
+                            </div>
+                            <ol style="margin: 0; padding-left: 18px; font-size: 11.5px; color: var(--slate-600); line-height: 1.65;">
+                                <li>Tekan tombol <strong>Unduh Langsung APK</strong> di atas untuk mengunduh paket instalasi resmi.</li>
+                                <li>Buka file hasil unduhan di notifikasi atau folder Download smartphone Anda.</li>
+                                <li>Jika muncul konfirmasi keamanan, aktifkan izin <em>"Izinkan dari sumber ini"</em> (Install Unknown Apps), lalu lanjutkan proses instalasi hingga selesai.</li>
+                            </ol>
                         </div>
                     </div>
 
