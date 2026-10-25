@@ -196,8 +196,8 @@
                 <span>{{ $appName }}</span>
             </a>
             <div class="header-actions">
+                <a class="btn btn-subtle" href="/terms">Syarat &amp; Ketentuan</a>
                 <a class="btn btn-primary" href="/#unduh">Unduh Aplikasi</a>
-                <a class="btn btn-subtle" href="{{ $playStoreUrl }}" rel="noopener">Google Play</a>
             </div>
         </div>
     </header>
@@ -260,8 +260,13 @@
     </main>
 
     <footer>
-        <div class="shell">
-            &copy; 2026 {{ $appName }}. <a href="/">Kembali ke beranda</a>.
+        <div class="shell" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px;">
+            <div>&copy; 2026 {{ $appName }}. Hak Cipta Dilindungi Undang-Undang.</div>
+            <div>
+                <a href="/">Beranda</a> &bull;
+                <a href="/terms">Syarat &amp; Ketentuan</a> &bull;
+                <a href="/#unduh">Pusat Unduhan</a>
+            </div>
         </div>
     </footer>
 </body>

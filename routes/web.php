@@ -24,6 +24,12 @@ Route::get('/privacy-policy', function () {
     return view('privacy-policy');
 });
 
+Route::get('/terms', function () {
+    return view('terms');
+});
+Route::get('/terms-of-service', fn() => redirect('/terms'));
+Route::get('/syarat-ketentuan', fn() => redirect('/terms'));
+
 Route::get('/login', function () {
     return view('app-link-fallback', [
         'title' => 'Login ke Aplikasi',

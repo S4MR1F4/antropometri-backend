@@ -1133,92 +1133,311 @@
         }
 
         .phone-mockup {
-            width: min(320px, 100%);
+            width: min(330px, 100%);
             margin: 0 auto;
-            background: #1E293B;
-            border-radius: 36px;
-            padding: 12px;
-            box-shadow: 0 20px 50px -10px rgba(15, 23, 42, 0.3);
-            border: 3px solid #334155;
+            background: #0f172a;
+            border-radius: 42px;
+            padding: 10px;
+            box-shadow: 0 25px 65px -15px rgba(15, 23, 42, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.08);
+            border: 3.5px solid #334155;
+            position: relative;
         }
 
         .phone-screen {
-            background: #F1F5F9;
-            border-radius: 26px;
-            padding: 14px;
-            min-height: 420px;
+            background: #F8FAFC;
+            border-radius: 32px;
+            padding: 10px 10px 8px;
+            min-height: 560px;
             display: flex;
             flex-direction: column;
             justify-content: space-between;
             position: relative;
-            background-image: linear-gradient(180deg, #E2E8F0 0%, #CBD5E1 100%);
+            overflow: hidden;
+            border: 1px solid rgba(0, 0, 0, 0.06);
         }
 
         .phone-notch {
-            width: 80px;
+            width: 86px;
             height: 14px;
-            background: var(--slate-900);
-            border-radius: 0 0 10px 10px;
-            margin: -14px auto 14px;
+            background: #0f172a;
+            border-radius: 0 0 12px 12px;
+            margin: -10px auto 6px;
+            position: relative;
+            z-index: 10;
         }
 
-        .widget-preview-card {
-            background: var(--white);
-            border-radius: var(--radius-md);
-            padding: 14px;
-            border: 1px solid var(--slate-200);
-            box-shadow: 0 6px 20px rgba(0,0,0,0.08);
-        }
-
-        .widget-preview-header {
+        .phone-status-bar {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-bottom: 10px;
+            padding: 0 4px 6px;
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--slate-700);
         }
 
-        .widget-preview-title {
+        .phone-app-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 4px 2px 8px;
+        }
+
+        .phone-user-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .phone-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 800;
+            font-size: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        .phone-avatar-dot {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--emerald-500);
+            border: 1.5px solid white;
+        }
+
+        .phone-user-text h6 {
+            margin: 0;
             font-size: 11px;
             font-weight: 700;
-            color: var(--primary-dark);
-            letter-spacing: 0.04em;
+            color: var(--slate-900);
+            line-height: 1.2;
         }
 
-        .widget-preview-actions {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
+        .phone-user-text span {
+            font-size: 9px;
+            color: var(--slate-500);
+            font-weight: 500;
+        }
+
+        .phone-header-actions {
+            display: flex;
+            align-items: center;
             gap: 6px;
         }
 
-        .widget-preview-btn {
-            background: var(--primary-light);
-            border: 1px solid var(--primary-border);
-            border-radius: var(--radius-xs);
-            padding: 8px 4px;
+        .phone-icon-btn {
+            width: 26px;
+            height: 26px;
+            border-radius: 8px;
+            background: white;
+            border: 1px solid var(--slate-200);
             display: flex;
-            flex-direction: column;
             align-items: center;
-            text-align: center;
-            cursor: pointer;
+            justify-content: center;
+            color: var(--slate-700);
         }
 
-        .widget-preview-btn svg {
-            width: 18px;
-            height: 18px;
-            color: var(--primary);
+        .phone-tabs {
+            display: flex;
+            background: #E2E8F0;
+            padding: 3px;
+            border-radius: 10px;
+            gap: 3px;
+            margin-bottom: 8px;
+        }
+
+        .phone-tab-item {
+            flex: 1;
+            text-align: center;
+            padding: 4px 0;
+            font-size: 9px;
+            font-weight: 600;
+            color: var(--slate-600);
+            border-radius: 7px;
+        }
+
+        .phone-tab-item.active {
+            background: white;
+            color: var(--primary-dark);
+            font-weight: 700;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .phone-banner {
+            background: linear-gradient(135deg, #10B981 0%, #047857 100%);
+            border-radius: 12px;
+            padding: 10px 12px;
+            color: white;
+            margin-bottom: 8px;
+            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.25);
+        }
+
+        .phone-banner-badge {
+            display: inline-block;
+            font-size: 8px;
+            font-weight: 800;
+            background: rgba(255, 255, 255, 0.22);
+            padding: 2px 6px;
+            border-radius: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
             margin-bottom: 4px;
         }
 
-        .widget-preview-btn span {
-            font-size: 9.5px;
+        .phone-banner h5 {
+            margin: 0 0 2px;
+            font-size: 11.5px;
             font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .phone-banner p {
+            margin: 0;
+            font-size: 8.5px;
+            opacity: 0.92;
+            line-height: 1.3;
+        }
+
+        .phone-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .phone-stat-box {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 8px;
+            padding: 6px 4px;
+            text-align: center;
+        }
+
+        .phone-stat-val {
+            font-size: 12px;
+            font-weight: 800;
             color: var(--slate-900);
             line-height: 1.1;
         }
 
-        .widget-preview-btn small {
+        .phone-stat-lbl {
             font-size: 8px;
             color: var(--slate-500);
+            font-weight: 600;
+        }
+
+        .phone-quick-actions {
+            display: flex;
+            gap: 5px;
+            margin-bottom: 8px;
+        }
+
+        .phone-act-pill {
+            flex: 1;
+            background: white;
+            border: 1px solid var(--primary-border);
+            border-radius: 8px;
+            padding: 5px 2px;
+            text-align: center;
+            font-size: 8.5px;
+            font-weight: 700;
+            color: var(--primary-dark);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 3px;
+        }
+
+        .phone-act-pill.highlight {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .phone-card-patient {
+            background: white;
+            border: 1px solid var(--slate-200);
+            border-radius: 10px;
+            padding: 8px 10px;
+            margin-bottom: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.03);
+        }
+
+        .phone-patient-top {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 4px;
+        }
+
+        .phone-patient-name {
+            font-size: 10px;
+            font-weight: 700;
+            color: var(--slate-900);
+        }
+
+        .phone-patient-tag {
+            font-size: 8px;
+            padding: 1px 5px;
+            border-radius: 4px;
+            background: var(--primary-light);
+            color: var(--primary-dark);
+            font-weight: 700;
+        }
+
+        .phone-patient-metrics {
+            font-size: 8.5px;
+            color: var(--slate-600);
+            margin-bottom: 4px;
+        }
+
+        .phone-patient-status {
+            display: inline-block;
+            font-size: 8px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            background: #DCFCE7;
+            color: #15803D;
+            font-weight: 700;
+        }
+
+        .phone-bottom-nav {
+            background: white;
+            border-top: 1px solid var(--slate-200);
+            margin: 0 -10px -8px;
+            padding: 6px 4px 4px;
+            display: flex;
+            justify-content: space-around;
+        }
+
+        .phone-nav-item {
+            text-align: center;
+            font-size: 7.5px;
+            font-weight: 600;
+            color: var(--slate-500);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 2px;
+        }
+
+        .phone-nav-item.active {
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .phone-nav-item svg {
+            width: 14px;
+            height: 14px;
         }
 
         /* Policy & Terms Accordion/Boxes */
@@ -1393,20 +1612,12 @@
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line><line x1="16" y1="14" x2="16" y2="18"></line><path d="M16 10h.01"></path><path d="M12 10h.01"></path><path d="M8 10h.01"></path><path d="M12 14h.01"></path><path d="M8 14h.01"></path><path d="M12 18h.01"></path><path d="M8 18h.01"></path></svg>
                         Kalkulator Gizi
                     </a>
-                    <a href="#unduh" class="nav-tab-btn" onclick="switchNav(this)">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
-                        Unduh
-                    </a>
                 </nav>
 
                 <div class="nav-actions">
-                    <a href="#unduh" class="btn-primary" title="Halaman Unduh Aplikasi Mobile">
+                    <a href="#unduh" class="btn-primary" title="Pusat Unduhan Resmi Aplikasi Mobile">
                         <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
                         <span>Unduh Aplikasi</span>
-                    </a>
-                    <a href="/login" class="btn-secondary" title="Login Petugas Medis">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path><polyline points="10 17 15 12 10 7"></polyline><line x1="15" y1="12" x2="3" y2="12"></line></svg>
-                        <span>Masuk</span>
                     </a>
                 </div>
             </div>
@@ -2041,46 +2252,124 @@
                         </div>
                     </div>
 
-                    <!-- Mockup Phone Display -->
+                    <!-- Mockup Phone Display: Representing Flutter Mobile App UI -->
                     <div>
                         <div class="phone-mockup">
                             <div class="phone-screen">
                                 <div class="phone-notch"></div>
-                                <div class="widget-preview-card">
-                                    <div class="widget-preview-header">
-                                        <div style="display: flex; align-items: center; gap: 6px;">
-                                            <div style="width: 18px; height: 18px; border-radius: 4px; background: var(--primary); display: flex; align-items: center; justify-content: center; color: white;">
-                                                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg>
-                                            </div>
-                                            <span class="widget-preview-title">ANTROPOMETRI WIDGET</span>
-                                        </div>
-                                        <span class="pulse-dot"></span>
+
+                                <!-- Mobile Status Bar -->
+                                <div class="phone-status-bar">
+                                    <span>09:41</span>
+                                    <div style="display: flex; align-items: center; gap: 4px;">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12.55a11 11 0 0 1 14.08 0"></path><path d="M1.42 9a16 16 0 0 1 21.16 0"></path><path d="M8.53 16.11a6 6 0 0 1 6.95 0"></path><line x1="12" y1="20" x2="12.01" y2="20"></line></svg>
+                                        <svg width="12" height="10" viewBox="0 0 24 24" fill="currentColor"><rect x="1" y="6" width="18" height="12" rx="2" fill="none" stroke="currentColor" stroke-width="2"></rect><rect x="3" y="8" width="12" height="8" rx="1"></rect><line x1="21" y1="10" x2="21" y2="14" stroke="currentColor" stroke-width="2"></line></svg>
                                     </div>
-                                    <div class="widget-preview-actions">
-                                        <div class="widget-preview-btn">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle></svg>
-                                            <span>Balita</span>
-                                            <small>WHO</small>
+                                </div>
+
+                                <!-- App Header -->
+                                <div class="phone-app-header">
+                                    <div class="phone-user-info">
+                                        <div class="phone-avatar">
+                                            P
+                                            <span class="phone-avatar-dot"></span>
                                         </div>
-                                        <div class="widget-preview-btn">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><polyline points="16 11 18 13 22 9"></polyline></svg>
-                                            <span>Dewasa</span>
-                                            <small>IMT</small>
+                                        <div class="phone-user-text">
+                                            <h6>Petugas Medis</h6>
+                                            <span>Posyandu Mawar Indah</span>
                                         </div>
-                                        <div class="widget-preview-btn">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="4" y="2" width="16" height="20" rx="2"></rect><line x1="8" y1="6" x2="16" y2="6"></line></svg>
-                                            <span>Kalkulator</span>
-                                            <small>Mandiri</small>
+                                    </div>
+                                    <div class="phone-header-actions">
+                                        <div class="phone-icon-btn" title="Sinkron Aktif">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color: var(--primary);"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
                                         </div>
-                                        <div class="widget-preview-btn">
-                                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path></svg>
-                                            <span>Sinkron</span>
-                                            <small>Server</small>
+                                        <div class="phone-icon-btn" title="Notifikasi">
+                                            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path></svg>
                                         </div>
                                     </div>
                                 </div>
-                                <div style="text-align: center; font-size: 10px; color: var(--slate-600); font-weight: 600; padding-bottom: 8px;">
-                                    Android 15 Ready &bull; AppWidgetProvider 4x2
+
+                                <!-- App Tabs (AnimatedSegmentTabs) -->
+                                <div class="phone-tabs">
+                                    <div class="phone-tab-item active">Ringkasan</div>
+                                    <div class="phone-tab-item">Status Gizi</div>
+                                    <div class="phone-tab-item">Kolaborasi</div>
+                                </div>
+
+                                <!-- Dashboard Banner (DashboardCarouselBanner) -->
+                                <div class="phone-banner">
+                                    <span class="phone-banner-badge">Standar WHO 2006</span>
+                                    <h5>Pemantauan Gizi Digital</h5>
+                                    <p>Pencatatan antropometri presisi, 100% offline-ready &amp; sinkron instan.</p>
+                                </div>
+
+                                <!-- Real App Stats Grid -->
+                                <div class="phone-stats-grid">
+                                    <div class="phone-stat-box">
+                                        <div class="phone-stat-val">128</div>
+                                        <div class="phone-stat-lbl">Subjek</div>
+                                    </div>
+                                    <div class="phone-stat-box">
+                                        <div class="phone-stat-val" style="color: #16A34A;">93.8%</div>
+                                        <div class="phone-stat-lbl">Gizi Normal</div>
+                                    </div>
+                                    <div class="phone-stat-box">
+                                        <div class="phone-stat-val" style="color: var(--primary);">0</div>
+                                        <div class="phone-stat-lbl">Antrean</div>
+                                    </div>
+                                </div>
+
+                                <!-- Quick Actions -->
+                                <div class="phone-quick-actions">
+                                    <div class="phone-act-pill highlight">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        + Balita (WHO)
+                                    </div>
+                                    <div class="phone-act-pill">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                                        + Dewasa
+                                    </div>
+                                    <div class="phone-act-pill">
+                                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                        Riwayat
+                                    </div>
+                                </div>
+
+                                <!-- Recent Examination Card -->
+                                <div class="phone-card-patient">
+                                    <div class="phone-patient-top">
+                                        <span class="phone-patient-name">KL-BL-01 (Inisial)</span>
+                                        <span class="phone-patient-tag">Balita &bull; 24 Bln</span>
+                                    </div>
+                                    <div class="phone-patient-metrics">BB: 12.2 kg &bull; TB: 86.5 cm &bull; Z: -0.39 SD</div>
+                                    <div style="display: flex; align-items: center; justify-content: space-between;">
+                                        <span class="phone-patient-status">Gizi Baik (Normal)</span>
+                                        <span style="font-size: 7.5px; color: var(--slate-400);">Hari ini</span>
+                                    </div>
+                                </div>
+
+                                <!-- App Bottom Navigation Bar -->
+                                <div class="phone-bottom-nav">
+                                    <div class="phone-nav-item active">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path></svg>
+                                        <span>Beranda</span>
+                                    </div>
+                                    <div class="phone-nav-item">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                                        <span>Ukur</span>
+                                    </div>
+                                    <div class="phone-nav-item">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                                        <span>Riwayat</span>
+                                    </div>
+                                    <div class="phone-nav-item">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+                                        <span>Panduan</span>
+                                    </div>
+                                    <div class="phone-nav-item">
+                                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                                        <span>Profil</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -2152,7 +2441,7 @@
                         <li><a href="#trend">Tren Pertumbuhan</a></li>
                         <li><a href="#excel">Standar Excel</a></li>
                         <li><a href="#theory">Landasan Klinis</a></li>
-                        <li><a href="#mobile-app">Widget &amp; APK</a></li>
+                        <li><a href="#unduh">Pusat Unduhan &amp; Aplikasi</a></li>
                     </ul>
                 </div>
                 <div class="footer-col">
@@ -2162,6 +2451,7 @@
                         <li><a href="/downloads/antropometri-latest.apk" download>Unduh APK (v2.2.0)</a></li>
                         <li><a href="/downloads/Template_Perhitungan_Antropometri.xlsx" download>Template Excel (.xlsx)</a></li>
                         <li><a href="/privacy-policy">Kebijakan Privasi Resmi</a></li>
+                        <li><a href="/terms">Syarat &amp; Ketentuan Layanan</a></li>
                     </ul>
                 </div>
             </div>

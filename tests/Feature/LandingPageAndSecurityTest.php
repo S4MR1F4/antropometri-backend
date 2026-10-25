@@ -103,6 +103,22 @@ class LandingPageAndSecurityTest extends TestCase
         $response->assertRedirect();
     }
 
+    public function test_terms_and_privacy_policy_pages_render_successfully(): void
+    {
+        $resTerms = $this->get('/terms');
+        $resTerms->assertOk();
+        $resTerms->assertSee('Syarat dan Ketentuan Penggunaan');
+        $resTerms->assertSee('UU No. 27 Tahun 2022');
+        $resTerms->assertSee('WHO Child Growth Standards 2006');
+
+        $resAlias = $this->get('/terms-of-service');
+        $resAlias->assertRedirect('/terms');
+
+        $resPrivacy = $this->get('/privacy-policy');
+        $resPrivacy->assertOk();
+        $resPrivacy->assertSee('Kebijakan Privasi');
+    }
+
     public function test_security_hardening_blocks_php2shell_and_cve_2024_4577_attacks(): void
     {
         // Malicious request with PHP argument injection / php2shell parameters
